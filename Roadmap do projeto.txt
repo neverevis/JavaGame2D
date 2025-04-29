@@ -1,0 +1,33 @@
+o que falta:
+
+ordem de importancia:
+[4]- pode esperar
+[3]- começar a implementar
+[2]- exige esforço, melhor dar atenção
+[1]- prioridade
+
+lógica do jogo:
+
+-> colisão [3]
+-> área de dano [3]
+-> vida das entidades [3]
+-> fases [2]
+-> servidor [4]
+-> recebimento de dados [4]
+-> tratamento de atrasos [4]
+
+elementos da estrutura:
+-> obstáculos [3]
+-> props [3]
+-> inimigos [2]
+-> armas [3]
+-> baú [3]
+-> boss (inimigos mais complexos) [3]
+-> inventário [3]
+
+visuais:
+-> spritesheet do player [3]
+-> tilesets [3]
+-> design das armas [4]
+-> inimigos [3]
+-> bosses [4]
