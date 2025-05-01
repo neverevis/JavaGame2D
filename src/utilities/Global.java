@@ -1,13 +1,13 @@
 package utilities;
 
 public class Global {
-    public static final double FPS = 60;
+    public static final double FPS = 30;
     public static final double ORIGINAL_TILESIZE = 32;
     public static final double SCALE = 3;
     public static final int TILESIZE = (int)(ORIGINAL_TILESIZE*SCALE);
-    public static final int GAMECOLS = 16;                                                       // Número de Colunas
-    public static final int GAMEROWS = 9;                                                       // Número de Colunas
-    public static final int SCREENWIDTH = GAMECOLS*TILESIZE;                                     // Comprimento da Tela
+    public static final int GAMECOLS = 16;
+    public static final int GAMEROWS = 9;
+    public static final int SCREENWIDTH = GAMECOLS*TILESIZE;
     public static final int SCREENHEIGHT = GAMEROWS*TILESIZE;
 
     //variáveis pra facilitar a orientação (ordem dos spritesheets)

@@ -2,6 +2,8 @@ package world;
 
 import utilities.Global;
 
+import java.awt.*;
+
 public class Camera {
     public double x;
     public double y;
@@ -13,8 +15,10 @@ public class Camera {
     double screenCenterY = Global.SCREENHEIGHT/2;
     double targetX;
     double targetY;
-    double smoothing = 0.08;
+    double smoothing = 6.25;
     boolean lock = true;
+    double mouseX;
+    double mouseY;
 
     World world;
 
@@ -22,11 +26,11 @@ public class Camera {
         this.world = world;
     }
 
-    public void update(){
+    public void update(double deltaTime){
         updateTarget();
         if(lock) {
-            x += (targetX - x) * smoothing;
-            y += (targetY - y) * smoothing;
+            x += (targetX - x) * smoothing * deltaTime;
+            y += (targetY - y) * smoothing * deltaTime;
         }
     }
 
@@ -35,7 +39,22 @@ public class Camera {
     }
 
     void updateTarget(){
-        targetX = world.player.getAnchorX() - screenCenterX;
-        targetY = world.player.getAnchorY() - screenCenterY;
+        double nextTarX = world.player.getAnchorX();
+        double nextTarY = world.player.getAnchorY();
+
+        double tolerance = 3*Global.TILESIZE;
+
+        if(world.gp.cursorPoint != null) {
+            mouseX = world.gp.cursorPoint.getX();
+            mouseY = world.gp.cursorPoint.getY();
+        }
+
+        double moveX = (mouseX - screenCenterX)*0.2;
+        double moveY = (mouseY - screenCenterY)*0.2;
+
+        if(nextTarX - screenCenterX > 0 - tolerance && nextTarX + screenCenterX < world.width + tolerance)
+            targetX = world.player.getAnchorX() - screenCenterX + moveX;
+        if(nextTarY - screenCenterY > 0 - tolerance&& nextTarY + screenCenterY < world.height + tolerance)
+            targetY = world.player.getAnchorY() - screenCenterY + moveY;
     }
 }

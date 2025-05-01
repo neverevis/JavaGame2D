@@ -38,7 +38,7 @@ public class GameLoop implements Runnable {
         while (true) {
             start = System.nanoTime();
 
-            deltaTime = (System.nanoTime() - lastTime) / 1_000_000_000;
+            deltaTime = (start - lastTime) / 1_000_000_000;
             lastTime = start;
 
             // Limita deltaTime máximo

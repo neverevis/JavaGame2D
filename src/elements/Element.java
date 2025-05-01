@@ -64,7 +64,7 @@ public abstract class Element {
     public void renderAnchor(Graphics2D g2d){
         g2d.setColor(Color.yellow);
         g2d.drawRect((int)(x - world.camera.x),(int)(y - world.camera.y),(int)(width* Global.SCALE),(int)(height*Global.SCALE));
-        g2d.setColor(Color.white);
+        g2d.setColor(Color.black);
         g2d.fillRect((int)(getAnchorX() - 4 - world.camera.x),(int)(getAnchorY() - 1 - world.camera.y),8,2);
         g2d.fillRect((int)(getAnchorX() - 1 - world.camera.x),(int)(getAnchorY() - 4 - world.camera.y),2,8);
     }

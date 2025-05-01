@@ -80,17 +80,20 @@ public class Player extends Entity {
         else {
             world.showElementsAnchor = false;
         }
+
+        sprite.update(deltaTime);
+        attack.update(deltaTime);
     }
 
     @Override
     public void render(Graphics2D g2d){
-        shadow.render(g2d,(int)(x - world.camera.x), (int)(y - world.camera.y+ 2*Global.SCALE));
+        shadow.render(g2d,(int)(x - world.camera.x), (int)(y - world.camera.y+ 2*Global.SCALE),width,height);
         if(sprite.orientation == Global.RIGHT || sprite.orientation == Global.UP) {
             renderSwordAndSlash(g2d);
         }
 
         if(!attacking)
-            sprite.render(g2d, (int)(x - world.camera.x), (int)(y - world.camera.y));
+            sprite.render(g2d, (int)(x - world.camera.x), (int)(y - world.camera.y),width,height);
         if(gp.world.showElementsAnchor)
             renderAnchor(g2d);
 
@@ -111,7 +114,7 @@ public class Player extends Entity {
         if(attacking) {
             frameCounter++;
             if(frameCounter >= 10){
-                x += 2;
+                x += 3;
             }
         }
 
@@ -186,8 +189,6 @@ public class Player extends Entity {
         //converter para graus
         angle = Math.toDegrees(angle);
 
-        System.out.println(angle);
-
         if(angle >= 45 && angle <= 135){
             setPlayerOrientation(Global.UP);
         }
@@ -204,7 +205,7 @@ public class Player extends Entity {
 
     private void renderSwordAndSlash(Graphics2D g2d){
         if (attacking)
-            attack.render(g2d, (int)(x - world.camera.x - 64*Global.SCALE), (int)(y - world.camera.y - 64*Global.SCALE));
+            attack.render(g2d, (int)(x - world.camera.x - 64*Global.SCALE), (int)(y - world.camera.y - 64*Global.SCALE),160,160);
     }
 
     private void setPlayerOrientation(int orientation){

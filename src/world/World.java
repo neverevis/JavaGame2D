@@ -1,5 +1,6 @@
 package world;
 
+import elements.Dust;
 import elements.Element;
 import elements.entities.Player;
 import elements.entities.Slime;
@@ -25,16 +26,18 @@ public class World {
     Player player;
     Slime slime1;
     Slime slime2;
+    Dust dust;
 
     public World(GamePanel gp){
         this.gp = gp;
         player = new Player(this.gp,this);
         slime1 = new Slime(this.gp,this,player);
+        dust = new Dust(this.gp,this,player);
         elements.add(player);
-        elements.add(slime1);
+        elements.add(dust);
         tiles = new Tiles();
-        cols = 14;
-        rows = 9;
+        cols = 100;
+        rows = 100;
         world = new int[cols][rows];
         width = cols* Global.TILESIZE;
         height = rows* Global.TILESIZE;
@@ -72,7 +75,7 @@ public class World {
     }
 
     public void update(double deltaTime){
-        camera.update();
+        camera.update(deltaTime);
         for(Element elm : elements){
             elm.update(deltaTime);
         }

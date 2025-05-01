@@ -22,7 +22,7 @@ public class Sprite {
     float fillOpacity = 1.0f;
     float fadeTime = 0.04f;
 
-    int frameCounter;
+    double timeElapsed;
     int changeRatio;
 
     public Sprite(BufferedImage spriteSheet, int width, int height, double seconds){
@@ -32,8 +32,9 @@ public class Sprite {
 
         totalOrientation = spriteSheet.getHeight()/height;
         totalFrame = spriteSheet.getWidth()/width;
+        System.out.println(totalFrame);
 
-        changeRatio = (int)(Global.FPS*seconds/totalFrame);
+        changeRatio = (int)(Global.FPS*seconds/(totalFrame - 1));
 
         sprite = new BufferedImage[totalOrientation][totalFrame];
 
@@ -56,15 +57,20 @@ public class Sprite {
         this.frame = frame;
     }
 
-    public void render(Graphics2D g, int x, int y){
+    public void update(double deltaTime){
         if(moving)
-            frameCounter++;
+            timeElapsed += deltaTime;
         else
             frame = 0;
-        if(moving && frameCounter % changeRatio == 0)
+        if(moving && timeElapsed > (1.0/Global.FPS) * changeRatio) {
             frame++;
+            timeElapsed = 0;
+        }
         if(frame >= totalFrame)
             frame = 1;
+    }
+
+    public void render(Graphics2D g, int x, int y,int width, int height){
         g.drawImage(sprite[orientation][frame], x, y, (int)(width*Global.SCALE), (int)(height*Global.SCALE), null);
 
         if (takingDamage) {

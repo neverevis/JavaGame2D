@@ -28,7 +28,7 @@ public class GamePanel extends Canvas  // Classe GamePanel extende Canvas
 
     Cursor c;                           // Atributo do tipo Cursor, que será usado para tratar do Mouse na janela gráfica
 
-    Point cursorPoint;                  // Atributo do tipo Point, que vai tratar o clicker do mouse na janela gráfica
+    public Point cursorPoint;                  // Atributo do tipo Point, que vai tratar o clicker do mouse na janela gráfica
 
     BufferedImage mouseImg;             // Atributo do tipo BufferedImage, usado para gerenciar as imagens e sprites
 

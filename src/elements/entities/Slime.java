@@ -92,16 +92,18 @@ public class Slime extends Entity{
 
         if (nextX <= world.width && nextX >= 0 && nextY <= world.height && nextY >= 0)
             setPositionByAnchor(nextX,nextY);
+
+        sprite.update(deltaTime);
     }
 
     @Override
     public void render(Graphics2D g2d) {
-        shadow.render(g2d,(int)(x - world.camera.x), (int)(y - world.camera.y+ 1*Global.SCALE));
+        shadow.render(g2d,(int)(x - world.camera.x), (int)(y - world.camera.y+ 1*Global.SCALE),width,height);
         if(jumping)
             sprite.moving = true;
         else
             sprite.moving = false;
-        sprite.render(g2d,(int)(x - world.camera.x) ,(int)(y - world.camera.y));
+        sprite.render(g2d,(int)(x - world.camera.x) ,(int)(y - world.camera.y),width,height);
 
         if(gp.world.showElementsAnchor)
             renderAnchor(g2d);
