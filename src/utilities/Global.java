@@ -1,7 +1,7 @@
 package utilities;
 
 public class Global {
-    public static final double FPS = 30;
+    public static final double FPS = 120;
     public static final double ORIGINAL_TILESIZE = 32;
     public static final double SCALE = 3;
     public static final int TILESIZE = (int)(ORIGINAL_TILESIZE*SCALE);

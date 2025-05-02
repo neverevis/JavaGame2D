@@ -4,6 +4,7 @@ import elements.Dust;
 import elements.Element;
 import elements.entities.Player;
 import elements.entities.Slime;
+import elements.enviroment.Tree;
 import game.GamePanel;
 import utilities.Global;
 
@@ -22,8 +23,10 @@ public class World {
     public GamePanel gp;
     public Camera camera = new Camera(this);
     public boolean showElementsAnchor = false;
-    List<Element> elements = new ArrayList<Element>();
+    public List<Element> elements = new ArrayList<Element>();
     Player player;
+    Tree tree;
+    Tree tree2;
     Slime slime1;
     Slime slime2;
     Dust dust;
@@ -33,8 +36,13 @@ public class World {
         player = new Player(this.gp,this);
         slime1 = new Slime(this.gp,this,player);
         dust = new Dust(this.gp,this,player);
+        tree = new Tree(this.gp,this);
+        tree2 = new Tree(this.gp,this);
+        tree2.setPositionByAnchor(900,900);
         elements.add(player);
+        elements.add(tree2);
         elements.add(dust);
+        elements.add(tree);
         tiles = new Tiles();
         cols = 100;
         rows = 100;
@@ -47,12 +55,7 @@ public class World {
     public void convertWorld() {
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
-                if (random.nextInt(10) == 0)
-                    world[i][j] = 1;
-                else
-                    world[i][j] = 0;
-                if (random.nextInt(60) == 0)
-                    world[i][j] = 2;
+                world[i][j] = 0;
             }
         }
     }
@@ -80,6 +83,6 @@ public class World {
             elm.update(deltaTime);
         }
         //organizar a lista de elementos por ordem de Y
-        elements.sort(Comparator.comparingInt(a -> (int) a.getAnchorY()));
+        elements.sort(Comparator.comparingInt(a -> (int) a.getFeetLine()));
     }
 }

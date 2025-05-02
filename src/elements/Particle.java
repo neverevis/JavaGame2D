@@ -12,14 +12,15 @@ public class Particle {
     Random random = new Random(System.nanoTime());
     public double x;
     public double y;
+    public double velocityY;
     public double scale;
     BufferedImage dust;
     Sprite sprite;
     public Particle(double x, double y){
-        scale = random.nextInt(5) + 16;
+        scale = random.nextInt(5) + 10;
         this.x = x;
         this.y = y;
-
+        this.velocityY = -100.0;
         try {
             dust = ImageIO.read(getClass().getResourceAsStream("/particles/dust.png"));
         } catch (IOException e) {

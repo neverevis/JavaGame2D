@@ -1,5 +1,6 @@
 package elements.entities;
 
+import elements.Element;
 import game.GamePanel;
 import utilities.Global;
 import utilities.Sprite;
@@ -33,6 +34,8 @@ public class Player extends Entity {
     Sprite attack;
     Sprite shadow;
     Sprite slash;
+    Rectangle nextBoxX;
+    Rectangle nextBoxY;
     double swordOffset = Global.TILESIZE/2.5;
 
     int frameCounter;
@@ -65,6 +68,9 @@ public class Player extends Entity {
         attack = new Sprite(attackSheet, 160, 160, 0.67f);
         setAnchor(16,18);
         shadow = new Sprite(shadowsheet,32,32,1f);
+        setFeetLine(32);
+
+        setCollisionBox(11,22,10,10);
     }
 
     @Override
@@ -83,6 +89,8 @@ public class Player extends Entity {
 
         sprite.update(deltaTime);
         attack.update(deltaTime);
+
+        updateCollisionBox(collisionBox,x,y);
     }
 
     @Override
@@ -94,8 +102,12 @@ public class Player extends Entity {
 
         if(!attacking)
             sprite.render(g2d, (int)(x - world.camera.x), (int)(y - world.camera.y),width,height);
-        if(gp.world.showElementsAnchor)
+        if(gp.world.showElementsAnchor) {
             renderAnchor(g2d);
+            g2d.setColor(Color.RED);
+            renderCollisionBox(g2d,collisionBox);
+            renderFeetLine(g2d);
+        }
 
         if(sprite.orientation == Global.LEFT || sprite.orientation == Global.DOWN) {
             renderSwordAndSlash(g2d);
@@ -174,8 +186,27 @@ public class Player extends Entity {
         }
 
         // movimentação do player validada
-        if (nextX <= world.width && nextX >= 0 && nextY <= world.height && nextY >= 0)
-            setPositionByAnchor(nextX,nextY);
+        if (nextX <= world.width && nextX >= 0 && nextY <= world.height && nextY >= 0) {
+            boolean validX = true;
+            boolean validY = true;
+            for(Element element: world.elements)
+                if(element != this && element.collision) {
+                    nextBoxX = new Rectangle(0,0,(int)collisionBox.getWidth(),(int)collisionBox.getHeight());
+                    nextBoxY = new Rectangle(0,0,(int)collisionBox.getWidth(),(int)collisionBox.getHeight());
+                    updateCollisionBox(nextBoxX,nextX - (width*Global.SCALE*anchorX),y);
+                    updateCollisionBox(nextBoxY,x ,nextY - (height*Global.SCALE*anchorY));
+                    if(element.collisionBox.intersects(nextBoxX)) {
+                        validX = false;
+                    }
+                    if(element.collisionBox.intersects(nextBoxY)) {
+                        validY = false;
+                    }
+                }
+            if(validX)
+                setPositionXByAnchor(nextX);
+            if(validY)
+                setPositionYByAnchor(nextY);
+        }
 
     }
 

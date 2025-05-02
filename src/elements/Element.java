@@ -17,8 +17,12 @@ public abstract class Element {
     public double anchorY = 0.5;
     protected int width;
     protected int height;
+    int feetLine;
 
-    boolean collision = false;
+    public boolean collision = false;
+    public Rectangle collisionBox;
+    int collisionX;
+    int collisionY;
 
     protected GamePanel gp;
     protected World world;
@@ -48,8 +52,22 @@ public abstract class Element {
         this.height = height;
     }
 
+    public void setCollisionBox(int x, int y, int width, int height){
+        collisionX = (int)(x*Global.SCALE);
+        collisionY = (int)(y*Global.SCALE);
+        collisionBox = new Rectangle((int)(x*Global.SCALE),(int)(y*Global.SCALE),(int)(width*Global.SCALE),(int)(height*Global.SCALE));
+    }
+
     public void setPositionByAnchor(double x, double y){
         this.x = x - anchorX*width*Global.SCALE;
+        this.y = y - anchorY*height*Global.SCALE;
+    }
+
+    public void setPositionXByAnchor(double x){
+        this.x = x - anchorX*width*Global.SCALE;
+    }
+
+    public void setPositionYByAnchor(double y){
         this.y = y - anchorY*height*Global.SCALE;
     }
 
@@ -77,15 +95,32 @@ public abstract class Element {
         anchorY = 1.0/scaledHeight*y*Global.SCALE;
     }
 
+    public void updateCollisionBox(Rectangle collisionBox, double x, double y){
+        collisionBox.setLocation((int)x + collisionX,(int)y + collisionY);
+    }
+
+    public void renderCollisionBox(Graphics2D g2d,Rectangle collisionBox){
+        g2d.drawRect((int)(collisionBox.getX() - world.camera.x),(int)(collisionBox.getY() - world.camera.y),(int)collisionBox.getWidth(),(int)collisionBox.getHeight());
+    }
+
     public void setCollision(boolean collision){
         this.collision = collision;
+    }
+
+    public void setFeetLine(double feetLine){
+        this.feetLine = (int)(feetLine*Global.SCALE);
     }
 
     public double getX(){
         return x;
     }
 
-    public double getY(){
-        return y;
+    public double getFeetLine(){
+        return y + feetLine;
+    }
+
+    public void renderFeetLine(Graphics2D g2d){
+        g2d.setColor(Color.green);
+        g2d.drawLine((int)(x - world.camera.x),(int)(getFeetLine() - world.camera.y),(int)(x+width*Global.SCALE - world.camera.x),(int)(getFeetLine() - world.camera.y));
     }
 }

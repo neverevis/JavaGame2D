@@ -43,14 +43,15 @@ public class Dust extends Element{
     public void update(double deltaTime) {
         if(gp.kh.rightKey || gp.kh.upKey || gp.kh.downKey || gp.kh.leftKey){
             if(random.nextInt(20) == 0){
-                particles.add(new Particle(player.getAnchorX(),player.getAnchorY() + player.height/2));
+                particles.add(new Particle(player.getAnchorX(),player.getAnchorY()));
             }
         }
 
         for(int i = particles.size() - 1; i >= 0; i--){
             particles.get(i).sprite.update(deltaTime);
             particles.get(i).scale-= 20*deltaTime;
-            particles.get(i).y-=0.5;
+            particles.get(i).y+=particles.get(i).velocityY*deltaTime;
+            particles.get(i).velocityY+=300*deltaTime;
             if(particles.get(i).scale <= 0)
                 particles.remove(i);
         }

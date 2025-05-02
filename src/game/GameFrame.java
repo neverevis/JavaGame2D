@@ -16,7 +16,7 @@ public class GameFrame extends JFrame { // A classe GameFrame extende JFrame
         pack();                                             // Altera o tamanho da janela para ficar apropriado com seus elementos internos
         gp.createBufferStrategy(3);              // Cria um bufferStrategy com 3 buffers gerenciados
         gp.game.start();                                   // Inicia a Thread da classe GamePanel
-        setResizable(false);                               // O usuário não pode alterar a janela         // Ícone pra ficar bonitinho
+        setResizable(true);                               // O usuário não pode alterar a janela         // Ícone pra ficar bonitinho
         setLocationRelativeTo(null);                       // Faz com que a janela apareça no meio da tela
         setVisible(true);                                  // Torna a janela gráfica visível
     }

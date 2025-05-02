@@ -49,8 +49,8 @@ public class Camera {
             mouseY = world.gp.cursorPoint.getY();
         }
 
-        double moveX = (mouseX - screenCenterX)*0.2;
-        double moveY = (mouseY - screenCenterY)*0.2;
+        double moveX = (mouseX - screenCenterX)*0.1;
+        double moveY = (mouseY - screenCenterY)*0.1;
 
         if(nextTarX - screenCenterX > 0 - tolerance && nextTarX + screenCenterX < world.width + tolerance)
             targetX = world.player.getAnchorX() - screenCenterX + moveX;
