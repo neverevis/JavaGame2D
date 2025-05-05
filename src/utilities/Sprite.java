@@ -1,5 +1,7 @@
 package utilities;
 
+import elements.states.Direction;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
@@ -10,10 +12,10 @@ public class Sprite {
     int width;
     int height;
 
-    public int orientation;
+    Direction direction = Direction.DOWN;
     int frame;
 
-    int totalOrientation;
+    int totalDirection;
     int totalFrame;
 
     public boolean moving = false;
@@ -30,31 +32,39 @@ public class Sprite {
         this.width = width;
         this.height = height;
 
-        totalOrientation = spriteSheet.getHeight()/height;
+        totalDirection = spriteSheet.getHeight()/height;
         totalFrame = spriteSheet.getWidth()/width;
-        System.out.println(totalFrame);
 
-        changeRatio = (int)(Global.FPS*seconds/(totalFrame - 1));
+        changeRatio = (int)(Global.FPS*seconds/totalFrame);
 
-        sprite = new BufferedImage[totalOrientation][totalFrame];
+        sprite = new BufferedImage[totalDirection][totalFrame];
 
         loadSprites();
     }
 
     private void loadSprites(){
-        for(int i = 0; i < totalOrientation; i++){
+        for(int i = 0; i < totalDirection; i++){
             for(int j = 0; j < totalFrame; j++){
                 sprite[i][j] = ImageManager.getCroppedImg(spriteSheet,j*width,i*height,width,height);
             }
         }
     }
 
-    public void setOrientation(int orientation){
-        this.orientation = orientation;
+    public void setDirection(Direction direction){
+        this.direction = direction;
     }
 
     public void setFrame(int frame){
-        this.frame = frame;
+        if(frame < totalFrame)
+            this.frame = frame;
+    }
+
+    public int getFrame(){
+        return frame;
+    }
+
+    public int getTotalFrame(){
+        return totalFrame;
     }
 
     public void update(double deltaTime){
@@ -71,10 +81,10 @@ public class Sprite {
     }
 
     public void render(Graphics2D g, int x, int y,int width, int height){
-        g.drawImage(sprite[orientation][frame], x, y, (int)(width*Global.SCALE), (int)(height*Global.SCALE), null);
+        g.drawImage(sprite[direction.code][frame], x, y, (int)(width*Global.SCALE), (int)(height*Global.SCALE), null);
 
         if (takingDamage) {
-            BufferedImage frameSprite = sprite[orientation][frame];
+            BufferedImage frameSprite = sprite[direction.ordinal()][frame];
 
             // Cria um sprite branco com a opacidade atual
             BufferedImage whiteFlash = new BufferedImage(frameSprite.getWidth(), frameSprite.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -100,6 +110,10 @@ public class Sprite {
                 fillOpacity = 1f;
             }
         }
+    }
+
+    public void setAnimationSpeed(double seconds){
+        changeRatio = (int)(Global.FPS*seconds/totalFrame);
     }
 
     public void toggleDamageState(){

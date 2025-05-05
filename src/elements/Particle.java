@@ -22,7 +22,7 @@ public class Particle {
         this.y = y;
         this.velocityY = -100.0;
         try {
-            dust = ImageIO.read(getClass().getResourceAsStream("/particles/dust.png"));
+            dust = ImageIO.read(getClass().getResourceAsStream("/resources/particles/dust.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }

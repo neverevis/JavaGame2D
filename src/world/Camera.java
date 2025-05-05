@@ -57,4 +57,12 @@ public class Camera {
         if(nextTarY - screenCenterY > 0 - tolerance&& nextTarY + screenCenterY < world.height + tolerance)
             targetY = world.player.getAnchorY() - screenCenterY + moveY;
     }
+
+    public int getXRelativeToScreen(double x){
+        return (int)(x - this.x);
+    }
+
+    public int getYRelativeToScreen(double y){
+        return (int)(y - this.y);
+    }
 }

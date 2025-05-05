@@ -4,6 +4,7 @@ import elements.entities.Player;
 import elements.Particle;
 import game.GamePanel;
 import utilities.Global;
+import utilities.Vector;
 import world.World;
 
 import javax.imageio.ImageIO;
@@ -28,13 +29,14 @@ public class Dust extends Element{
     @Override
     public void setAttributes() {
         try {
-            dust = ImageIO.read(getClass().getResourceAsStream("/particles/dust.png"));
+            dust = ImageIO.read(getClass().getResourceAsStream("/resources/particles/dust.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         setSize(16,16);
         setAnchor(16/2,16/2);
-        setPositionByAnchor(300,300);
+        setPositionByAnchor(new Vector(0,0));
+        setFeetLine(-500);
         setSprite(dust);
         sprite.moving = true;
     }
@@ -43,7 +45,7 @@ public class Dust extends Element{
     public void update(double deltaTime) {
         if(gp.kh.rightKey || gp.kh.upKey || gp.kh.downKey || gp.kh.leftKey){
             if(random.nextInt(20) == 0){
-                particles.add(new Particle(player.getAnchorX(),player.getAnchorY()));
+                particles.add(new Particle(player.getAnchorX(),player.getFeetLine() - 10));
             }
         }
 
@@ -55,6 +57,7 @@ public class Dust extends Element{
             if(particles.get(i).scale <= 0)
                 particles.remove(i);
         }
+        position.setPosition(player.position);
     }
 
     @Override

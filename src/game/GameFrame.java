@@ -10,15 +10,16 @@ public class GameFrame extends JFrame { // A classe GameFrame extende JFrame
     /*============ CONSTRUTOR ============*/
     public GameFrame()
     {
-        setTitle("Game2D");                                 // Título da Janela
-        setDefaultCloseOperation(EXIT_ON_CLOSE);            // Fecha o programa quando a janela for fechada
-        add(gp);                                            // Adiciona o objeto gp
-        pack();                                             // Altera o tamanho da janela para ficar apropriado com seus elementos internos
-        gp.createBufferStrategy(3);              // Cria um bufferStrategy com 3 buffers gerenciados
-        gp.game.start();                                   // Inicia a Thread da classe GamePanel
-        setResizable(true);                               // O usuário não pode alterar a janela         // Ícone pra ficar bonitinho
-        setLocationRelativeTo(null);                       // Faz com que a janela apareça no meio da tela
-        setVisible(true);                                  // Torna a janela gráfica visível
+        setTitle("Game2D");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        add(gp);
+        pack();
+        gp.createBufferStrategy(3);
+        gp.game.start();
+        setResizable(true);
+        //setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
     /*

@@ -7,6 +7,7 @@ import elements.entities.Slime;
 import elements.enviroment.Tree;
 import game.GamePanel;
 import utilities.Global;
+import utilities.Vector;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -34,15 +35,17 @@ public class World {
     public World(GamePanel gp){
         this.gp = gp;
         player = new Player(this.gp,this);
-        slime1 = new Slime(this.gp,this,player);
         dust = new Dust(this.gp,this,player);
         tree = new Tree(this.gp,this);
+        tree.setPositionByAnchor(new Vector(0,0));
         tree2 = new Tree(this.gp,this);
-        tree2.setPositionByAnchor(900,900);
+        slime1 = new Slime(this.gp,this,this.player);
+        tree2.setPositionByAnchor(new Vector(500,500));
         elements.add(player);
         elements.add(tree2);
-        elements.add(dust);
         elements.add(tree);
+        elements.add(dust);
+        elements.add(slime1);
         tiles = new Tiles();
         cols = 100;
         rows = 100;
@@ -73,7 +76,8 @@ public class World {
         }
 
         for(Element elm : elements){
-            elm.render(g2d);
+            if(elm.position.x - camera.x < Global.SCREENWIDTH && elm.position.y - camera.y < Global.SCREENHEIGHT && elm.position.x+elm.width*Global.SCALE - camera.x > 0 && elm.position.y+elm.height*Global.SCALE - camera.y > 0)
+                elm.render(g2d);
         }
     }
 

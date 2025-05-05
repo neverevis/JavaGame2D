@@ -1,9 +1,13 @@
 package elements.entities;
 
 import elements.Element;
+import elements.states.Direction;
+import elements.states.PlayerState;
 import game.GamePanel;
+import game.KeyHandler;
 import utilities.Global;
 import utilities.Sprite;
+import utilities.Vector;
 import world.World;
 import java.awt.image.BufferedImage;
 
@@ -13,69 +17,54 @@ import java.io.IOException;
 
 public class Player extends Entity {
 
-    /*=============== ATRIBUTOS ===============*/
-    double nextX;
-    double nextY;
-
-    double swordX;
-    double swordY;
-    double swordTargetX;
-    double swordTargetY;
-    double swordSmoothing = 0.2;
+    Vector previousPosition = new Vector(0,0);
+    Vector velocity = new Vector(0,0);
 
     boolean attacking = false;
     boolean coolDown = false;
     double slashTime = 0.5; //segundos
     double coolDownTime = 0.05;
+    double elapsedTime;
 
-    BufferedImage slashSheet;
+    PlayerState playerState = PlayerState.IDLE;
+    KeyHandler key;
+    Direction direction;
     BufferedImage shadowsheet;
     BufferedImage attackSheet;
     Sprite attack;
     Sprite shadow;
-    Sprite slash;
-    Rectangle nextBoxX;
-    Rectangle nextBoxY;
-    double swordOffset = Global.TILESIZE/2.5;
-
-    int frameCounter;
 
     public Player(GamePanel gp, World world){
         super(gp, world);
-        swordTargetX = x - swordOffset;
-        swordTargetY = y;
-    }
-
-    public void attackToward(){
-
+        this.key = gp.kh;
     }
 
     @Override
     public void setAttributes() {
         //carregando o spritesheet
         try{
-            spriteSheet = ImageIO.read(getClass().getResourceAsStream("/entities/players/playersheet.png"));
-            shadowsheet = ImageIO.read(getClass().getResourceAsStream("/entities/monsters/shadow.png"));
-            attackSheet = ImageIO.read(getClass().getResourceAsStream("/entities/players/attack.png"));
+            spriteSheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/players/playersheet.png"));
+            shadowsheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/monsters/shadow.png"));
+            attackSheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/players/attack.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         setSize((int)Global.ORIGINAL_TILESIZE,(int)Global.ORIGINAL_TILESIZE);
-        setPositionByAnchor(500,700);
+        setPositionByAnchor(new Vector(500,700));
         setSpeed(100);
         sprite = new Sprite(spriteSheet,width,height,1f);
         attack = new Sprite(attackSheet, 160, 160, 0.67f);
+        collider.setBounds(this,11,26,10,6);
+        collider.collision = true;
         setAnchor(16,18);
         shadow = new Sprite(shadowsheet,32,32,1f);
         setFeetLine(32);
-
-        setCollisionBox(11,22,10,10);
     }
 
     @Override
     public void update(double deltaTime) {
-        updateAttack();
+        updateAttack(deltaTime);
         if(!attacking){
             updateMovement(deltaTime);
         }
@@ -87,127 +76,112 @@ public class Player extends Entity {
             world.showElementsAnchor = false;
         }
 
+        if(playerState == PlayerState.IDLE){
+            sprite.moving = false;
+        }
+        else if(playerState == PlayerState.MOVING){
+            sprite.moving = true;
+        }
         sprite.update(deltaTime);
         attack.update(deltaTime);
-
-        updateCollisionBox(collisionBox,x,y);
+        collider.update();
     }
 
     @Override
     public void render(Graphics2D g2d){
-        shadow.render(g2d,(int)(x - world.camera.x), (int)(y - world.camera.y+ 2*Global.SCALE),width,height);
-        if(sprite.orientation == Global.RIGHT || sprite.orientation == Global.UP) {
+        shadow.render(g2d,(int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y+ 2*Global.SCALE),width,height);
+        if(direction == Direction.RIGHT || direction == Direction.UP) {
             renderSwordAndSlash(g2d);
         }
-
-        if(!attacking)
-            sprite.render(g2d, (int)(x - world.camera.x), (int)(y - world.camera.y),width,height);
+        sprite.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y),width,height);
         if(gp.world.showElementsAnchor) {
             renderAnchor(g2d);
-            g2d.setColor(Color.RED);
-            renderCollisionBox(g2d,collisionBox);
+            collider.render(g2d);
             renderFeetLine(g2d);
         }
 
-        if(sprite.orientation == Global.LEFT || sprite.orientation == Global.DOWN) {
+        if(direction == Direction.LEFT || direction == Direction.DOWN) {
             renderSwordAndSlash(g2d);
         }
     }
 
-    public void updateAttack(){
+    public void updateAttack(double deltaTime){
 
-        if(gp.mI.mouseClicked && !attacking && !coolDown) {
+        if(gp.mI.mouseClicked && playerState != PlayerState.ATTACKING && !coolDown) {
             attack.setFrame(1);
-            attacking = true;
+            playerState = PlayerState.ATTACKING;
             attack.moving = true;
             setAttackDir();
         }
 
         if(attacking) {
-            frameCounter++;
-            if(frameCounter >= 10){
-                x += 3;
-            }
+            elapsedTime += deltaTime;
         }
 
-        if(attacking && frameCounter >= Global.FPS*slashTime){
-            frameCounter = 0;
-            attacking = false;
+        if(attacking && elapsedTime >= slashTime){
+            elapsedTime = 0;
+            playerState = PlayerState.IDLE;
             coolDown = true;
-            swordX = x;
-            swordY = y;
         }
 
         if(coolDown){
-            frameCounter++;
+            elapsedTime += deltaTime;
         }
 
-        if(coolDown && frameCounter >= Global.FPS*coolDownTime){
-            frameCounter = 0;
+        if(coolDown && elapsedTime >= coolDownTime){
+            elapsedTime = 0;
             coolDown = false;
         }
     }
 
     public void updateMovement(double deltaTime){
-        nextX = getAnchorX();
-        nextY = getAnchorY();
-
         realSpeed = speed * deltaTime;
+        velocity.setPosition(0,0);
 
-        if (gp.kh.upKey && (gp.kh.leftKey || gp.kh.rightKey) || gp.kh.downKey && (gp.kh.leftKey || gp.kh.rightKey)) {
-            realSpeed = (realSpeed / Math.sqrt(2));
+        if (key.upKey) {
+            velocity.y --;
+            setPlayerDirection(Direction.UP);
+        }
+        if (key.downKey) {
+            velocity.y ++;
+            setPlayerDirection(Direction.DOWN);
+        }
+        if (key.leftKey) {
+            velocity.x --;
+            setPlayerDirection(Direction.LEFT);
         }
 
-        if (gp.kh.upKey) {
-            nextY -= realSpeed;
-            setPlayerOrientation(Global.UP);
-            sprite.moving = true;
-        }
-        if (gp.kh.downKey) {
-            nextY += realSpeed; //player
-            setPlayerOrientation(Global.DOWN);
-            sprite.moving = true;
-        }
-        if (gp.kh.leftKey) {
-            nextX -= realSpeed; //player
-            setPlayerOrientation(Global.LEFT);
-            sprite.moving = true;
+        if (key.rightKey) {
+            velocity.x ++;
+            setPlayerDirection(Direction.RIGHT);
         }
 
-        if (gp.kh.rightKey) {
-            nextX += realSpeed;
-            setPlayerOrientation(Global.RIGHT);
-            sprite.moving = true;
-
+        if(!key.leftKey && !key.upKey && !key.downKey && !key.rightKey){
+            playerState = PlayerState.IDLE;
+        }else{
+            playerState = PlayerState.MOVING;
+            velocity = velocity.normalize().multiply(realSpeed);
         }
 
-        if(!gp.kh.leftKey && !gp.kh.upKey && !gp.kh.downKey && !gp.kh.rightKey){
-            sprite.moving = false;
-        }
+        nextPosition.setPosition(position);
+        nextPosition.add(velocity);
 
-        // movimentação do player validada
-        if (nextX <= world.width && nextX >= 0 && nextY <= world.height && nextY >= 0) {
-            boolean validX = true;
-            boolean validY = true;
-            for(Element element: world.elements)
-                if(element != this && element.collision) {
-                    nextBoxX = new Rectangle(0,0,(int)collisionBox.getWidth(),(int)collisionBox.getHeight());
-                    nextBoxY = new Rectangle(0,0,(int)collisionBox.getWidth(),(int)collisionBox.getHeight());
-                    updateCollisionBox(nextBoxX,nextX - (width*Global.SCALE*anchorX),y);
-                    updateCollisionBox(nextBoxY,x ,nextY - (height*Global.SCALE*anchorY));
-                    if(element.collisionBox.intersects(nextBoxX)) {
-                        validX = false;
-                    }
-                    if(element.collisionBox.intersects(nextBoxY)) {
-                        validY = false;
-                    }
-                }
-            if(validX)
-                setPositionXByAnchor(nextX);
-            if(validY)
-                setPositionYByAnchor(nextY);
-        }
 
+        boolean canMoveX = true;
+        boolean canMoveY = true;
+
+        for(Element element : world.elements){
+            if(element != this && element.collider.collision && collider.predictXCollision(element.collider,nextPosition.x)) {
+                canMoveX = false;
+            }
+            if(element != this && element.collider.collision && collider.predictYCollision(element.collider,nextPosition.y)) {
+                canMoveY = false;
+            }
+        }
+        if(canMoveX)
+            position.setX(nextPosition.x);
+        if(canMoveY)
+           position.setY(nextPosition.y);
     }
 
     public void setAttackDir(){
@@ -221,25 +195,25 @@ public class Player extends Entity {
         angle = Math.toDegrees(angle);
 
         if(angle >= 45 && angle <= 135){
-            setPlayerOrientation(Global.UP);
+            setPlayerDirection(Direction.UP);
         }
         else if((angle >= 135 && angle <= 180) || (angle >= -180 && angle <= -135)){
-            setPlayerOrientation(Global.RIGHT);
+            setPlayerDirection(Direction.RIGHT);
         }
         else if(angle >= -135 && angle <= -45){
-            setPlayerOrientation(Global.DOWN);
+            setPlayerDirection(Direction.DOWN);
         }
         else if(angle >= -45 && angle <= 45){
-            setPlayerOrientation(Global.LEFT);
+            setPlayerDirection(Direction.LEFT);
         }
     }
 
     private void renderSwordAndSlash(Graphics2D g2d){
-        if (attacking)
-            attack.render(g2d, (int)(x - world.camera.x - 64*Global.SCALE), (int)(y - world.camera.y - 64*Global.SCALE),160,160);
+        if (playerState == PlayerState.ATTACKING)
+            attack.render(g2d, (int)(position.getX() - world.camera.x - 64*Global.SCALE), (int)(position.getY() - world.camera.y - 64*Global.SCALE),160,160);
     }
 
-    private void setPlayerOrientation(int orientation){
-        sprite.setOrientation(orientation);
+    private void setPlayerDirection(Direction direction){
+        sprite.setDirection(direction);
     }
 }

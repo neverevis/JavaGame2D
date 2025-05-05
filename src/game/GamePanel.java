@@ -46,7 +46,7 @@ public class GamePanel extends Canvas  // Classe GamePanel extende Canvas
         addMouseMotionListener(mI);
         // Carrega a textura do cursor
         try{
-            mouseImg = ImageIO.read(getClass().getResourceAsStream("/cursor/cursor.png"));
+            mouseImg = ImageIO.read(getClass().getResourceAsStream("/resources/cursor/cursor.png"));
         } catch (IOException e){}
 
         //cria um cursor customizado INVISIVEL
@@ -77,9 +77,11 @@ public class GamePanel extends Canvas  // Classe GamePanel extende Canvas
         world.render(g2d);
 
         // Definindo a string desenhada pelo pincel
-        g2d.setFont(new Font("Arial",Font.BOLD,30));
-        g2d.setColor(Color.WHITE);
-        g2d.drawString("FPS: " + String.valueOf(gl.finalFps),10,40);
+        if(world.showElementsAnchor) {
+            g2d.setFont(new Font("Arial", Font.BOLD, 30));
+            g2d.setColor(Color.WHITE);
+            g2d.drawString("FPS: " + String.valueOf(gl.finalFps), 10, 40);
+        }
 
         //obter as coordenadas do mouse em relação e este componente e salvar em um objeto Point que tem x e y
         cursorPoint = getMousePosition();
