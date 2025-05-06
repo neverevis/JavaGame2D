@@ -4,9 +4,15 @@ public class Vector {
     public double x;
     public double y;
 
+    public static Vector ZERO = new Vector(0,0);
+
     public Vector(double x, double y){
         this.x = x;
         this.y = y;
+    }
+
+    public Vector get(){
+        return new Vector(this.x,this.y);
     }
 
     public void setX(double x){
@@ -25,14 +31,18 @@ public class Vector {
         return this.y;
     }
 
-    public void setPosition(double x, double y){
+    public Vector setPosition(double x, double y){
         setX(x);
         setY(y);
+
+        return this;
     }
 
-    public void setPosition(Vector vector){
+    public Vector setPosition(Vector vector){
         setX(vector.x);
         setY(vector.y);
+
+        return this;
     }
 
     public double getDistance(Vector target){
@@ -43,45 +53,58 @@ public class Vector {
     }
 
     public Vector normalize(){
-        double vectorLength = getDistance(new Vector(0,0));
+        double vectorLength = getDistance(ZERO);
 
         if(vectorLength == 0){
-            return new Vector(0,0);
+            setPosition(0,0);
+            return this;
         }
 
-        return new Vector(x/vectorLength,y/vectorLength);
+        setPosition(x/vectorLength,y/vectorLength);
+
+        return this;
     }
 
-    public void add(Vector vector){
+    public Vector add(Vector vector){
         this.x += vector.x;
         this.y += vector.y;
+
+        return this;
     }
 
-    public void add(double x, double y){
+    public Vector add(double x, double y){
         this.x += x;
         this.y += y;
+
+        return this;
     }
 
-    public void subtract(Vector vector){
+    public Vector subtract(Vector vector){
         this.x -= vector.x;
         this.y -= vector.y;
+
+        return this;
     }
 
     public Vector multiply(double value){
-        return new Vector(this.x * value, this.y * value);
+        this.setPosition(this.x * value, this.y * value);
+
+        return this;
     }
 
-    public void applyDirection(Vector target, double multiplier){
-        Vector direction = target.getDeltaVector(this).normalize();
+    public Vector applyDirection(Vector target, double multiplier){
+        Vector direction = target.get();
+        direction.subtract(this);
+        direction.normalize();
         this.x += direction.x * multiplier;
         this.y += direction.y * multiplier;
+
+        return this;
     }
 
-    public void applyOppositeDirection(Vector target, double multiplier){
+    public Vector applyOppositeDirection(Vector target, double multiplier){
         applyDirection(target, -multiplier);
-    }
 
-    public Vector getDeltaVector(Vector vector){
-        return new Vector(this.x - vector.x, this.y - vector.y);
+        return this;
     }
 }

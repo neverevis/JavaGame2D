@@ -17,8 +17,11 @@ import java.io.IOException;
 
 public class Player extends Entity {
 
-    Vector previousPosition = new Vector(0,0);
     Vector velocity = new Vector(0,0);
+    Vector directionVector = new Vector(0,0);
+
+    double acceleration = 0.5;
+    double deceleration = 10;
 
     boolean attacking = false;
     boolean coolDown = false;
@@ -52,7 +55,7 @@ public class Player extends Entity {
 
         setSize((int)Global.ORIGINAL_TILESIZE,(int)Global.ORIGINAL_TILESIZE);
         setPositionByAnchor(new Vector(500,700));
-        setSpeed(100);
+        setSpeed(0.9);
         sprite = new Sprite(spriteSheet,width,height,1f);
         attack = new Sprite(attackSheet, 160, 160, 0.67f);
         collider.setBounds(this,11,26,10,6);
@@ -135,33 +138,39 @@ public class Player extends Entity {
     }
 
     public void updateMovement(double deltaTime){
-        realSpeed = speed * deltaTime;
-        velocity.setPosition(0,0);
+        directionVector.setPosition(0,0);
 
         if (key.upKey) {
-            velocity.y --;
+            directionVector.y --;
             setPlayerDirection(Direction.UP);
         }
         if (key.downKey) {
-            velocity.y ++;
+            directionVector.y ++;
             setPlayerDirection(Direction.DOWN);
         }
         if (key.leftKey) {
-            velocity.x --;
+            directionVector.x --;
             setPlayerDirection(Direction.LEFT);
         }
 
         if (key.rightKey) {
-            velocity.x ++;
+            directionVector.x ++;
             setPlayerDirection(Direction.RIGHT);
         }
 
         if(!key.leftKey && !key.upKey && !key.downKey && !key.rightKey){
             playerState = PlayerState.IDLE;
+            elapsedTime += deltaTime;
+
         }else{
             playerState = PlayerState.MOVING;
-            velocity = velocity.normalize().multiply(realSpeed);
+            velocity.add(directionVector.normalize().multiply(acceleration));
+            if (velocity.getDistance(new Vector(0,0)) > speed) {
+                velocity = velocity.normalize().multiply(speed);
+            }
         }
+
+        velocity.multiply(0.90);
 
         nextPosition.setPosition(position);
         nextPosition.add(velocity);

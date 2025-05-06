@@ -34,7 +34,7 @@ public class Tree extends Element {
         sprite.moving = true;
         random = new Random(System.nanoTime());
         sprite.setFrame(random.nextInt(6));
-        collider.setBounds(this,39,83,16,10);
+        collider.setBounds(this,38,80,19,10);
         collider.collision = true;
     }
 
