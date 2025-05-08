@@ -4,7 +4,12 @@ public class Vector {
     public double x;
     public double y;
 
-    public static Vector ZERO = new Vector(0,0);
+    public static Vector ZERO = new Vector();
+
+    public Vector(){
+        this.x = 0;
+        this.y = 0;
+    }
 
     public Vector(double x, double y){
         this.x = x;
@@ -52,6 +57,10 @@ public class Vector {
         return Math.sqrt((dx*dx) + (dy*dy));
     }
 
+    public double length(){
+        return Math.sqrt( x * x + y * y );
+    }
+
     public Vector normalize(){
         double vectorLength = getDistance(ZERO);
 
@@ -72,14 +81,7 @@ public class Vector {
         return this;
     }
 
-    public Vector add(double x, double y){
-        this.x += x;
-        this.y += y;
-
-        return this;
-    }
-
-    public Vector subtract(Vector vector){
+    public Vector sub(Vector vector){
         this.x -= vector.x;
         this.y -= vector.y;
 
@@ -92,9 +94,17 @@ public class Vector {
         return this;
     }
 
+    public Vector clamp(double max){
+        if(this.getDistance(Vector.ZERO) > max){
+            this.normalize().multiply(max);
+        }
+
+        return this;
+    }
+
     public Vector applyDirection(Vector target, double multiplier){
         Vector direction = target.get();
-        direction.subtract(this);
+        direction.sub(this);
         direction.normalize();
         this.x += direction.x * multiplier;
         this.y += direction.y * multiplier;
@@ -106,5 +116,9 @@ public class Vector {
         applyDirection(target, -multiplier);
 
         return this;
+    }
+
+    public double cross(Vector vector){
+        return this.x * vector.y - this.y * vector.x;
     }
 }

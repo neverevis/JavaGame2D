@@ -8,10 +8,10 @@ public class Collider {
 
     double offsetX;
     double offsetY;
-    double x;
-    double y;
-    double width;
-    double height;
+    public double x;
+    public double y;
+    public double width;
+    public double height;
     public boolean collision = false;
     public Rectangle colliderBox;
     Rectangle nextColliderBox;

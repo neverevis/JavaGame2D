@@ -1,10 +1,10 @@
 package elements.entities;
 
 import elements.Element;
-import elements.states.Direction;
 import elements.states.EnemyState;
 import game.GamePanel;
 import utilities.Global;
+import utilities.MathUtils;
 import utilities.Sprite;
 import utilities.Vector;
 import world.World;
@@ -18,19 +18,22 @@ import java.util.Random;
 public class Slime extends Entity{
 
     Player player;
-    Vector target = new Vector(0,0);
-    Vector home;
-    double distance;
-    double sightRange = 4*Global.TILESIZE;
-    boolean isOnLineOfSight = false;
-    boolean isOnRange = false;
-    double elapsedTime = 0;
-    double patrolIterationTime = 3.0;
-    double patrolRange = 5*Global.TILESIZE;
     Random random = new Random(System.nanoTime());
     EnemyState slimeState = EnemyState.IDLE;
     BufferedImage shadowsheet;
     Sprite shadow;
+    Vector direction = new Vector(0,0);
+    Vector target = new Vector(0,0);
+    Vector velocity = new Vector(0,0);
+    Vector desired = new Vector();
+    Vector steering = new Vector();
+    Vector mouse = new Vector();
+    Vector nearestPoint = new Vector();
+    Vector totalForce = new Vector();
+
+    Vector toTarget = new Vector();
+    Vector toObstacle = new Vector();
+    Vector lateralForce;
 
     public Slime(GamePanel gp, World world, Player player){
         super(gp,world);
@@ -44,8 +47,7 @@ public class Slime extends Entity{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        setSpeed(65);
-        setHome( 2130,1080);
+        setSpeed(100);
         setSize((int)Global.ORIGINAL_TILESIZE,(int)Global.ORIGINAL_TILESIZE);
         sprite = new Sprite(spriteSheet,width,height,0.5f);
         shadow = new Sprite(shadowsheet,width,height,1f);
@@ -59,52 +61,27 @@ public class Slime extends Entity{
 
     @Override
     public void update(double deltaTime) {
+        if(gp.cursorPoint != null) {
+            mouse.setPosition(gp.world.camera.relativeWorld(mouse.setPosition(gp.cursorPoint.getX(),gp.cursorPoint.getY())));
+            target.setPosition(mouse);
+            target.setPosition(getInAnchorOffset(target));
+        }
+        else {
+            target.setPosition(player.position);
+        }
+
         nextPosition.setPosition(position);
 
-        distance = position.getDistance(player.position);
+        totalForce.setPosition(0,0);
 
-        if(distance < sightRange)
-            isOnRange = true;
-        else
-            isOnRange = false;
+        totalForce.add(seek(deltaTime).multiply(0.8));
+        totalForce.add(avoid(deltaTime).multiply(0.2));
 
-        if(isOnRange) {
-            isOnLineOfSight = true;
+        steering = totalForce.get().sub(velocity).multiply(2);
 
-            for (Element element : world.elements) {
-                if (element != this && element != player && element.collider.collision)
-                    if (element.collider.colliderBox.intersectsLine(getAnchorX(), getAnchorY(), player.getAnchorX(), player.getAnchorY()))
-                        isOnLineOfSight = false;
-            }
-        }
+        velocity.add(steering.multiply(deltaTime));
 
-        if (isOnRange && isOnLineOfSight) {
-            target.setPosition(player.getAnchorX(),player.getAnchorY());
-        }
-        else{
-            slimeState = EnemyState.IDLE;
-        }
-
-        if(slimeState == EnemyState.IDLE){
-            sprite.setAnimationSpeed(1f);
-            elapsedTime += deltaTime;
-            if(elapsedTime >= patrolIterationTime){
-                target.setPosition(new Vector(home.x - patrolRange + random.nextDouble(patrolRange),home.y - patrolRange + random.nextDouble(patrolRange)));
-                elapsedTime = 0;
-            }
-        }else{
-            elapsedTime = 0;
-            sprite.setAnimationSpeed(0.5f);
-        }
-
-        realSpeed = speed * deltaTime;
-        nextPosition.setPosition(position);
-        nextPosition.applyDirection(target,realSpeed);
-
-        if(target.x > position.getX())
-            sprite.setDirection(Direction.DOWN);
-        else
-            sprite.setDirection(Direction.UP);
+        nextPosition.add(velocity.get().multiply(deltaTime * 2));
 
 
         boolean canMoveX = true;
@@ -128,6 +105,52 @@ public class Slime extends Entity{
         sprite.update(deltaTime);
     }
 
+    public Vector seek(double deltaTime){
+        double distance = position.getDistance(target);
+
+        toTarget = target.get().sub(position);
+        desired = target.get().sub(position).normalize().multiply(speed);
+
+        return desired;
+    }
+
+    public Vector avoid(double deltaTime){
+        for(Element element : world.elements){
+            if(element != this && element != player && element.collider.collision){
+                double minX = element.collider.colliderBox.getMinX();
+                double minY = element.collider.colliderBox.getMinY();
+                double maxX = element.collider.colliderBox.getMaxX();
+                double maxY = element.collider.colliderBox.getMaxY();
+
+                Vector anchorPos = new Vector(getAnchorX(),getAnchorY());
+
+                nearestPoint = new Vector(MathUtils.clamp(minX,maxX,getAnchorX()),MathUtils.clamp(minY,maxY,getAnchorY()));
+
+                toObstacle = nearestPoint.get().sub(anchorPos);
+
+                double distance = anchorPos.getDistance(nearestPoint);
+
+                if(distance < 200) {
+                    if(lateralForce == null) {
+                        lateralForce = new Vector();
+                        if (toTarget.cross(toObstacle) >= 0) {
+                            lateralForce.setPosition(-toObstacle.y, toObstacle.x);
+                        } else {
+                            lateralForce.setPosition(toObstacle.y, -toObstacle.x);
+                        }
+                    }
+
+                    return lateralForce.get().normalize().multiply(speed*1200/distance);
+                }
+                else {
+                    lateralForce = null;
+                }
+            }
+        }
+
+        return Vector.ZERO;
+    }
+
     @Override
     public void render(Graphics2D g2d) {
         shadow.render(g2d,(int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y+ 1*Global.SCALE),width,height);
@@ -137,20 +160,18 @@ public class Slime extends Entity{
             renderAnchor(g2d);
             collider.render(g2d);
             renderFeetLine(g2d);
-            g2d.setColor(Color.orange);
-            g2d.drawOval((int)(getAnchorX() - sightRange - world.camera.x),(int)(getAnchorY()  - sightRange - world.camera.y),(int)sightRange*2,(int)sightRange*2);
-            if(isOnLineOfSight) {
-                if(isOnRange)
-                    g2d.setColor(Color.red);
-                else
-                    g2d.setColor(Color.white);
-                g2d.drawLine((int) (getAnchorX() - world.camera.x), (int) (getAnchorY() - world.camera.y), (int) (target.x - world.camera.x), (int) (target.y - world.camera.y));
-            }
         }
-    }
+        g2d.setColor(Color.red);
+        g2d.fillOval(world.camera.relativeX(nearestPoint.x),world.camera.relativeY(nearestPoint.y),5,5);
+        g2d.setColor(Color.white);
+        g2d.fillRect(world.camera.relativeX(direction.x),world.camera.relativeY(direction.y),50,50);
 
-    public void setHome(double x, double y){
-        setPositionByAnchor(new Vector(x,y));
-        home = new Vector(x,y);
+        g2d.setColor(Color.BLUE);
+        g2d.drawLine(world.camera.relativeX(getAnchorX()), world.camera.relativeY(getAnchorY()),
+                world.camera.relativeX(position.x + velocity.x * 10), (int) (position.y + velocity.y * 10));
+
+        g2d.setColor(Color.GREEN);
+        g2d.drawLine(world.camera.relativeX(getAnchorX()), world.camera.relativeY(getAnchorY()),
+                world.camera.relativeX(position.x + desired.x * 10), world.camera.relativeY(position.y + desired.y * 10));
     }
 }

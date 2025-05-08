@@ -60,6 +60,14 @@ public abstract class Element {
         position.setY(y - anchorY*height*Global.SCALE);
     }
 
+    public Vector getInAnchor(Vector position){
+        return position.get().add(new Vector(anchorX*width*Global.SCALE,anchorY*height*Global.SCALE));
+    }
+
+    public Vector getInAnchorOffset(Vector position){
+        return position.get().sub(new Vector(anchorX*width*Global.SCALE,anchorY*height*Global.SCALE));
+    }
+
     public double getAnchorX(){
         return position.getX() + width*anchorX*Global.SCALE;
     }
@@ -96,12 +104,18 @@ public abstract class Element {
         return position.getX();
     }
 
-    public double getFeetLine(){
+    public double getFeetCenterY(){
         return position.getY() + feetLine;
     }
 
+    public double getFeetCenterX(){
+        return position.getX() + width*Global.SCALE/2;
+    }
+
+
+
     public void renderFeetLine(Graphics2D g2d){
         g2d.setColor(Color.green);
-        g2d.drawLine((int)(position.getX() - world.camera.x),(int)(getFeetLine() - world.camera.y),(int)(position.getX() + width*Global.SCALE - world.camera.x),(int)(getFeetLine() - world.camera.y));
+        g2d.drawLine((int)(position.getX() - world.camera.x),(int)(getFeetCenterY() - world.camera.y),(int)(position.getX() + width*Global.SCALE - world.camera.x),(int)(getFeetCenterY() - world.camera.y));
     }
 }

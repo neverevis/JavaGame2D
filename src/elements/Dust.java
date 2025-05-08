@@ -1,9 +1,7 @@
 package elements;
 
 import elements.entities.Player;
-import elements.Particle;
 import game.GamePanel;
-import utilities.Global;
 import utilities.Vector;
 import world.World;
 
@@ -45,7 +43,7 @@ public class Dust extends Element{
     public void update(double deltaTime) {
         if(gp.kh.rightKey || gp.kh.upKey || gp.kh.downKey || gp.kh.leftKey){
             if(random.nextInt(20) == 0){
-                particles.add(new Particle(player.getAnchorX(),player.getFeetLine() - 10));
+                particles.add(new Particle(player.getAnchorX(),player.getFeetCenterY() - 10));
             }
         }
 

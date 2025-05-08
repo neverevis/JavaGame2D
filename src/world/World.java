@@ -40,6 +40,7 @@ public class World {
         tree.setPositionByAnchor(new Vector(0,0));
         tree2 = new Tree(this.gp,this);
         slime1 = new Slime(this.gp,this,this.player);
+        slime2 = new Slime(this.gp,this,this.player);
         tree2.setPositionByAnchor(new Vector(500,500));
         elements.add(player);
         elements.add(tree2);
@@ -87,6 +88,6 @@ public class World {
             elm.update(deltaTime);
         }
         //organizar a lista de elementos por ordem de Y
-        elements.sort(Comparator.comparingInt(a -> (int) a.getFeetLine()));
+        elements.sort(Comparator.comparingInt(a -> (int) a.getFeetCenterY()));
     }
 }

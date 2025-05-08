@@ -1,15 +1,11 @@
 package world;
 
 import utilities.Global;
-
-import java.awt.*;
+import utilities.Vector;
 
 public class Camera {
     public double x;
     public double y;
-
-    double cameraPositionTargetX;
-    double cameraPositionTargetY;
 
     double screenCenterX = Global.SCREENWIDTH/2;
     double screenCenterY = Global.SCREENHEIGHT/2;
@@ -20,6 +16,7 @@ public class Camera {
     double mouseX;
     double mouseY;
 
+    Vector point = new Vector();
     World world;
 
     public Camera(World world){
@@ -58,11 +55,19 @@ public class Camera {
             targetY = world.player.getAnchorY() - screenCenterY + moveY;
     }
 
-    public int getXRelativeToScreen(double x){
+    public int relativeX(double x){
         return (int)(x - this.x);
     }
 
-    public int getYRelativeToScreen(double y){
+    public int relativeY(double y){
         return (int)(y - this.y);
+    }
+
+    public Vector relativeWorld(Vector point){
+
+        this.point.x = point.get().x + x;
+        this.point.y = point.get().y + y;
+
+        return this.point.get();
     }
 }

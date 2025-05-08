@@ -170,7 +170,7 @@ public class Player extends Entity {
             }
         }
 
-        velocity.multiply(0.90);
+        velocity.multiply(0.95);
 
         nextPosition.setPosition(position);
         nextPosition.add(velocity);
