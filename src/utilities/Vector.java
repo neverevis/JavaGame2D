@@ -16,6 +16,13 @@ public class Vector {
         this.y = y;
     }
 
+    public Vector reset(){
+        this.x = 0;
+        this.y = 0;
+
+        return this;
+    }
+
     public Vector get(){
         return new Vector(this.x,this.y);
     }
@@ -36,14 +43,14 @@ public class Vector {
         return this.y;
     }
 
-    public Vector setPosition(double x, double y){
+    public Vector set(double x, double y){
         setX(x);
         setY(y);
 
         return this;
     }
 
-    public Vector setPosition(Vector vector){
+    public Vector set(Vector vector){
         setX(vector.x);
         setY(vector.y);
 
@@ -65,11 +72,11 @@ public class Vector {
         double vectorLength = getDistance(ZERO);
 
         if(vectorLength == 0){
-            setPosition(0,0);
+            set(0,0);
             return this;
         }
 
-        setPosition(x/vectorLength,y/vectorLength);
+        set(x/vectorLength,y/vectorLength);
 
         return this;
     }
@@ -89,7 +96,7 @@ public class Vector {
     }
 
     public Vector multiply(double value){
-        this.setPosition(this.x * value, this.y * value);
+        this.set(this.x * value, this.y * value);
 
         return this;
     }

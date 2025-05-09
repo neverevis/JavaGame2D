@@ -55,7 +55,7 @@ public class Dust extends Element{
             if(particles.get(i).scale <= 0)
                 particles.remove(i);
         }
-        position.setPosition(player.position);
+        position.set(player.position);
     }
 
     @Override

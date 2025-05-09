@@ -85,6 +85,7 @@ public class Player extends Entity {
         else if(playerState == PlayerState.MOVING){
             sprite.moving = true;
         }
+
         sprite.update(deltaTime);
         attack.update(deltaTime);
         collider.update();
@@ -138,7 +139,7 @@ public class Player extends Entity {
     }
 
     public void updateMovement(double deltaTime){
-        directionVector.setPosition(0,0);
+        directionVector.set(0,0);
 
         if (key.upKey) {
             directionVector.y --;
@@ -172,7 +173,7 @@ public class Player extends Entity {
 
         velocity.multiply(0.95);
 
-        nextPosition.setPosition(position);
+        nextPosition.set(position);
         nextPosition.add(velocity);
 
 

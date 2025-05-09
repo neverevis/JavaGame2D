@@ -37,13 +37,15 @@ public class World {
         player = new Player(this.gp,this);
         dust = new Dust(this.gp,this,player);
         tree = new Tree(this.gp,this);
-        tree.setPositionByAnchor(new Vector(0,0));
+        tree.setPositionByAnchor(new Vector(700,500));
         tree2 = new Tree(this.gp,this);
         slime1 = new Slime(this.gp,this,this.player);
         slime2 = new Slime(this.gp,this,this.player);
+        slime1.setPositionByAnchor(new Vector(600,600));
         tree2.setPositionByAnchor(new Vector(500,500));
+        //elements.add(slime2);
         elements.add(player);
-        elements.add(tree2);
+        //elements.add(tree2);
         elements.add(tree);
         elements.add(dust);
         elements.add(slime1);

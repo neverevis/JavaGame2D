@@ -49,7 +49,7 @@ public abstract class Element {
     }
 
     public void setPositionByAnchor(Vector position){
-        this.position.setPosition(position.x - anchorX*width*Global.SCALE,position.y - anchorY*height*Global.SCALE);
+        this.position.set(position.x - anchorX*width*Global.SCALE,position.y - anchorY*height*Global.SCALE);
     }
 
     public void setPositionXByAnchor(double x){
