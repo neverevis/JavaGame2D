@@ -39,6 +39,8 @@ public class Slime extends Entity{
     Vector toObstacle = new Vector();
     Vector lateralForce = new Vector();
 
+    double steeringForce = 200;
+
     boolean isOnlineOfSight = false;
     Line2D.Double lineOfSight = new Line2D.Double(0,0,0,0);
 
@@ -86,8 +88,10 @@ public class Slime extends Entity{
 
         steering.reset().add(seekForce).add(avoidForce);
 
-        if(steering.length() > speed)
-            steering.normalize().multiply(speed);
+        steering.normalize().multiply(steeringForce);
+
+        /*if(steering.length() > steeringForce)
+            steering.normalize().multiply(steeringForce);*/
 
         velocity.add(steering.get().multiply(deltaTime));
 
@@ -121,7 +125,7 @@ public class Slime extends Entity{
     }
 
     public Vector seek(){
-        lineOfSight.setLine(getAnchorX(),getAnchorY(),target.x,target.y);
+        lineOfSight.setLine(getAnchorX(),getAnchorY(),getAnchorX() + toTarget.x,getAnchorY() + toTarget.y);
         toTarget = target.get().sub(new Vector(position.x, position.y));
         desired = target.get().sub(new Vector(position.x, position.y)).normalize().multiply(speed);
 
@@ -162,7 +166,7 @@ public class Slime extends Entity{
 
                     evadingObstacle = true;
 
-                    return lateralForce.get().normalize().multiply(1/distance*20000);
+                    return lateralForce.get().normalize().multiply(600);
                 }
                 else{
                     evadingObstacle = false;
@@ -197,7 +201,7 @@ public class Slime extends Entity{
                     world.camera.relativeX(getAnchorX() + toTarget.x),world.camera.relativeY(getAnchorY() + toTarget.y));
 
             g2d.setColor(Color.YELLOW);
-            g2d.drawLine(world.camera.relativeX(getAnchorX()),world.camera.relativeY(getAnchorY()),world.camera.relativeX(target.x),world.camera.relativeY(target.y));
+            g2d.drawLine(world.camera.relativeX(getAnchorX()),world.camera.relativeY(getAnchorY()),world.camera.relativeX(getAnchorX() + toTarget.x),world.camera.relativeY(getAnchorY() + toTarget.y));
         }
     }
 }

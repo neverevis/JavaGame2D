@@ -4,6 +4,7 @@ import elements.Dust;
 import elements.Element;
 import elements.entities.Player;
 import elements.entities.Slime;
+import elements.enviroment.Fence;
 import elements.enviroment.Tree;
 import game.GamePanel;
 import utilities.Global;
@@ -31,12 +32,14 @@ public class World {
     Slime slime1;
     Slime slime2;
     Dust dust;
+    Fence fence;
 
     public World(GamePanel gp){
         this.gp = gp;
         player = new Player(this.gp,this);
         dust = new Dust(this.gp,this,player);
         tree = new Tree(this.gp,this);
+        fence = new Fence(this.gp,this);
         tree.setPositionByAnchor(new Vector(700,500));
         tree2 = new Tree(this.gp,this);
         slime1 = new Slime(this.gp,this,this.player);
@@ -44,6 +47,7 @@ public class World {
         slime1.setPositionByAnchor(new Vector(600,600));
         tree2.setPositionByAnchor(new Vector(500,500));
         //elements.add(slime2);
+        elements.add(fence);
         elements.add(player);
         //elements.add(tree2);
         elements.add(tree);
