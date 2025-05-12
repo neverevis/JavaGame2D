@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public abstract class Element {
-    protected Sprite sprite;
+    public Sprite sprite;
 
     public Vector position = new Vector(0,0);
     public double anchorX = 0.5;

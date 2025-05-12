@@ -8,6 +8,8 @@ import utilities.Vector;
 import world.World;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Entity extends Element {
     public double speed;
@@ -16,6 +18,7 @@ public abstract class Entity extends Element {
     BufferedImage spriteSheet;
 
     public Entity(GamePanel gp,World world){
+
         super(gp,world);
     }
 

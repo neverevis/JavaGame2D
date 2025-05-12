@@ -12,7 +12,7 @@ public class Sprite {
     int width;
     int height;
 
-    Direction direction = Direction.DOWN;
+    public Direction direction = Direction.DOWN;
     int frame;
 
     int totalDirection;
@@ -22,7 +22,7 @@ public class Sprite {
     public boolean takingDamage = false;
 
     float fillOpacity = 1.0f;
-    float fadeTime = 0.04f;
+    float fadeTime = 6f;
 
     double timeElapsed;
     int changeRatio;
@@ -78,6 +78,14 @@ public class Sprite {
         }
         if(frame >= totalFrame)
             frame = 1;
+
+        if(takingDamage){
+            fillOpacity -= fadeTime*(float)deltaTime;
+            if (fillOpacity <= 0f) {
+                takingDamage = false;
+                fillOpacity = 1f;
+            }
+        }
     }
 
     public void render(Graphics2D g, int x, int y,int width, int height){
@@ -90,7 +98,7 @@ public class Sprite {
             BufferedImage whiteFlash = new BufferedImage(frameSprite.getWidth(), frameSprite.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = whiteFlash.createGraphics();
 
-            // Set o alpha que você quer
+            // Set o alpha
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillOpacity));
 
             // Aplica o "branco" por cima do sprite, preservando a shape
@@ -102,13 +110,6 @@ public class Sprite {
 
             // Desenha o efeito branco no local correto
             g.drawImage(whiteFlash, x, y, (int)(width*Global.SCALE), (int)(height*Global.SCALE), null);
-
-            // Atualiza a opacidade
-            fillOpacity -= fadeTime;
-            if (fillOpacity <= 0f) {
-                takingDamage = false;
-                fillOpacity = 1f;
-            }
         }
     }
 

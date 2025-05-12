@@ -5,6 +5,7 @@ import elements.states.Direction;
 import elements.states.PlayerState;
 import game.GamePanel;
 import game.KeyHandler;
+import server.Client;
 import utilities.Global;
 import utilities.Sprite;
 import utilities.Vector;
@@ -19,8 +20,9 @@ public class Player extends Entity {
 
     Vector velocity = new Vector(0,0);
     Vector directionVector = new Vector(0,0);
+    Client client;
 
-    double acceleration = 0.5;
+    double acceleration = 500*Global.SCALE;
     double deceleration = 10;
 
     boolean attacking = false;
@@ -28,25 +30,33 @@ public class Player extends Entity {
     double slashTime = 0.5; //segundos
     double coolDownTime = 0.05;
     double elapsedTime;
+    public double health = 100;
+    public double maxHealth = 100;
+    public double dealt = health;
+
+    boolean invulnerable = false;
 
     PlayerState playerState = PlayerState.IDLE;
     KeyHandler key;
-    Direction direction;
+    public Direction direction;
     BufferedImage shadowsheet;
     BufferedImage attackSheet;
     Sprite attack;
     Sprite shadow;
+    double knockBackForce = 500*Global.SCALE;
+    boolean serverOriented = false;
 
-    public Player(GamePanel gp, World world){
+    public Player(GamePanel gp, World world, Client client, boolean serverOriented){
         super(gp, world);
         this.key = gp.kh;
-    }
+        this.serverOriented = serverOriented;
+        this.client = client;
 
-    @Override
-    public void setAttributes() {
-        //carregando o spritesheet
         try{
-            spriteSheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/players/playersheet.png"));
+            if(serverOriented)
+                spriteSheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/players/playersheet2.png"));
+            else
+                spriteSheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/players/playersheet.png"));
             shadowsheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/monsters/shadow.png"));
             attackSheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/players/attack.png"));
         } catch (IOException e) {
@@ -55,40 +65,64 @@ public class Player extends Entity {
 
         setSize((int)Global.ORIGINAL_TILESIZE,(int)Global.ORIGINAL_TILESIZE);
         setPositionByAnchor(new Vector(500,700));
-        setSpeed(0.9);
+        setSpeed(100);
         sprite = new Sprite(spriteSheet,width,height,1f);
         attack = new Sprite(attackSheet, 160, 160, 0.67f);
         collider.setBounds(this,11,26,10,6);
         collider.collision = true;
         setAnchor(16,18);
         shadow = new Sprite(shadowsheet,32,32,1f);
+    }
+
+    @Override
+    public void setAttributes() {
+        //carregando o spritesheet
         setFeetLine(32);
     }
 
     @Override
     public void update(double deltaTime) {
-        updateAttack(deltaTime);
-        if(!attacking){
-            updateMovement(deltaTime);
-        }
+        if(!serverOriented) {
+            dealt += (health - dealt) * 0.06;
 
-        if(gp.kh.toggleAnchorDisplay){
-            world.showElementsAnchor = true;
-        }
-        else {
-            world.showElementsAnchor = false;
-        }
+            if (!attacking) {
+                updateMovement(deltaTime);
+            }
 
-        if(playerState == PlayerState.IDLE){
-            sprite.moving = false;
-        }
-        else if(playerState == PlayerState.MOVING){
-            sprite.moving = true;
+            if (gp.kh.toggleAnchorDisplay) {
+                world.showElementsAnchor = true;
+            } else {
+                world.showElementsAnchor = false;
+            }
+
+            if (playerState == PlayerState.IDLE) {
+                sprite.moving = false;
+            } else if (playerState == PlayerState.MOVING) {
+                sprite.moving = true;
+
+            }
         }
 
         sprite.update(deltaTime);
         attack.update(deltaTime);
         collider.update();
+    }
+
+    public void dealDamage(Vector originPosition){
+        if(!invulnerable) {
+            Vector knockback = collider.center.sub(originPosition).normalize();
+
+            sprite.toggleDamageState();
+            knockback.multiply(knockBackForce);
+            velocity.set(knockback);
+
+            if (health > 0) {
+                health -= 10;
+            } else {
+                this.world.pause = true;
+            }
+        }
+
     }
 
     @Override
@@ -109,37 +143,8 @@ public class Player extends Entity {
         }
     }
 
-    public void updateAttack(double deltaTime){
-
-        if(gp.mI.mouseClicked && playerState != PlayerState.ATTACKING && !coolDown) {
-            attack.setFrame(1);
-            playerState = PlayerState.ATTACKING;
-            attack.moving = true;
-            setAttackDir();
-        }
-
-        if(attacking) {
-            elapsedTime += deltaTime;
-        }
-
-        if(attacking && elapsedTime >= slashTime){
-            elapsedTime = 0;
-            playerState = PlayerState.IDLE;
-            coolDown = true;
-        }
-
-        if(coolDown){
-            elapsedTime += deltaTime;
-        }
-
-        if(coolDown && elapsedTime >= coolDownTime){
-            elapsedTime = 0;
-            coolDown = false;
-        }
-    }
-
     public void updateMovement(double deltaTime){
-        directionVector.set(0,0);
+        directionVector.reset();
 
         if (key.upKey) {
             directionVector.y --;
@@ -163,18 +168,19 @@ public class Player extends Entity {
             playerState = PlayerState.IDLE;
             elapsedTime += deltaTime;
 
+            velocity.multiply(0.95);
+
         }else{
             playerState = PlayerState.MOVING;
-            velocity.add(directionVector.normalize().multiply(acceleration));
-            if (velocity.getDistance(new Vector(0,0)) > speed) {
-                velocity = velocity.normalize().multiply(speed);
-            }
+            velocity.add(directionVector.normalize().multiply(acceleration * deltaTime));
+
+            if(velocity.length() > speed)
+                velocity.normalize().multiply(speed);
         }
 
-        velocity.multiply(0.95);
 
         nextPosition.set(position);
-        nextPosition.add(velocity);
+        nextPosition.add(velocity.get().multiply(deltaTime));
 
 
         boolean canMoveX = true;

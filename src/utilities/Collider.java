@@ -15,6 +15,8 @@ public class Collider {
     public boolean collision = false;
     public Rectangle colliderBox;
     Rectangle nextColliderBox;
+    public Vector centerOffset;
+    public Vector center = new Vector();
     Element owner;
 
     public void setBounds(Element owner, int offsetX, int offsetY, int width, int height){
@@ -25,7 +27,7 @@ public class Collider {
         this.offsetY = offsetY *Global.SCALE;
         colliderBox = new Rectangle((int)this.offsetX,(int)this.offsetY,(int)this.width,(int)this.height);
         nextColliderBox = new Rectangle((int)this.offsetX,(int)this.offsetY,(int)this.width,(int)this.height);
-
+        centerOffset = new Vector(this.width/2,this.height/2);
         update();
     }
 
@@ -34,6 +36,7 @@ public class Collider {
         y = owner.position.y + this.offsetY;
 
         colliderBox.setLocation((int) x,(int) y);
+        center.set(x,y).add(centerOffset);
     }
 
     public boolean predictXCollision(Collider collider, double futureX){
@@ -56,8 +59,19 @@ public class Collider {
         return false;
     }
 
+    public boolean predictCollision(Collider collider, Vector futurePosition){
+        update();
+        nextColliderBox.setLocation((int)(futurePosition.x + this.offsetX), (int)(futurePosition.y + this.offsetY));
+        if(nextColliderBox.intersects(collider.colliderBox)) {
+            return true;
+        }
+        return false;
+    }
+
     public void render(Graphics2D g2d){
         g2d.setColor(Color.red);
         g2d.drawRect((int)(x - owner.world.camera.x),(int)(y - owner.world.camera.y),(int)width,(int)height);
+        g2d.setColor(Color.white);
+        g2d.fillRect(owner.world.camera.relativeX(center.x),owner.world.camera.relativeY(center.y),3,3);
     }
 }

@@ -1,5 +1,8 @@
 package utilities;
 
+import java.awt.*;
+import java.awt.geom.Point2D;
+
 public class Vector {
     public double x;
     public double y;

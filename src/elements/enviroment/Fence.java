@@ -32,7 +32,7 @@ public class Fence extends Element {
 
     @Override
     public void update(double deltaTime) {
-
+        collider.update();
     }
 
     @Override

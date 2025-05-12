@@ -12,8 +12,8 @@ public class Global {
     static Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     //public static final int SCREENWIDTH = dimension.width;
     //public static final int SCREENHEIGHT = dimension.height;
-    public static final int SCREENWIDTH = GAMECOLS*TILESIZE;
-    public static final int SCREENHEIGHT = GAMEROWS*TILESIZE;
+    public static final int SCREENWIDTH = 1280;
+    public static final int SCREENHEIGHT = 720;
 
     //variáveis pra facilitar a orientação (ordem dos spritesheets)
     public static final int DOWN = 0;
