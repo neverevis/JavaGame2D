@@ -9,6 +9,7 @@ import elements.enviroment.Tree;
 import game.GamePanel;
 import server.Client;
 import utilities.Global;
+import utilities.Sound;
 import utilities.Vector;
 
 import java.awt.*;
@@ -45,6 +46,8 @@ public class World {
     float alpha = 0.0f;
     public boolean pause = false;
     Client client;
+
+    Sound music = new Sound();
 
     public World(GamePanel gp){
         this.client = gp.client;

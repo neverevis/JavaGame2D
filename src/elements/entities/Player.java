@@ -7,6 +7,7 @@ import game.GamePanel;
 import game.KeyHandler;
 import server.Client;
 import utilities.Global;
+import utilities.Sound;
 import utilities.Sprite;
 import utilities.Vector;
 import world.World;
@@ -22,7 +23,7 @@ public class Player extends Entity {
     Vector directionVector = new Vector(0,0);
     Client client;
 
-    double acceleration = 500*Global.SCALE;
+    double acceleration = 1100*Global.SCALE;
     double deceleration = 10;
 
     boolean attacking = false;
@@ -34,7 +35,7 @@ public class Player extends Entity {
     public double maxHealth = 100;
     public double dealt = health;
 
-    boolean invulnerable = false;
+    boolean invulnerable = true;
 
     PlayerState playerState = PlayerState.IDLE;
     KeyHandler key;
@@ -45,6 +46,8 @@ public class Player extends Entity {
     Sprite shadow;
     double knockBackForce = 500*Global.SCALE;
     boolean serverOriented = false;
+
+    Sound sound = new Sound();
 
     public Player(GamePanel gp, World world, Client client, boolean serverOriented){
         super(gp, world);
@@ -110,6 +113,8 @@ public class Player extends Entity {
 
     public void dealDamage(Vector originPosition){
         if(!invulnerable) {
+            sound.setSound(0);
+            sound.play();
             Vector knockback = collider.center.sub(originPosition).normalize();
 
             sprite.toggleDamageState();

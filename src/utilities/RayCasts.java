@@ -18,10 +18,10 @@ public class RayCasts {
     Vector rightPerpendicular = new Vector();
     Vector central = new Vector();
 
-    public RayCasts(Element owner, double maxLength){
+    public RayCasts(Element owner, double maxLength, double rayDsistance){
         this.owner = owner;
         this.length = maxLength;
-        raysDistance = (owner.width*Global.SCALE/3);
+        this.raysDistance = rayDsistance;
         for (int i = 0; i < 3; i++) {
             rays.add(new Line2D.Double());
         }

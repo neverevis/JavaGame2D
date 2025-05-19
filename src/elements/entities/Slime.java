@@ -76,7 +76,7 @@ public class Slime extends Entity{
         setPositionByAnchor(new Vector(200,200));
         setFeetLine(height);
         sprite.moving = true;
-        rayCasts = new RayCasts(this,0.3);
+        rayCasts = new RayCasts(this,0.3,32);
     }
 
 
