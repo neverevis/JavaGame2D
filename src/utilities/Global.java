@@ -5,7 +5,7 @@ import java.awt.*;
 public class Global {
     public static final double FPS = 120;
     public static final double ORIGINAL_TILESIZE = 32;
-    public static final double SCALE = 6;
+    public static final double SCALE = 4;
     public static final int TILESIZE = (int)(ORIGINAL_TILESIZE*SCALE);
     public static final int GAMECOLS = 16;
     public static final int GAMEROWS = 9;
