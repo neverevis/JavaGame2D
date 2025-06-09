@@ -36,7 +36,7 @@ public class Slime extends Entity{
     Vector nearestPoint = new Vector();
 
     double maxVelocity = 250;
-    double avoidForce = 1000;
+    double avoidForce = 3000;
     RayCasts rayCasts;
     Line2D.Double avoidLine = new Line2D.Double();
     Vector v = new Vector();
@@ -76,7 +76,7 @@ public class Slime extends Entity{
         setPositionByAnchor(new Vector(200,200));
         setFeetLine(height);
         sprite.moving = true;
-        rayCasts = new RayCasts(this,0.3,32);
+        rayCasts = new RayCasts(this,0.4,32);
     }
 
 

@@ -148,7 +148,7 @@ public class Player extends Entity {
         }
     }
 
-    public void updateMovement(double deltaTime){
+    public void updateMovement(double dt){
         directionVector.reset();
 
         if (key.upKey) {
@@ -171,13 +171,13 @@ public class Player extends Entity {
 
         if(!key.leftKey && !key.upKey && !key.downKey && !key.rightKey){
             playerState = PlayerState.IDLE;
-            elapsedTime += deltaTime;
+            elapsedTime += dt;
 
             velocity.multiply(0.95);
 
         }else{
             playerState = PlayerState.MOVING;
-            velocity.add(directionVector.normalize().multiply(acceleration * deltaTime));
+            velocity.add(directionVector.normalize().multiply(acceleration * dt));
 
             if(velocity.length() > speed)
                 velocity.normalize().multiply(speed);
@@ -185,7 +185,7 @@ public class Player extends Entity {
 
 
         nextPosition.set(position);
-        nextPosition.add(velocity.get().multiply(deltaTime));
+        nextPosition.add(velocity.get().multiply(dt));
 
 
         boolean canMoveX = true;
