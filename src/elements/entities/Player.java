@@ -35,7 +35,7 @@ public class Player extends Entity {
     public double maxHealth = 100;
     public double dealt = health;
 
-    boolean invulnerable = true;
+    boolean invulnerable = false;
 
     PlayerState playerState = PlayerState.IDLE;
     KeyHandler key;
@@ -137,7 +137,7 @@ public class Player extends Entity {
             renderSwordAndSlash(g2d);
         }
         sprite.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y),width,height);
-        if(gp.world.showElementsAnchor) {
+        if(gp.activeWorld.showElementsAnchor) {
             renderAnchor(g2d);
             collider.render(g2d);
             renderFeetLine(g2d);
@@ -207,8 +207,8 @@ public class Player extends Entity {
 
     public void setAttackDir(){
         //diferença dx e dy do centro da tela em relação ao clique
-        double clickDx = (double)Global.SCREENWIDTH/2 - gp.mI.x;
-        double clickDy = (double)Global.SCREENHEIGHT/2 - gp.mI.y;
+        double clickDx = (double)Global.SCREENWIDTH/2 - gp.mouseInput.x;
+        double clickDy = (double)Global.SCREENHEIGHT/2 - gp.mouseInput.y;
 
         //angulo em radianos
         double angle = Math.atan2(clickDy,clickDx);

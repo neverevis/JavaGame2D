@@ -7,14 +7,12 @@ import java.awt.event.MouseMotionListener;
 
 public class MouseInputs implements MouseListener, MouseMotionListener{
 
-    /*=========== ATRIBUTOS ===========*/
     private GamePanel gp;
     public boolean mouseClicked = false;
 
     public int x = 0;
     public int y = 0;
 
-    /*=========== MÉTODOS DA INTERFACE IMPLEMENTADA ===========*/
 
     @Override
     public void mouseClicked(MouseEvent e) {}

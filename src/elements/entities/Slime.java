@@ -9,7 +9,6 @@ import world.World;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
@@ -177,7 +176,7 @@ public class Slime extends Entity{
     public void render(Graphics2D g2d) {
         shadow.render(g2d,(int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y+ 1*Global.SCALE),width,height);
         sprite.render(g2d,(int)(position.getX() - world.camera.x) ,(int)(position.getY() - world.camera.y),width,height);
-        if(gp.world.showElementsAnchor) {
+        if(gp.activeWorld.showElementsAnchor) {
             renderAnchor(g2d);
             collider.render(g2d);
             renderFeetLine(g2d);

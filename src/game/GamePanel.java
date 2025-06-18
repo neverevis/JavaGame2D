@@ -1,5 +1,7 @@
 package game;
 
+import elements.states.GameState;
+import gui.MainMenu;
 import server.Client;
 import utilities.Global;
 import world.World;
@@ -16,14 +18,16 @@ public class GamePanel extends Canvas  // Classe GamePanel extende Canvas
     GameLoop gl;
 
     public KeyHandler kh = new KeyHandler();
-    public MouseInputs mI = new MouseInputs();
+    public MouseInputs mouseInput = new MouseInputs();
     public Client client = new Client(this);
     public Thread clientThread = new Thread(client);
-    public World world = new World(this);
+    public World activeWorld = new World(this);
     Cursor c;
     public Point cursorPoint;
     BufferedImage mouseImg;
     Thread game;
+    public GameState gameState = GameState.MENU;
+    MainMenu mainMenu = new MainMenu(this);
 
     public GamePanel()
     {
@@ -31,8 +35,8 @@ public class GamePanel extends Canvas  // Classe GamePanel extende Canvas
         setBackground(Color.black); // Fundo preto
         setFocusable(true); // Habilita inputs
         addKeyListener(kh); // Adiciona um leitor
-        addMouseListener(mI);
-        addMouseMotionListener(mI);
+        addMouseListener(mouseInput);
+        addMouseMotionListener(mouseInput);
         try{
             mouseImg = ImageIO.read(getClass().getResourceAsStream("/resources/cursor/cursor.png"));
         } catch (IOException e){}
@@ -52,12 +56,20 @@ public class GamePanel extends Canvas  // Classe GamePanel extende Canvas
         g2d.setColor(Color.black);
         g2d.fillRect(0,0,getWidth(),getHeight());
 
-        world.render(g2d);
+        if(gameState == GameState.MENU){
+            g2d.setColor(Color.blue);
+            g2d.fillRect(0,0,getWidth(),getHeight());
+            mainMenu.render(g2d);
+        }
 
-        if(world.showElementsAnchor) {
-            g2d.setFont(new Font("Arial", Font.BOLD, 30));
-            g2d.setColor(Color.WHITE);
-            g2d.drawString("FPS: " + String.valueOf(gl.finalFps), 10, 40);
+        if(gameState == GameState.INWORLD){
+            activeWorld.render(g2d);
+
+            if(activeWorld.showElementsAnchor) {
+                g2d.setFont(new Font("Arial", Font.BOLD, 30));
+                g2d.setColor(Color.WHITE);
+                g2d.drawString("FPS: " + String.valueOf(gl.finalFps), 10, 40);
+            }
         }
         cursorPoint = getMousePosition();
 
@@ -70,14 +82,19 @@ public class GamePanel extends Canvas  // Classe GamePanel extende Canvas
     }
 
     public void update(double deltaTime){
-        world.update(deltaTime);
+        if(gameState == GameState.MENU){
+            mainMenu.update(cursorPoint);
+        }
+        if(gameState == GameState.INWORLD){
+            activeWorld.update(deltaTime);
+        }
 
         //enviar atualização para o cliente enviar pro servidor
         if(client.connected){
-            client.updatePosition(world.player.position.x, world.player.position.y);
-            client.updateDirection(world.player.sprite.direction);
+            client.updatePosition(activeWorld.player.position.x, activeWorld.player.position.y);
+            client.updateDirection(activeWorld.player.sprite.direction);
 
-            if(world.player.sprite.moving){
+            if(activeWorld.player.sprite.moving){
                 client.updateState(1);
             }else{
                 client.updateState(0);

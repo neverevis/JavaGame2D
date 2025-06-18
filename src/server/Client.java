@@ -68,22 +68,22 @@ public class Client implements Runnable{
                 inState = in.readInt();
 
                 //atualizar
-                gp.world.connectedPlayer.position.set(inX,inY);
+                gp.activeWorld.connectedPlayer.position.set(inX,inY);
 
                 if(inDirection == 0) {
-                    gp.world.connectedPlayer.sprite.setDirection(Direction.DOWN);
+                    gp.activeWorld.connectedPlayer.sprite.setDirection(Direction.DOWN);
                 }else if(inDirection == 1){
-                    gp.world.connectedPlayer.sprite.setDirection(Direction.UP);
+                    gp.activeWorld.connectedPlayer.sprite.setDirection(Direction.UP);
                 }else if(inDirection == 2){
-                    gp.world.connectedPlayer.sprite.setDirection(Direction.LEFT);
+                    gp.activeWorld.connectedPlayer.sprite.setDirection(Direction.LEFT);
                 }else if(inDirection == 3){
-                    gp.world.connectedPlayer.sprite.setDirection(Direction.RIGHT);
+                    gp.activeWorld.connectedPlayer.sprite.setDirection(Direction.RIGHT);
                 }
 
                 if(inState == 0) {
-                    gp.world.connectedPlayer.sprite.moving = false;
+                    gp.activeWorld.connectedPlayer.sprite.moving = false;
                 }else if(inState == 1){
-                    gp.world.connectedPlayer.sprite.moving = true;
+                    gp.activeWorld.connectedPlayer.sprite.moving = true;
                 }
             }
         } catch (IOException e) {
