@@ -9,6 +9,7 @@ public class MouseInputs implements MouseListener, MouseMotionListener{
 
     private GamePanel gp;
     public boolean mouseClicked = false;
+    public boolean mouseReleased = false;
 
     public int x = 0;
     public int y = 0;
@@ -23,8 +24,9 @@ public class MouseInputs implements MouseListener, MouseMotionListener{
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) { // Mouse foi solto
+    public void mouseReleased(MouseEvent e) {
         mouseClicked = false;
+        mouseReleased = true;
     }
 
     @Override

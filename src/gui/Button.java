@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.Buffer;
 
 public class Button {
     private int x;
@@ -14,9 +15,11 @@ public class Button {
     private int width;
     private int height;
     private BufferedImage btn;
+    private BufferedImage btnPressed;
     private BufferedImage btnHovered;
     public boolean hovered = false;
     public boolean clicked = false;
+    public boolean released = false;
 
 
     public void setSize(int width, int height){
@@ -32,9 +35,10 @@ public class Button {
         this.y = y - halfH;
     }
 
-    public void loadImage(String btnPath, String btnHoveredPath){
+    public void loadImage(String btnPath,String btnPressedPath, String btnHoveredPath){
         try {
             btn = ImageIO.read(getClass().getResourceAsStream(btnPath));
+            btnPressed = ImageIO.read(getClass().getResourceAsStream(btnPressedPath));
             btnHovered = ImageIO.read(getClass().getResourceAsStream(btnHoveredPath));
         } catch (IOException e) {
             e.printStackTrace();
@@ -44,12 +48,16 @@ public class Button {
     public void render(Graphics2D g){
         if(!hovered)
             g.drawImage(btn,x,y,width,height,null);
+        else if(clicked)
+            g.drawImage(btnPressed,x,y,width,height,null);
         else
             g.drawImage(btnHovered,x,y,width,height,null);
     }
 
     public void update(Point cursorPoint,MouseInputs mouseInput){
         if(cursorPoint != null){
+            if(released)
+                released = false;
             if(cursorPoint.x >= this.x && cursorPoint.y >= this.y && cursorPoint.x <= this.x + width && cursorPoint.y <= this.y + height)
                 hovered = true;
             else
@@ -59,6 +67,9 @@ public class Button {
                 clicked = true;
             else
                 clicked = false;
+
+            if(mouseInput.mouseReleased && hovered)
+                released = true;
         }
     }
 }

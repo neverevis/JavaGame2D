@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;            // Importa a classe BufferedImag
 import java.io.IOException;                     // Importa a classe IOException, usada para tratar erros que podem ocorrer durante operações de entrada/saída (como ler imagens de arquivos).
 
 
-public class GamePanel extends Canvas  // Classe GamePanel extende Canvas
+public class GamePanel extends Canvas
 {
     GameLoop gl;
 
@@ -31,10 +31,10 @@ public class GamePanel extends Canvas  // Classe GamePanel extende Canvas
 
     public GamePanel()
     {
-        setPreferredSize(new Dimension(Global.SCREENWIDTH,Global.SCREENHEIGHT));  // Tamanho do Canvas
-        setBackground(Color.black); // Fundo preto
-        setFocusable(true); // Habilita inputs
-        addKeyListener(kh); // Adiciona um leitor
+        setPreferredSize(new Dimension(Global.SCREENWIDTH,Global.SCREENHEIGHT));
+        setBackground(Color.black);
+        setFocusable(true);
+        addKeyListener(kh);
         addMouseListener(mouseInput);
         addMouseMotionListener(mouseInput);
         try{
@@ -86,6 +86,8 @@ public class GamePanel extends Canvas  // Classe GamePanel extende Canvas
             mainMenu.update(cursorPoint);
         }
         if(gameState == GameState.INWORLD){
+            if(kh.escapeKey)
+                gameState = GameState.MENU;
             activeWorld.update(deltaTime);
         }
 
