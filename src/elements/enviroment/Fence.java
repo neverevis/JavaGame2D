@@ -2,6 +2,7 @@ package elements.enviroment;
 
 import elements.Element;
 import game.GamePanel;
+import utilities.Sprite;
 import world.World;
 
 import javax.imageio.ImageIO;
@@ -25,7 +26,7 @@ public class Fence extends Element {
         setAnchor((int)(width/2),(int)(height/2));
         setPosition(500,500);
         setFeetLine(height);
-        setSprite(spriteSheet);
+        sprite = new Sprite("/resources/elements/fence.png",96,32,1f);
         collider.collision = true;
         collider.setBounds(this,0,28,96,4);
     }

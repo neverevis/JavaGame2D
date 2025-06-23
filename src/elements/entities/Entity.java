@@ -15,7 +15,6 @@ public abstract class Entity extends Element {
     public double speed;
     public double realSpeed;
     Vector nextPosition = new Vector(0,0);
-    BufferedImage spriteSheet;
 
     public Entity(GamePanel gp,World world){
 

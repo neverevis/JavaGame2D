@@ -12,15 +12,15 @@ public class MainMenu {
 
     public MainMenu(GamePanel gp){
         this.gp = gp;
-        play.loadImage("/resources/UI/playbutton.png","/resources/UI/playbutton_pressed.png","/resources/UI/playbutton_hovered.png");
+        play.loadSprite("/resources/UI/button.png");
         play.setSize(96,32);
         play.setPosition(1280/2,720/2);
     }
 
-    public void update(Point cursorPoint){
-        play.update(gp.cursorPoint,gp.mouseInput);
+    public void update(double dt, Point cursorPoint){
+        play.update(dt,gp.cursorPoint,gp.mouseInput);
 
-        if(play.released) {
+        if(play.done) {
             gp.gameState = GameState.INWORLD;
             gp.mouseInput.mouseReleased = false;
         }

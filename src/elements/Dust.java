@@ -2,6 +2,7 @@ package elements;
 
 import elements.entities.Player;
 import game.GamePanel;
+import utilities.Sprite;
 import utilities.Vector;
 import world.World;
 
@@ -26,16 +27,11 @@ public class Dust extends Element{
     }
     @Override
     public void setAttributes() {
-        try {
-            dust = ImageIO.read(getClass().getResourceAsStream("/resources/particles/dust.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         setSize(16,16);
         setAnchor(16/2,16/2);
         setPositionByAnchor(new Vector(0,0));
         setFeetLine(-500);
-        setSprite(dust);
+        sprite = new Sprite("/resources/particles/dust.png",16,16,1f);
         sprite.moving = true;
     }
 

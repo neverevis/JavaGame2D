@@ -76,7 +76,7 @@ public class World {
         fence.setPositionByAnchor(new Vector(1500,1500));
         elements.add(fence);
         elements.add(player);
-        //elements.add(connectedPlayer);
+        elements.add(connectedPlayer);
         elements.add(tree2);
         elements.add(tree);
         elements.add(dust);

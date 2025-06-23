@@ -2,12 +2,13 @@ package utilities;
 
 import elements.states.Direction;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
+import java.io.IOException;
 
 public class Sprite {
-    BufferedImage spriteSheet;
     BufferedImage[][] sprite;
     int width;
     int height;
@@ -27,22 +28,29 @@ public class Sprite {
     double timeElapsed;
     int changeRatio;
 
-    public Sprite(BufferedImage spriteSheet, int width, int height, double seconds){
-        this.spriteSheet = spriteSheet;
+    public Sprite(String path, int width, int height, double seconds){
+        BufferedImage spriteSheet;
+        try{
+            spriteSheet = ImageIO.read(getClass().getResourceAsStream(path));
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
         this.width = width;
         this.height = height;
 
-        totalDirection = spriteSheet.getHeight()/height;
-        totalFrame = spriteSheet.getWidth()/width;
+        if(spriteSheet != null) {
+            totalDirection = spriteSheet.getHeight() / height;
+            totalFrame = spriteSheet.getWidth() / width;
+        }
 
         changeRatio = (int)(Global.FPS*seconds/totalFrame);
 
         sprite = new BufferedImage[totalDirection][totalFrame];
 
-        loadSprites();
+        loadSprites(spriteSheet);
     }
 
-    private void loadSprites(){
+    private void loadSprites(BufferedImage spriteSheet){
         for(int i = 0; i < totalDirection; i++){
             for(int j = 0; j < totalFrame; j++){
                 sprite[i][j] = ImageManager.getCroppedImg(spriteSheet,j*width,i*height,width,height);

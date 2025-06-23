@@ -83,7 +83,7 @@ public class GamePanel extends Canvas
 
     public void update(double deltaTime){
         if(gameState == GameState.MENU){
-            mainMenu.update(cursorPoint);
+            mainMenu.update(deltaTime, cursorPoint);
         }
         if(gameState == GameState.INWORLD){
             if(kh.escapeKey)

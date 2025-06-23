@@ -21,13 +21,8 @@ public class Particle {
         this.x = x;
         this.y = y;
         this.velocityY = -100.0;
-        try {
-            dust = ImageIO.read(getClass().getResourceAsStream("/resources/particles/dust.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        sprite = new Sprite(dust,16,16,0.2f);
+        sprite = new Sprite("/resources/particles/dust.png",16,16,0.2f);
         sprite.moving = true;
     }
 

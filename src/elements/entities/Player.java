@@ -11,11 +11,8 @@ import utilities.Sound;
 import utilities.Sprite;
 import utilities.Vector;
 import world.World;
-import java.awt.image.BufferedImage;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.IOException;
 
 public class Player extends Entity {
 
@@ -31,7 +28,7 @@ public class Player extends Entity {
     double slashTime = 0.5; //segundos
     double coolDownTime = 0.05;
     double elapsedTime;
-    public double health = 100;
+    public double health = 30;
     public double maxHealth = 100;
     public double dealt = health;
 
@@ -40,11 +37,9 @@ public class Player extends Entity {
     PlayerState playerState = PlayerState.IDLE;
     KeyHandler key;
     public Direction direction;
-    BufferedImage shadowsheet;
-    BufferedImage attackSheet;
     Sprite attack;
     Sprite shadow;
-    double knockBackForce = 500*Global.SCALE;
+    double knockBackForce = 300*Global.SCALE;
     boolean serverOriented = false;
 
     Sound sound = new Sound();
@@ -55,26 +50,15 @@ public class Player extends Entity {
         this.serverOriented = serverOriented;
         this.client = client;
 
-        try{
-            if(serverOriented)
-                spriteSheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/players/playersheet2.png"));
-            else
-                spriteSheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/players/playersheet.png"));
-            shadowsheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/monsters/shadow.png"));
-            attackSheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/players/attack.png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
         setSize((int)Global.ORIGINAL_TILESIZE,(int)Global.ORIGINAL_TILESIZE);
         setPositionByAnchor(new Vector(500,700));
         setSpeed(100);
-        sprite = new Sprite(spriteSheet,width,height,1f);
-        attack = new Sprite(attackSheet, 160, 160, 0.67f);
+        sprite = new Sprite("/resources/entities/players/playersheet.png",width,height,1f);
+        attack = new Sprite("/resources/entities/players/attack.png", 160, 160, 0.67f);
+        shadow = new Sprite("/resources/entities/monsters/shadow.png",32,32,1f);
         collider.setBounds(this,11,26,10,6);
         collider.collision = true;
         setAnchor(16,18);
-        shadow = new Sprite(shadowsheet,32,32,1f);
     }
 
     @Override
@@ -116,6 +100,7 @@ public class Player extends Entity {
             sound.setSound(0);
             sound.play();
             Vector knockback = collider.center.sub(originPosition).normalize();
+            world.camera.shaking = true;
 
             sprite.toggleDamageState();
             knockback.multiply(knockBackForce);

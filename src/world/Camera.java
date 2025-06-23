@@ -3,6 +3,8 @@ package world;
 import utilities.Global;
 import utilities.Vector;
 
+import java.util.Random;
+
 public class Camera {
     public double x;
     public double y;
@@ -13,9 +15,12 @@ public class Camera {
     double targetY;
     double smoothing = 6.25;
     boolean lock = true;
+    public boolean shaking = false;
+    double time = 0;
     double mouseX;
     double mouseY;
 
+    Random random = new Random();
     Vector point = new Vector();
     World world;
 
@@ -28,6 +33,17 @@ public class Camera {
         if(lock) {
             x += (targetX - x) * smoothing * deltaTime;
             y += (targetY - y) * smoothing * deltaTime;
+        }
+
+        if(shaking) {
+            time += deltaTime;
+            x += -4 + random.nextInt(9);
+            y += -4 + random.nextInt(9);
+
+            if(time >= 0.25){
+                time = 0;
+                shaking = false;
+            }
         }
     }
 

@@ -35,10 +35,6 @@ public abstract class Element {
     public abstract void update(double deltaTime);
     public abstract void render(Graphics2D g2d);
 
-    public void setSprite(BufferedImage spritesheet){
-        sprite = new Sprite(spritesheet,width,height,1);
-    }
-
     public void setPosition(double x, double y){
 
     }

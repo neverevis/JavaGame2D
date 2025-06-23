@@ -1,7 +1,9 @@
 package gui;
 
+import elements.states.Direction;
 import game.MouseInputs;
 import utilities.Global;
+import utilities.Sprite;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,12 +16,11 @@ public class Button {
     private int y;
     private int width;
     private int height;
-    private BufferedImage btn;
-    private BufferedImage btnPressed;
-    private BufferedImage btnHovered;
+    private double time;
+    private Sprite btn;
     public boolean hovered = false;
     public boolean clicked = false;
-    public boolean released = false;
+    public boolean done = false;
 
 
     public void setSize(int width, int height){
@@ -35,41 +36,45 @@ public class Button {
         this.y = y - halfH;
     }
 
-    public void loadImage(String btnPath,String btnPressedPath, String btnHoveredPath){
-        try {
-            btn = ImageIO.read(getClass().getResourceAsStream(btnPath));
-            btnPressed = ImageIO.read(getClass().getResourceAsStream(btnPressedPath));
-            btnHovered = ImageIO.read(getClass().getResourceAsStream(btnHoveredPath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void loadSprite(String spriteSheetPath){
+        btn = new Sprite(spriteSheetPath,96,32,0.4f);
     }
 
     public void render(Graphics2D g){
-        if(!hovered)
-            g.drawImage(btn,x,y,width,height,null);
-        else if(clicked)
-            g.drawImage(btnPressed,x,y,width,height,null);
-        else
-            g.drawImage(btnHovered,x,y,width,height,null);
+        btn.render(g,x,y,(int)(width/Global.SCALE),(int)(height/Global.SCALE));
     }
 
-    public void update(Point cursorPoint,MouseInputs mouseInput){
-        if(cursorPoint != null){
-            if(released)
-                released = false;
-            if(cursorPoint.x >= this.x && cursorPoint.y >= this.y && cursorPoint.x <= this.x + width && cursorPoint.y <= this.y + height)
+    public void update(double dt, Point cursorPoint,MouseInputs mouseInput){
+        btn.update(dt);
+
+        if(done)
+            done = false;
+
+        if(clicked){
+            time += dt;
+        }
+
+        if(cursorPoint != null) {
+            if (cursorPoint.x >= this.x && cursorPoint.y >= this.y && cursorPoint.x <= this.x + width && cursorPoint.y <= this.y + height) {
                 hovered = true;
-            else
+                btn.setDirection(Direction.UP);
+            }
+            else if(!clicked){
                 hovered = false;
+                btn.setDirection(Direction.DOWN);
+            }
+        }
 
-            if(mouseInput.mouseClicked && hovered)
-                clicked = true;
-            else
-                clicked = false;
+        if(mouseInput.mouseClicked && hovered) {
+            clicked = true;
+            btn.moving = true;
+        }
 
-            if(mouseInput.mouseReleased && hovered)
-                released = true;
+        if(time >= 0.3) {
+            btn.moving = false;
+            clicked = false;
+            time = 0.0;
+            done = true;
         }
     }
 }

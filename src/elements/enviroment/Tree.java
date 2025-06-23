@@ -21,15 +21,10 @@ public class Tree extends Element {
     }
     @Override
     public void setAttributes() {
-        try{
-            spriteSheet = ImageIO.read(getClass().getResourceAsStream("/resources/elements/arvore2.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         setSize(96,96);
         setAnchor(48,48);
         setPosition(500,500);
-        sprite = new Sprite(spriteSheet,width,height,3.5f);
+        sprite = new Sprite("/resources/elements/arvore2.png",width,height,3.5f);
         setFeetLine(93);
         sprite.moving = true;
         random = new Random(System.nanoTime());

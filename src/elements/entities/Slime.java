@@ -54,21 +54,10 @@ public class Slime extends Entity{
     @Override
 
     public void setAttributes() {
-
-        try{
-            spriteSheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/monsters/redslime.png"));
-            shadowsheet = ImageIO.read(getClass().getResourceAsStream("/resources/entities/monsters/shadow.png"));
-
-        } catch (IOException e) {
-
-            throw new RuntimeException(e);
-
-        }
-
         setSpeed(1.5);
         setSize((int)Global.ORIGINAL_TILESIZE,(int)Global.ORIGINAL_TILESIZE);
-        sprite = new Sprite(spriteSheet,width,height,0.5f);
-        shadow = new Sprite(shadowsheet,width,height,1f);
+        sprite = new Sprite("/resources/entities/monsters/redslime.png",width,height,0.5f);
+        shadow = new Sprite("/resources/entities/monsters/shadow.png",width,height,1f);
         setAnchor(16,27);
         collider.setBounds(this,9,22,14,10);
         collider.collision = true;
@@ -83,16 +72,15 @@ public class Slime extends Entity{
 
     public void update(double deltaTime) {
         rayCasts.update(velocity);
-        /*if(gp.cursorPoint != null) {
-            mouse.set(gp.world.camera.relativeWorld(mouse.set(gp.cursorPoint.getX(),gp.cursorPoint.getY())));
+        if(gp.cursorPoint != null) {
+            mouse.set(gp.activeWorld.camera.relativeWorld(mouse.set(gp.cursorPoint.getX(),gp.cursorPoint.getY())));
             target.set(mouse);
             target.set(getInAnchorOffset(target));
         }
         else {
             target.set(player.position);
-        }*/
+        }
 
-        target.set(player.position);
         nextPosition.set(position);
         steering.set(0,0);
         steering.add(seek());
