@@ -34,7 +34,7 @@ public class Slime extends Entity{
     Vector mouse = new Vector();
     Vector nearestPoint = new Vector();
 
-    double maxVelocity = 250;
+    double maxVelocity = 50 * Global.SCALE;
     double avoidForce = 3000;
     RayCasts rayCasts;
     Line2D.Double avoidLine = new Line2D.Double();

@@ -3,23 +3,16 @@ package game;
 import utilities.Global;
 
 public class GameLoop implements Runnable {
-
-    /*========== ATRIBUTOS ==========*/
-
-    GamePanel gp;                                                       // Instância do tipo GamePanel
-    int realFps = 0;                                                    // Frames passando no mundo "real"
-    public int finalFps;                                                // O quanto de Frames que foram percorridos a cada segundo
-
-    /*========== CONSTRUTOR ==========*/
+    GamePanel gp;
+    int realFps = 0;
+    public int finalFps;
 
     public GameLoop(GamePanel gp) {
-        this.gp = gp;                                                   // Instanciado o GamePanel
+        this.gp = gp;
     }
 
-    /*========== MÉTODOS ==========*/
-
     @Override
-    public void run() { // chamado no instante que a Thread é iniciada automaticamente
+    public void run() {
 
 
         //variáveis do metodo run
@@ -41,11 +34,10 @@ public class GameLoop implements Runnable {
             deltaTime = (start - lastTime) / 1_000_000_000;
             lastTime = start;
 
-            // Limita deltaTime máximo
-            deltaTime = Math.min(deltaTime, 1.0 / 30.0); // Limita a aceleração excessiva
+            deltaTime = Math.min(deltaTime, 1.0 / 30.0);
 
-            update(deltaTime); //Atualiza
-            render(); //Pinta
+            update(deltaTime);
+            render();
 
             sleepTime = (nextFrame - System.nanoTime())/1_000_000;
             if(sleepTime < 0)
@@ -72,7 +64,6 @@ public class GameLoop implements Runnable {
         }
     }
 
-    /*========== METODO UPDATE ==========*/
     public void update(double deltaTime) {
         gp.update(deltaTime);
     }
