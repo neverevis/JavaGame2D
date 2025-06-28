@@ -5,6 +5,7 @@ import elements.Element;
 import elements.entities.Player;
 import elements.entities.Slime;
 import elements.enviroment.Fence;
+import elements.enviroment.Pillar;
 import elements.enviroment.Tree;
 import game.GamePanel;
 import server.Client;
@@ -43,6 +44,7 @@ public class World {
     Slime slime6;
     Dust dust;
     Fence fence;
+    Pillar pillar;
     float alpha = 0.0f;
     public boolean pause = false;
     Client client;
@@ -60,6 +62,7 @@ public class World {
         fence = new Fence(this.gp,this);
         tree.setPositionByAnchor(new Vector(700,500));
         tree2 = new Tree(this.gp,this);
+        pillar = new Pillar(gp,this);
         slime1 = new Slime(this.gp,this,this.player);
         slime2 = new Slime(this.gp,this,this.player);
         slime3 = new Slime(this.gp,this,this.player);
@@ -74,6 +77,7 @@ public class World {
         slime6.setPositionByAnchor(new Vector(1100,700));
         tree2.setPositionByAnchor(new Vector(500,500));
         fence.setPositionByAnchor(new Vector(1500,1500));
+        elements.add(pillar);
         elements.add(fence);
         elements.add(player);
         elements.add(connectedPlayer);

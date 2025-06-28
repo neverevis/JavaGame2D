@@ -3,6 +3,7 @@ package gui;
 import elements.states.GameState;
 import game.GamePanel;
 import game.MouseInputs;
+import utilities.Global;
 
 import java.awt.*;
 
@@ -14,7 +15,7 @@ public class MainMenu {
         this.gp = gp;
         play.loadSprite("/resources/UI/button.png");
         play.setSize(96,32);
-        play.setPosition(1280/2,720/2);
+        play.setPosition(Global.SCREENWIDTH/2,Global.SCREENHEIGHT/2);
     }
 
     public void update(double dt, Point cursorPoint){
