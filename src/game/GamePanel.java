@@ -21,7 +21,7 @@ public class GamePanel extends Canvas
     public MouseInputs mouseInput = new MouseInputs();
     public Client client = new Client(this);
     public Thread clientThread = new Thread(client);
-    public World activeWorld = new World(this);
+    public World activeWorld = new World(this,"/resources/tileData.png");
     Cursor c;
     public Point cursorPoint;
     BufferedImage mouseImg;

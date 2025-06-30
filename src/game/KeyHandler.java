@@ -13,7 +13,6 @@ public class KeyHandler implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println(e.getKeyCode());
         if(e.getKeyCode() == 27)
             escapeKey = true;
         if(e.getKeyCode() == 87)

@@ -21,6 +21,7 @@ public class Tiles {
             tile[0] = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/grass.png"));
             tile[1] = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/flowergrass.png"));
             tile[2] = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/bush.png"));
+            tile[3] = ImageIO.read(getClass().getResourceAsStream("/resources/tiles/stone.png"));
 
 
         } catch (IOException e) {

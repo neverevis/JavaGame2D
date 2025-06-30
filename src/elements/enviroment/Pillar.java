@@ -23,6 +23,7 @@ public class Pillar extends Element {
         setPositionByAnchor(new Vector(900,1000));
         collider.setBounds(this,16,48,32,16);
         collider.collision = true;
+        world.collisionSystem.register(collider);
     }
 
     @Override

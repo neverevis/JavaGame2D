@@ -29,6 +29,7 @@ public class Fence extends Element {
         sprite = new Sprite("/resources/elements/fence.png",96,32,1f);
         collider.collision = true;
         collider.setBounds(this,0,28,96,4);
+        world.collisionSystem.register(collider);
     }
 
     @Override

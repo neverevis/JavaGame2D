@@ -36,7 +36,8 @@ public abstract class Element {
     public abstract void render(Graphics2D g2d);
 
     public void setPosition(double x, double y){
-
+        this.position.x = x + width*anchorX*Global.SCALE;
+        this.position.y = y + height*anchorY*Global.SCALE;
     }
 
     public void setSize(int width, int height){

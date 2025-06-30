@@ -7,15 +7,16 @@ import elements.entities.Slime;
 import elements.enviroment.Fence;
 import elements.enviroment.Pillar;
 import elements.enviroment.Tree;
+import game.CollisionSystem;
 import game.GamePanel;
 import server.Client;
 import utilities.Global;
 import utilities.Sound;
 import utilities.Vector;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,6 +33,7 @@ public class World {
     public Camera camera = new Camera(this);
     public boolean showElementsAnchor = false;
     public List<Element> elements = new ArrayList<Element>();
+    public CollisionSystem collisionSystem = new CollisionSystem();
     public Player player;
     public Player connectedPlayer;
     Tree tree;
@@ -45,18 +47,24 @@ public class World {
     Dust dust;
     Fence fence;
     Pillar pillar;
+    Pillar p2;
     float alpha = 0.0f;
     public boolean pause = false;
     Client client;
+    String tilePath;
+    BufferedImage tileData;
 
     Sound music = new Sound();
 
-    public World(GamePanel gp){
+    public World(GamePanel gp, String tilePath){
         this.client = gp.client;
         this.gp = gp;
+        this.tilePath = tilePath;
         player = new Player(this.gp,this,client,false);
         connectedPlayer = new Player(this.gp,this,client,true);
         connectedPlayer.setPositionByAnchor(new Vector(600,600));
+        p2 = new Pillar(this.gp,this);
+        p2.setPosition(0,0);
         dust = new Dust(this.gp,this,player);
         tree = new Tree(this.gp,this);
         fence = new Fence(this.gp,this);
@@ -64,20 +72,11 @@ public class World {
         tree2 = new Tree(this.gp,this);
         pillar = new Pillar(gp,this);
         slime1 = new Slime(this.gp,this,this.player);
-        slime2 = new Slime(this.gp,this,this.player);
-        slime3 = new Slime(this.gp,this,this.player);
-        slime4 = new Slime(this.gp,this,this.player);
-        slime5 = new Slime(this.gp,this,this.player);
-        slime6 = new Slime(this.gp,this,this.player);
         slime1.setPositionByAnchor(new Vector(600,700));
-        slime2.setPositionByAnchor(new Vector(700,700));
-        slime3.setPositionByAnchor(new Vector(800,700));
-        slime4.setPositionByAnchor(new Vector(900,700));
-        slime5.setPositionByAnchor(new Vector(1000,700));
-        slime6.setPositionByAnchor(new Vector(1100,700));
         tree2.setPositionByAnchor(new Vector(500,500));
         fence.setPositionByAnchor(new Vector(1500,1500));
         elements.add(pillar);
+        elements.add(p2);
         elements.add(fence);
         elements.add(player);
         elements.add(connectedPlayer);
@@ -86,24 +85,49 @@ public class World {
         elements.add(dust);
 
         elements.add(slime1);
-        /*elements.add(slime2);
-        elements.add(slime3);
-        elements.add(slime4);
-        elements.add(slime5);
-        elements.add(slime6);*/
         tiles = new Tiles();
         cols = 100;
         rows = 100;
-        world = new int[cols][rows];
         width = cols* Global.TILESIZE;
         height = rows* Global.TILESIZE;
         convertWorld();
     }
 
     public void convertWorld() {
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
-                world[i][j] = 0;
+        try {
+            tileData = ImageIO.read(getClass().getResourceAsStream(tilePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int w = tileData.getWidth();
+        int h = tileData.getHeight();
+
+        cols = tileData.getWidth();
+        rows = tileData.getHeight();
+
+        world = new int[cols][rows];
+
+        for(int y = 0; y < tileData.getWidth(); y++){
+            for(int x = 0; x < tileData.getHeight(); x++){
+                int pixel = tileData.getRGB(x,y);
+
+                int alpha = (pixel >> 24) & 0xFF;
+                int red   = (pixel >> 16) & 0xFF;
+                int green = (pixel >> 8)  & 0xFF;
+                int blue  =  pixel        & 0xFF;
+
+                String hexRGB = String.format("%02X%02X%02X", red, green, blue);
+
+                if(hexRGB.equalsIgnoreCase("99e550")){
+                    world[y][x] = 0;
+                }
+                else if(hexRGB.equalsIgnoreCase("daffb6")){
+                    world[y][x] = 1;
+                }
+                else if(hexRGB.equalsIgnoreCase("585858")){
+                    world[y][x] = 3;
+                }
             }
         }
     }
@@ -111,8 +135,8 @@ public class World {
     public void render(Graphics2D g2d){
         for(int i = 0; i < cols; i++){
             for(int j = 0; j < rows; j++){
-                double tileX = i*Global.TILESIZE - camera.x;
-                double tileY = j*Global.TILESIZE - camera.y;
+                double tileX = j*Global.TILESIZE - camera.x;
+                double tileY = i*Global.TILESIZE - camera.y;
 
                 if(tileX > - Global.TILESIZE && tileX < Global.SCREENWIDTH && tileY > - Global.TILESIZE && tileY < Global.SCREENHEIGHT) {
                     tiles.drawTile(g2d, world[i][j], (int)tileX, (int)tileY);
@@ -149,14 +173,12 @@ public class World {
     }
 
     public void update(double deltaTime){
-        if(client.connected){
-
-        }
         camera.update(deltaTime);
         if(!pause) {
             for (Element elm : elements) {
                 elm.update(deltaTime);
             }
+            collisionSystem.update();
         }
         else{
             player.update(deltaTime);

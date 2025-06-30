@@ -31,6 +31,7 @@ public class Tree extends Element {
         sprite.setFrame(random.nextInt(6));
         collider.setBounds(this,38,80,19,10);
         collider.collision = true;
+        world.collisionSystem.register(collider);
     }
 
     @Override

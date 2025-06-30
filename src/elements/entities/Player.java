@@ -58,6 +58,7 @@ public class Player extends Entity {
         shadow = new Sprite("/resources/entities/monsters/shadow.png",32,32,1f);
         collider.setBounds(this,11,26,10,6);
         collider.collision = true;
+        world.collisionSystem.register(collider);
         setAnchor(16,18);
     }
 
@@ -92,7 +93,6 @@ public class Player extends Entity {
 
         sprite.update(deltaTime);
         attack.update(deltaTime);
-        collider.update();
     }
 
     public void dealDamage(Vector originPosition){
@@ -172,22 +172,10 @@ public class Player extends Entity {
         nextPosition.set(position);
         nextPosition.add(velocity.get().multiply(dt));
 
-
-        boolean canMoveX = true;
-        boolean canMoveY = true;
-
-        for(Element element : world.elements){
-            if(element != this && element.collider.collision && collider.predictXCollision(element.collider,nextPosition.x)) {
-                canMoveX = false;
-            }
-            if(element != this && element.collider.collision && collider.predictYCollision(element.collider,nextPosition.y)) {
-                canMoveY = false;
-            }
-        }
-        if(canMoveX)
+        if(!world.collisionSystem.willCollideX(collider,nextPosition.x))
             position.setX(nextPosition.x);
-        if(canMoveY)
-           position.setY(nextPosition.y);
+        if(!world.collisionSystem.willCollideY(collider,nextPosition.y))
+            position.setY(nextPosition.y);
     }
 
     public void setAttackDir(){

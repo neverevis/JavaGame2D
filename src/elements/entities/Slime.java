@@ -61,6 +61,7 @@ public class Slime extends Entity{
         setAnchor(16,27);
         collider.setBounds(this,9,22,14,10);
         collider.collision = true;
+        world.collisionSystem.register(collider);
         setPositionByAnchor(new Vector(200,200));
         setFeetLine(height);
         sprite.moving = true;

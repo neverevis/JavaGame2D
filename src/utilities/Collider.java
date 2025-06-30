@@ -17,7 +17,13 @@ public class Collider {
     Rectangle nextColliderBox;
     public Vector centerOffset;
     public Vector center = new Vector();
-    Element owner;
+    public Element owner;
+
+    public Collider(){}
+
+    public Collider(Element owner){
+        this.owner = owner;
+    }
 
     public void setBounds(Element owner, int offsetX, int offsetY, int width, int height){
         this.width = width*Global.SCALE;
@@ -37,6 +43,13 @@ public class Collider {
 
         colliderBox.setLocation((int) x,(int) y);
         center.set(x,y).add(centerOffset);
+    }
+
+    public void render(Graphics2D g2d){
+        g2d.setColor(Color.red);
+        g2d.drawRect((int)(x - owner.world.camera.x),(int)(y - owner.world.camera.y),(int)width,(int)height);
+        g2d.setColor(Color.white);
+        g2d.fillRect(owner.world.camera.relativeX(center.x),owner.world.camera.relativeY(center.y),3,3);
     }
 
     public boolean predictXCollision(Collider collider, double futureX){
@@ -66,12 +79,5 @@ public class Collider {
             return true;
         }
         return false;
-    }
-
-    public void render(Graphics2D g2d){
-        g2d.setColor(Color.red);
-        g2d.drawRect((int)(x - owner.world.camera.x),(int)(y - owner.world.camera.y),(int)width,(int)height);
-        g2d.setColor(Color.white);
-        g2d.fillRect(owner.world.camera.relativeX(center.x),owner.world.camera.relativeY(center.y),3,3);
     }
 }
