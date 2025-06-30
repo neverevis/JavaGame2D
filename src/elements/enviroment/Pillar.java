@@ -3,15 +3,25 @@ package elements.enviroment;
 import elements.Element;
 import game.GamePanel;
 import utilities.Sprite;
+import utilities.TextCollider;
 import utilities.Vector;
 import world.World;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Pillar extends Element {
 
+    ArrayList<String> dialogue = new ArrayList<>();
+    TextCollider tc;
+
     public Pillar(GamePanel gp, World world){
         super(gp,world);
+        dialogue.add("Um grande pilar de pedra, há escrituras de um idioma desconhecido gravado");
+        dialogue.add("Você se pergunta há quanto tempo ele existe...");
+        tc = new TextCollider(gp,dialogue);
+        tc.setBounds(this,16,64,32,16);
+        world.collisionSystem.register(tc);
     }
 
     @Override
@@ -37,6 +47,7 @@ public class Pillar extends Element {
         if(gp.activeWorld.showElementsAnchor) {
             renderAnchor(g2d);
             collider.render(g2d);
+            tc.render(g2d);
             renderFeetLine(g2d);
         }
     }

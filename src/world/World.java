@@ -8,6 +8,7 @@ import elements.enviroment.Fence;
 import elements.enviroment.Pillar;
 import elements.enviroment.Tree;
 import game.CollisionSystem;
+import game.DialogueManager;
 import game.GamePanel;
 import server.Client;
 import utilities.Global;
@@ -34,16 +35,11 @@ public class World {
     public boolean showElementsAnchor = false;
     public List<Element> elements = new ArrayList<Element>();
     public CollisionSystem collisionSystem = new CollisionSystem();
+    public DialogueManager dialogueManager;
     public Player player;
     public Player connectedPlayer;
     Tree tree;
     Tree tree2;
-    Slime slime1;
-    Slime slime2;
-    Slime slime3;
-    Slime slime4;
-    Slime slime5;
-    Slime slime6;
     Dust dust;
     Fence fence;
     Pillar pillar;
@@ -59,6 +55,7 @@ public class World {
     public World(GamePanel gp, String tilePath){
         this.client = gp.client;
         this.gp = gp;
+        this.dialogueManager = new DialogueManager(gp,this);
         this.tilePath = tilePath;
         player = new Player(this.gp,this,client,false);
         connectedPlayer = new Player(this.gp,this,client,true);
@@ -70,12 +67,16 @@ public class World {
         fence = new Fence(this.gp,this);
         tree.setPositionByAnchor(new Vector(700,500));
         tree2 = new Tree(this.gp,this);
-        pillar = new Pillar(gp,this);
-        slime1 = new Slime(this.gp,this,this.player);
-        slime1.setPositionByAnchor(new Vector(600,700));
+
+        /*for(int i = 0; i < 100; i++){
+            Slime s = new Slime(gp,this,player);
+            elements.add(s);
+            s.setPositionByAnchor(new Vector(70*i,900));
+        }*/
+
+
         tree2.setPositionByAnchor(new Vector(500,500));
         fence.setPositionByAnchor(new Vector(1500,1500));
-        elements.add(pillar);
         elements.add(p2);
         elements.add(fence);
         elements.add(player);
@@ -84,7 +85,6 @@ public class World {
         elements.add(tree);
         elements.add(dust);
 
-        elements.add(slime1);
         tiles = new Tiles();
         cols = 100;
         rows = 100;
@@ -159,6 +159,8 @@ public class World {
             player.render(g2d);
         }
 
+        dialogueManager.render(g2d);
+
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Arial", Font.BOLD, 20));
         g2d.drawString("health",20,30);
@@ -174,6 +176,7 @@ public class World {
 
     public void update(double deltaTime){
         camera.update(deltaTime);
+        dialogueManager.update(deltaTime);
         if(!pause) {
             for (Element elm : elements) {
                 elm.update(deltaTime);

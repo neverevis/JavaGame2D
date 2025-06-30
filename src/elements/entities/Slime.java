@@ -33,8 +33,9 @@ public class Slime extends Entity{
     Vector steering = new Vector();
     Vector mouse = new Vector();
     Vector nearestPoint = new Vector();
+    Random r = new Random();
 
-    double maxVelocity = 50 * Global.SCALE;
+    double maxVelocity = 100 * Global.SCALE;
     double avoidForce = 3000;
     RayCasts rayCasts;
     Line2D.Double avoidLine = new Line2D.Double();
@@ -48,7 +49,7 @@ public class Slime extends Entity{
         super(gp,world);
 
         this.player = player;
-
+        sprite.setFrame(r.nextInt(5));
     }
 
     @Override

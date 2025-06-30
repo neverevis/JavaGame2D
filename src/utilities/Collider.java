@@ -80,4 +80,14 @@ public class Collider {
         }
         return false;
     }
+
+    public boolean colliding(Collider other){
+        if(this.colliderBox.intersects(other.colliderBox)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void onCollision(){
+    }
 }

@@ -28,13 +28,13 @@ public class Player extends Entity {
     double slashTime = 0.5; //segundos
     double coolDownTime = 0.05;
     double elapsedTime;
-    public double health = 30;
+    public double health = 100;
     public double maxHealth = 100;
     public double dealt = health;
 
-    boolean invulnerable = false;
+    boolean invulnerable = true;
 
-    PlayerState playerState = PlayerState.IDLE;
+    public PlayerState playerState = PlayerState.IDLE;
     KeyHandler key;
     public Direction direction;
     Sprite attack;
