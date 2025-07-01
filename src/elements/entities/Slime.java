@@ -35,7 +35,7 @@ public class Slime extends Entity{
     Vector nearestPoint = new Vector();
     Random r = new Random();
 
-    double maxVelocity = 100 * Global.SCALE;
+    double maxVelocity = 90 * Global.SCALE;
     double avoidForce = 3000;
     RayCasts rayCasts;
     Line2D.Double avoidLine = new Line2D.Double();

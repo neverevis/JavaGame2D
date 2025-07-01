@@ -5,6 +5,7 @@ import elements.Element;
 import elements.entities.Player;
 import elements.entities.Slime;
 import elements.enviroment.Fence;
+import elements.enviroment.Grass;
 import elements.enviroment.Pillar;
 import elements.enviroment.Tree;
 import game.CollisionSystem;
@@ -58,24 +59,32 @@ public class World {
         this.dialogueManager = new DialogueManager(gp,this);
         this.tilePath = tilePath;
         player = new Player(this.gp,this,client,false);
+        player.setPosition(32/2*Global.TILESIZE,32/2* Global.TILESIZE);
         connectedPlayer = new Player(this.gp,this,client,true);
         connectedPlayer.setPositionByAnchor(new Vector(600,600));
         p2 = new Pillar(this.gp,this);
-        p2.setPosition(0,0);
+        p2.setPosition(1500,1500);
         dust = new Dust(this.gp,this,player);
         tree = new Tree(this.gp,this);
         fence = new Fence(this.gp,this);
         tree.setPositionByAnchor(new Vector(700,500));
         tree2 = new Tree(this.gp,this);
 
-        /*for(int i = 0; i < 100; i++){
+        for(int i = 0; i < 4; i++){
             Slime s = new Slime(gp,this,player);
             elements.add(s);
             s.setPositionByAnchor(new Vector(70*i,900));
-        }*/
+        }
 
 
-        tree2.setPositionByAnchor(new Vector(500,500));
+        for(int i = 0; i < 50 ;i++){
+            for(int j = 0;j < 50; j++){
+                Grass grass = new Grass(gp,this);
+                grass.setPositionByAnchor(new Vector(16*Global.TILESIZE + j * 7,16*Global.TILESIZE + i * 7));
+                elements.add(grass);
+            }
+        }
+        tree2.setPositionByAnchor(new Vector(1000,1900));
         fence.setPositionByAnchor(new Vector(1500,1500));
         elements.add(p2);
         elements.add(fence);
