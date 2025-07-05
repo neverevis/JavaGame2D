@@ -34,7 +34,7 @@ public class ClientHandler implements Runnable{
         }
         finally {
             try {
-                client.close();  // Fecha a conexão do cliente ao desconectar
+                client.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

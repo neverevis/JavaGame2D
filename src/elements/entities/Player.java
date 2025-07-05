@@ -32,7 +32,7 @@ public class Player extends Entity {
     public double maxHealth = 100;
     public double dealt = health;
 
-    boolean invulnerable = false;
+    boolean invulnerable = true;
 
     public PlayerState playerState = PlayerState.IDLE;
     KeyHandler key;
@@ -53,7 +53,7 @@ public class Player extends Entity {
         setSize((int)Global.ORIGINAL_TILESIZE,(int)Global.ORIGINAL_TILESIZE);
         setPositionByAnchor(new Vector(500,700));
         setSpeed(100);
-        sprite = new Sprite("/resources/entities/players/playersheet.png",width,height,0.8f);
+        sprite = new Sprite("/resources/entities/players/playersheet.png",width,height,1f);
         attack = new Sprite("/resources/entities/players/attack.png", 160, 160, 0.67f);
         shadow = new Sprite("/resources/entities/monsters/shadow.png",32,32,1f);
         collider.setBounds(this,11,26,10,6);
@@ -64,7 +64,6 @@ public class Player extends Entity {
 
     @Override
     public void setAttributes() {
-        //carregando o spritesheet
         setFeetLine(32);
     }
 

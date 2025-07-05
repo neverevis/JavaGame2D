@@ -77,13 +77,13 @@ public class World {
         }
 
 
-        for(int i = 0; i < 50 ;i++){
+        /*for(int i = 0; i < 50 ;i++){
             for(int j = 0;j < 50; j++){
                 Grass grass = new Grass(gp,this);
-                grass.setPositionByAnchor(new Vector(16*Global.TILESIZE + j * 7,16*Global.TILESIZE + i * 7));
+                grass.setPositionByAnchor(new Vector(22*Global.TILESIZE + j * 12,22*Global.TILESIZE + i * 12));
                 elements.add(grass);
             }
-        }
+        }*/
         tree2.setPositionByAnchor(new Vector(1000,1900));
         fence.setPositionByAnchor(new Vector(1500,1500));
         elements.add(p2);
