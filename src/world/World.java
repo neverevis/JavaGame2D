@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class World {
     int cols,rows;
@@ -34,11 +35,11 @@ public class World {
     public GamePanel gp;
     public Camera camera = new Camera(this);
     public boolean showElementsAnchor = false;
-    public List<Element> elements = new ArrayList<Element>();
+    public List<Element> elements = new ArrayList<>();
+    public List<Player> connectedPlayers = new CopyOnWriteArrayList<>();
     public CollisionSystem collisionSystem = new CollisionSystem();
     public DialogueManager dialogueManager;
     public Player player;
-    public Player connectedPlayer;
     Tree tree;
     Tree tree2;
     Dust dust;
@@ -58,10 +59,9 @@ public class World {
         this.gp = gp;
         this.dialogueManager = new DialogueManager(gp,this);
         this.tilePath = tilePath;
-        player = new Player(this.gp,this,client,false);
+        if(!gp.isVirtual)
+            player = new Player(this.gp,this,false);
         player.setPosition(32/2*Global.TILESIZE,32/2* Global.TILESIZE);
-        connectedPlayer = new Player(this.gp,this,client,true);
-        connectedPlayer.setPositionByAnchor(new Vector(600,600));
         p2 = new Pillar(this.gp,this);
         p2.setPosition(1500,1500);
         dust = new Dust(this.gp,this,player);
@@ -84,12 +84,12 @@ public class World {
                 elements.add(grass);
             }
         }*/
+
         tree2.setPositionByAnchor(new Vector(1000,1900));
         fence.setPositionByAnchor(new Vector(1500,1500));
         elements.add(p2);
         elements.add(fence);
         elements.add(player);
-        elements.add(connectedPlayer);
         elements.add(tree2);
         elements.add(tree);
         elements.add(dust);

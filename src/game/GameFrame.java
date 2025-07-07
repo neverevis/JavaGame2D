@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class GameFrame extends JFrame {
 
-    GamePanel gp = new GamePanel();
+    GamePanel gp = new GamePanel(false);
 
     public GameFrame()
     {
@@ -15,7 +15,7 @@ public class GameFrame extends JFrame {
         gp.createBufferStrategy(3);
         gp.game.start();
         setResizable(true);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setVisible(true);
     }

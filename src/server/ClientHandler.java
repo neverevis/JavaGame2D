@@ -7,8 +7,11 @@ import java.util.List;
 public class ClientHandler implements Runnable{
     Socket client;
     List<ClientHandler> clients;
+    DataInputStream in;
+    DataOutputStream out;
     double inX;
     double inY;
+    int id;
     int inDirection;
     int inState;
     public ClientHandler(Socket client,List<ClientHandler> clients){
@@ -18,15 +21,21 @@ public class ClientHandler implements Runnable{
     @Override
     public void run() {
         try {
-            DataInputStream in = new DataInputStream(client.getInputStream());
-            DataOutputStream out = new DataOutputStream(client.getOutputStream());
-            while(true){
-                inX = in.readDouble();
-                inY = in.readDouble();
-                inDirection = in.readInt();
-                inState = in.readInt();
+            in = new DataInputStream(client.getInputStream());
+            out = new DataOutputStream(client.getOutputStream());
+            id = Server.connectedCount;
+            out.writeInt(Server.connectedCount);
 
-                Server.broadcast(this,clients);
+            while(true){
+                try {
+                    inX = in.readDouble();
+                    inY = in.readDouble();
+                    inDirection = in.readInt();
+                    inState = in.readInt();
+                } catch (EOFException e) {
+                    System.out.println("Cliente desconectou: " + client.getInetAddress());
+                    break; // Sai do loop para fechar o socket
+                }
             }
 
         } catch (IOException e) {

@@ -15,10 +15,10 @@ import world.World;
 import java.awt.*;
 
 public class Player extends Entity {
+    public int id;
 
     Vector velocity = new Vector(0,0);
     Vector directionVector = new Vector(0,0);
-    Client client;
 
     double acceleration = 1100*Global.SCALE;
     double deceleration = 10;
@@ -44,11 +44,10 @@ public class Player extends Entity {
 
     Sound sound = new Sound();
 
-    public Player(GamePanel gp, World world, Client client, boolean serverOriented){
+    public Player(GamePanel gp, World world, boolean serverOriented){
         super(gp, world);
         this.key = gp.kh;
         this.serverOriented = serverOriented;
-        this.client = client;
 
         setSize((int)Global.ORIGINAL_TILESIZE,(int)Global.ORIGINAL_TILESIZE);
         setPositionByAnchor(new Vector(500,700));
@@ -173,8 +172,26 @@ public class Player extends Entity {
 
         if(!world.collisionSystem.willCollideX(collider,nextPosition.x))
             position.setX(nextPosition.x);
+        else{
+            for(Player p : gp.activeWorld.connectedPlayers){
+                if(this.collider.predictXCollision(p.collider, nextPosition.x));{
+                    Vector knockback = collider.center.sub(p.collider.center).normalize();
+                    knockback.multiply(20);
+                    velocity.add(knockback);
+                }
+            }
+        }
         if(!world.collisionSystem.willCollideY(collider,nextPosition.y))
             position.setY(nextPosition.y);
+        else{
+            for(Player p : gp.activeWorld.connectedPlayers){
+                if(this.collider.predictYCollision(p.collider, nextPosition.y));{
+                    Vector knockback = collider.center.sub(p.collider.center).normalize();
+                    knockback.multiply(20);
+                    velocity.add(knockback);
+                }
+            }
+        }
     }
 
     public void setAttackDir(){

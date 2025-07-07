@@ -16,21 +16,24 @@ import java.io.IOException;                     // Importa a classe IOException,
 public class GamePanel extends Canvas
 {
     GameLoop gl;
+    public boolean isVirtual;
 
     public KeyHandler kh = new KeyHandler();
     public MouseInputs mouseInput = new MouseInputs();
-    public Client client = new Client(this);
-    public Thread clientThread = new Thread(client);
+    public Client client;
     public World activeWorld = new World(this,"/resources/tileData.png");
     Cursor c;
     public Point cursorPoint;
     BufferedImage mouseImg;
-    Thread game;
+    public Thread game;
     public GameState gameState = GameState.MENU;
     MainMenu mainMenu = new MainMenu(this);
 
-    public GamePanel()
+    public GamePanel(boolean isVirtual)
     {
+        this.isVirtual = isVirtual;
+        if(!isVirtual)
+            client = new Client(this);
         setPreferredSize(new Dimension(Global.SCREENWIDTH,Global.SCREENHEIGHT));
         setBackground(Color.black);
         setFocusable(true);
@@ -46,7 +49,6 @@ public class GamePanel extends Canvas
 
         gl = new GameLoop(this);
         game = new Thread(gl);
-        clientThread.start();
     }
 
     public void render() {
@@ -89,18 +91,6 @@ public class GamePanel extends Canvas
             if(kh.escapeKey)
                 gameState = GameState.MENU;
             activeWorld.update(deltaTime);
-        }
-
-        //enviar atualização para o cliente enviar pro servidor
-        if(client.connected){
-            client.updatePosition(activeWorld.player.position.x, activeWorld.player.position.y);
-            client.updateDirection(activeWorld.player.sprite.direction);
-
-            if(activeWorld.player.sprite.moving){
-                client.updateState(1);
-            }else{
-                client.updateState(0);
-            }
         }
     }
 }

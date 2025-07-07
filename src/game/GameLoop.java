@@ -37,7 +37,8 @@ public class GameLoop implements Runnable {
             deltaTime = Math.min(deltaTime, 1.0 / 30.0);
 
             update(deltaTime);
-            render();
+            if(!gp.isVirtual)
+                render();
 
             sleepTime = (nextFrame - System.nanoTime())/1_000_000;
             if(sleepTime < 0)
