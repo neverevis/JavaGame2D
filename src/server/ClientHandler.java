@@ -14,6 +14,7 @@ public class ClientHandler implements Runnable{
     int id;
     int inDirection;
     int inState;
+    boolean hasSentData = false;
     public ClientHandler(Socket client,List<ClientHandler> clients){
         this.client = client;
         this.clients = clients;
@@ -32,6 +33,7 @@ public class ClientHandler implements Runnable{
                     inY = in.readDouble();
                     inDirection = in.readInt();
                     inState = in.readInt();
+                    hasSentData = true;
                 } catch (EOFException e) {
                     System.out.println("Cliente desconectou: " + client.getInetAddress());
                     break; // Sai do loop para fechar o socket

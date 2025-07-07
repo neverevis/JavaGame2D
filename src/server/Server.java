@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
     ServerSocket server;
@@ -17,7 +18,7 @@ public class Server {
 
     public Server(){
         try{
-            clients = new ArrayList<>();
+            clients = new CopyOnWriteArrayList<>();
 
             server = new ServerSocket(12345);
             System.out.println("Servidor inicializado na porta " + server.getLocalPort());
@@ -46,9 +47,10 @@ public class Server {
         while(true){
             try {
                 for (ClientHandler self : clients) {
-                    self.out.writeInt(connectedCount);
                     for (ClientHandler other : clients) {
-                        if (other != self) {
+                        if (other != self && other.hasSentData) {
+                            self.out.writeInt(1);
+                            self.out.writeInt(connectedCount);
                             self.out.writeInt(other.id);
                             self.out.writeDouble(other.inX);
                             self.out.writeDouble(other.inY);

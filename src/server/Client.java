@@ -19,6 +19,7 @@ public class Client{
 
     //dados para receber
     int connectedCount;
+    int iterationCount;
     int inId;
     double inX;
     double inY;
@@ -52,19 +53,6 @@ public class Client{
 
             id = in.readInt();
             System.out.println("Seu ID: " + id);
-
-            outX = gp.activeWorld.player.position.x;
-            outY = gp.activeWorld.player.position.y;
-            outDirection = gp.activeWorld.player.sprite.direction.ordinal();
-            if(gp.activeWorld.player.sprite.moving)
-                outState = 1;
-            else
-                outState = 0;
-
-            out.writeDouble(outX);
-            out.writeDouble(outY);
-            out.writeInt(outDirection);
-            out.writeInt(outState);
 
             for(int i = 1; i < id; i++) {
                 System.out.println("instanciando player: " + i);
@@ -116,58 +104,59 @@ public class Client{
     public void receive(){
         try {
             while(connected){
-                connectedCount = in.readInt();
-                for(int i = 1; i <= connectedCount; i++) {
-                    if(i != id) {
-                        inId = in.readInt();
-                        inX = in.readDouble();
-                        inY = in.readDouble();
-                        inDirection = in.readInt();
-                        inState = in.readInt();
+                if(in.readInt() == 1) {
+                    connectedCount = in.readInt();
+                    inId = in.readInt();
+                    inX = in.readDouble();
+                    inY = in.readDouble();
+                    inDirection = in.readInt();
+                    inState = in.readInt();
 
-                        System.out.println("=-=Pacotes=-=");
-                        System.out.println("Conectados recebido: " + connectedCount);
-                        System.out.println("Id recebido: " + inId);
-                        System.out.println("X recebido: " + inX);
-                        System.out.println("Y recebido: " + inY);
-                        System.out.println("Direção recebido: " + inDirection);
-                        System.out.println("State recebido: " + inState);
+                    System.out.println("=-=Pacotes=-=");
+                    System.out.println("conexões estabelecidas: " + connectedCount);
+                    System.out.println("Id recebido: " + inId);
+                    System.out.println("X recebido: " + inX);
+                    System.out.println("Y recebido: " + inY);
+                    System.out.println("Direção recebido: " + inDirection);
+                    System.out.println("State recebido: " + inState);
 
-                        if (connectedCount != gp.activeWorld.connectedPlayers.size() + 1) {
-                            Player newP = new Player(gp, gp.activeWorld, true);
-                            newP.id = connectedCount;
-                            gp.activeWorld.connectedPlayers.add(newP);
-                            gp.activeWorld.elements.add(newP);
+                    //achar o player que está sendo atualizado
+                    Player connectedPlayer = null;
+                    boolean alreadyExists = false;
+                    for (Player p : gp.activeWorld.connectedPlayers) {
+                        if (p.id == inId) {
+                            alreadyExists = true;
+                            connectedPlayer = p;
+                            System.out.println("achou: " + connectedPlayer.id);
+                        }
+                    }
+
+                    if (!alreadyExists) {
+                        Player newP = new Player(gp, gp.activeWorld, true);
+                        newP.id = connectedCount;
+                        gp.activeWorld.connectedPlayers.add(newP);
+                        gp.activeWorld.elements.add(newP);
+                        connectedPlayer = newP;
+                    }
+
+                    //atualizar
+                    if (connectedPlayer != null) {
+                        connectedPlayer.position.set(inX, inY);
+
+                        if (inDirection == 0) {
+                            connectedPlayer.sprite.setDirection(Direction.DOWN);
+                        } else if (inDirection == 1) {
+                            connectedPlayer.sprite.setDirection(Direction.UP);
+                        } else if (inDirection == 2) {
+                            connectedPlayer.sprite.setDirection(Direction.LEFT);
+                        } else if (inDirection == 3) {
+                            connectedPlayer.sprite.setDirection(Direction.RIGHT);
                         }
 
-                        //achar o player que está sendo atualizado
-                        Player connectedPlayer = null;
-                        for (Player p : gp.activeWorld.connectedPlayers) {
-                            if (p.id == inId) {
-                                connectedPlayer = p;
-                                System.out.println("achou: " + connectedPlayer.id);
-                            }
-                        }
-
-                        //atualizar
-                        if (connectedPlayer != null) {
-                            connectedPlayer.position.set(inX, inY);
-
-                            if (inDirection == 0) {
-                                connectedPlayer.sprite.setDirection(Direction.DOWN);
-                            } else if (inDirection == 1) {
-                                connectedPlayer.sprite.setDirection(Direction.UP);
-                            } else if (inDirection == 2) {
-                                connectedPlayer.sprite.setDirection(Direction.LEFT);
-                            } else if (inDirection == 3) {
-                                connectedPlayer.sprite.setDirection(Direction.RIGHT);
-                            }
-
-                            if (inState == 0) {
-                                connectedPlayer.sprite.moving = false;
-                            } else if (inState == 1) {
-                                connectedPlayer.sprite.moving = true;
-                            }
+                        if (inState == 0) {
+                            connectedPlayer.sprite.moving = false;
+                        } else if (inState == 1) {
+                            connectedPlayer.sprite.moving = true;
                         }
                     }
                 }
