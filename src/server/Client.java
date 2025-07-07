@@ -1,6 +1,8 @@
 package server;
 
+import elements.Element;
 import elements.entities.Player;
+import elements.entities.Slime;
 import elements.states.Direction;
 import game.GamePanel;
 import utilities.Global;
@@ -104,7 +106,9 @@ public class Client{
     public void receive(){
         try {
             while(connected){
-                if(in.readInt() == 1) {
+                int datatype = in.readInt();
+                if(datatype == 1) {
+                    System.out.println("TIPO DE DADO: PACOTE DE PLAYER");
                     connectedCount = in.readInt();
                     inId = in.readInt();
                     inX = in.readDouble();
@@ -157,6 +161,27 @@ public class Client{
                             connectedPlayer.sprite.moving = false;
                         } else if (inState == 1) {
                             connectedPlayer.sprite.moving = true;
+                        }
+                    }
+                }
+                else if(datatype == 2){
+                    System.out.println("TIPO DE DADO: PACOTE DE SLIME");
+                    int slimeCount = in.readInt();
+                    int currentSlimeCount = 0;
+                    for(Element elm : gp.activeWorld.elements){
+                        if(elm instanceof Slime) {
+                            currentSlimeCount++;
+                        }
+                    }
+                    System.out.println("Quantidade de slimes ativos no servidor: " + slimeCount);
+                    System.out.println("Quantidade de slimes atual: " + currentSlimeCount);
+
+                    if(slimeCount != currentSlimeCount){
+                        int deltaSlime = slimeCount - currentSlimeCount;
+                        for(int i = 0; i < deltaSlime; i++){
+                            Slime newSlime = new Slime(gp,gp.activeWorld,gp.activeWorld.player,true);
+                            gp.activeWorld.elements.add(newSlime);
+                            System.out.println("+1 Slime instanciado!");
                         }
                     }
                 }

@@ -25,6 +25,7 @@ public class Slime extends Entity{
 
     BufferedImage shadowsheet;
 
+    boolean dummy;
     Sprite shadow;
     Vector direction = new Vector();
     Vector target = new Vector();
@@ -44,10 +45,11 @@ public class Slime extends Entity{
 
     Vector avoid = new Vector();
 
-    public Slime(GamePanel gp, World world, Player player){
+    public Slime(GamePanel gp, World world, Player player, boolean dummy){
 
         super(gp,world);
 
+        this.dummy = dummy;
         this.player = player;
         sprite.setFrame(r.nextInt(5));
     }
@@ -73,29 +75,29 @@ public class Slime extends Entity{
     @Override
 
     public void update(double deltaTime) {
-        rayCasts.update(velocity);
-        if(gp.cursorPoint != null) {
-            mouse.set(gp.activeWorld.camera.relativeWorld(mouse.set(gp.cursorPoint.getX(),gp.cursorPoint.getY())));
-            target.set(mouse);
-            target.set(getInAnchorOffset(target));
+        if(!dummy) {
+            rayCasts.update(velocity);
+            if (gp.cursorPoint != null) {
+                mouse.set(gp.activeWorld.camera.relativeWorld(mouse.set(gp.cursorPoint.getX(), gp.cursorPoint.getY())));
+                target.set(mouse);
+                target.set(getInAnchorOffset(target));
+            } else {
+                target.set(player.position);
+            }
+
+            nextPosition.set(position);
+            steering.set(0, 0);
+            steering.add(seek());
+            steering.add(avoid());
+
+            velocity.add(steering.multiply(deltaTime));
+            if (velocity.length() > maxVelocity)
+                velocity.normalize().multiply(maxVelocity);
+
+            nextPosition.add(velocity.get().multiply(deltaTime));
+
+            nextPositionValidation();
         }
-        else {
-            target.set(player.position);
-        }
-
-        nextPosition.set(position);
-        steering.set(0,0);
-        steering.add(seek());
-        steering.add(avoid());
-
-        velocity.add(steering.multiply(deltaTime));
-        if(velocity.length() > maxVelocity)
-            velocity.normalize().multiply(maxVelocity);
-
-        nextPosition.add(velocity.get().multiply(deltaTime));
-
-        nextPositionValidation();
-
         collider.update();
         sprite.update(deltaTime);
     }

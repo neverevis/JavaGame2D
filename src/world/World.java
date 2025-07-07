@@ -35,7 +35,7 @@ public class World {
     public GamePanel gp;
     public Camera camera = new Camera(this);
     public boolean showElementsAnchor = false;
-    public List<Element> elements = new ArrayList<>();
+    public List<Element> elements = new CopyOnWriteArrayList<>();
     public List<Player> connectedPlayers = new CopyOnWriteArrayList<>();
     public CollisionSystem collisionSystem = new CollisionSystem();
     public DialogueManager dialogueManager;
@@ -70,10 +70,13 @@ public class World {
         tree.setPositionByAnchor(new Vector(700,500));
         tree2 = new Tree(this.gp,this);
 
-        for(int i = 0; i < 4; i++){
-            Slime s = new Slime(gp,this,player);
-            elements.add(s);
-            s.setPositionByAnchor(new Vector(70*i,900));
+        if(gp.isVirtual) {
+            System.out.println("instanciando 4 slimes no jogo virtual");
+            for (int i = 0; i < 4; i++) {
+                Slime s = new Slime(gp, this, player,false);
+                elements.add(s);
+                s.setPositionByAnchor(new Vector(70 * i, 900));
+            }
         }
 
 

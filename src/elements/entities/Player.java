@@ -21,8 +21,6 @@ public class Player extends Entity {
     Vector directionVector = new Vector(0,0);
 
     double acceleration = 1100*Global.SCALE;
-    double deceleration = 10;
-
     boolean attacking = false;
     boolean coolDown = false;
     double slashTime = 0.5; //segundos
@@ -174,7 +172,7 @@ public class Player extends Entity {
             position.setX(nextPosition.x);
         else{
             for(Player p : gp.activeWorld.connectedPlayers){
-                if(this.collider.predictXCollision(p.collider, nextPosition.x));{
+                if(this.collider.predictXCollision(p.collider, nextPosition.x)){
                     Vector knockback = collider.center.sub(p.collider.center).normalize();
                     knockback.multiply(20);
                     velocity.add(knockback);

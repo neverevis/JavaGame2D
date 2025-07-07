@@ -1,6 +1,8 @@
 package server;
 
+import elements.Element;
 import elements.entities.Player;
+import elements.entities.Slime;
 import game.GamePanel;
 
 import java.io.*;
@@ -47,6 +49,17 @@ public class Server {
         while(true){
             try {
                 for (ClientHandler self : clients) {
+                    self.out.writeInt(2);
+                    int slimeCount = 0;
+                    for(Element elm: virtualGame.activeWorld.elements){
+                        if(elm instanceof Slime)
+                            slimeCount++;
+                    }
+                    self.out.writeInt(4);
+
+                    //atualizar slimes
+                    self.out.writeInt(3);
+
                     for (ClientHandler other : clients) {
                         if (other != self && other.hasSentData) {
                             self.out.writeInt(1);

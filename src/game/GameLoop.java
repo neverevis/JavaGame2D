@@ -13,9 +13,6 @@ public class GameLoop implements Runnable {
 
     @Override
     public void run() {
-
-
-        //variáveis do metodo run
         double frameTime = 1_000_000_000.0/ Global.FPS;
         double deltaTime;
         double lastTime = System.nanoTime();
