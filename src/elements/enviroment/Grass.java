@@ -15,7 +15,6 @@ import java.util.Random;
 public class Grass extends Element {
     double rotationa;
     double rotationb;
-    double distance = 16;
     double rotationOffset;
     Random random = new Random(System.nanoTime());
     Sprite r_blade;
@@ -24,7 +23,6 @@ public class Grass extends Element {
     double targetOffset = 0.7;
     double stepOffset = 0;
     double leaningSpeed = 6;
-    double time = 0;
 
     public Grass(GamePanel gp, World world){
         super(gp,world);
@@ -43,10 +41,9 @@ public class Grass extends Element {
 
     @Override
     public void update(double deltaTime) {
-        time += deltaTime;
         double maxAngle = 8;
-        rotationa = Math.sin(time * 4 + rotationOffset) * maxAngle;
-        rotationb = Math.sin(time * 4 + rotationOffset + 7) * maxAngle;
+        rotationa = Math.sin(gp.time * 4 + rotationOffset) * maxAngle;
+        rotationb = Math.sin(gp.time * 4 + rotationOffset + 7) * maxAngle;
 
         for(Element elm : gp.activeWorld.elements){
             if(elm instanceof Entity){
@@ -76,13 +73,13 @@ public class Grass extends Element {
 
     @Override
     public void render(Graphics2D g2d) {
-        shadow.render(g2d,(int)(position.x - world.camera.x),(int)(position.y - world.camera.y + 3*Global.SCALE),width,height);
+        shadow.render(g2d,(int)(position.x - world.camera.x),(int)(position.y - world.camera.y + 3*Global.SCALE));
         AffineTransform original = g2d.getTransform();
         g2d.rotate(Math.toRadians(rotationa) + stepOffset,width*anchorX* Global.SCALE + position.x - world.camera.x,height*anchorY*Global.SCALE + position.y - world.camera.y);
-        l_blade.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y),width,height);
+        l_blade.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y));
         g2d.setTransform(original);
         g2d.rotate(Math.toRadians(rotationb) + stepOffset,width*anchorX* Global.SCALE + position.x - world.camera.x,height*anchorY*Global.SCALE + position.y - world.camera.y);
-        r_blade.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y),width,height);
+        r_blade.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y));
         g2d.setTransform(original);
         if(gp.activeWorld.showElementsAnchor) {
             renderAnchor(g2d);

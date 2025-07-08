@@ -3,7 +3,7 @@ package utilities;
 import java.awt.*;
 
 public class Global {
-    public static final double FPS = 120;
+    public static final double FPS = 60;
     public static final double ORIGINAL_TILESIZE = 32;
     public static final double SCALE = 4;
     public static final int TILESIZE = (int)(ORIGINAL_TILESIZE*SCALE);

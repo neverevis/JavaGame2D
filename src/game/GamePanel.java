@@ -17,6 +17,7 @@ public class GamePanel extends Canvas
 {
     GameLoop gl;
     public boolean isVirtual;
+    public double time;
 
     public KeyHandler kh = new KeyHandler();
     public MouseInputs mouseInput = new MouseInputs();
@@ -84,6 +85,8 @@ public class GamePanel extends Canvas
     }
 
     public void update(double deltaTime){
+        time += deltaTime;
+
         if(gameState == GameState.MENU){
             mainMenu.update(deltaTime, cursorPoint);
         }

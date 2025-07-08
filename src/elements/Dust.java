@@ -1,6 +1,7 @@
 package elements;
 
 import elements.entities.Player;
+import elements.states.PlayerState;
 import game.GamePanel;
 import utilities.Sprite;
 import utilities.Vector;
@@ -19,7 +20,7 @@ public class Dust extends Element{
     BufferedImage dust;
     Player player;
     Random random = new Random();
-    List<Particle> particles = new ArrayList<Particle>();
+    List<Particle> particles = new ArrayList<>();
 
     public Dust(GamePanel gp, World world, Player player){
         super(gp,world);
@@ -37,16 +38,16 @@ public class Dust extends Element{
 
     @Override
     public void update(double deltaTime) {
-        if(gp.kh.rightKey || gp.kh.upKey || gp.kh.downKey || gp.kh.leftKey){
+        if(player.playerState == PlayerState.MOVING){
             if(random.nextInt(20) == 0){
-                particles.add(new Particle(player.getAnchorX(),player.getFeetCenterY() - 10));
+                particles.add(new Particle(player.getFeetCenterX(),player.getFeetCenterY() - 10));
             }
         }
 
         for(int i = particles.size() - 1; i >= 0; i--){
-            particles.get(i).sprite.update(deltaTime);
-            particles.get(i).scale-= 20*deltaTime;
-            particles.get(i).y+=particles.get(i).velocityY*deltaTime;
+            sprite.update(deltaTime);
+            particles.get(i).scale -= 20*deltaTime;
+            particles.get(i).y += particles.get(i).velocityY*deltaTime;
             particles.get(i).velocityY+=300*deltaTime;
             if(particles.get(i).scale <= 0)
                 particles.remove(i);
@@ -57,6 +58,6 @@ public class Dust extends Element{
     @Override
     public void render(Graphics2D g2d) {
         for(Particle particle : particles)
-            particle.sprite.render(g2d,(int)(particle.getX() - world.camera.x),(int)(particle.getY() - world.camera.y),(int)particle.scale,(int)particle.scale);
+            sprite.render(g2d,(int)(particle.getX() - gp.activeWorld.camera.x - particle.scale),(int)(particle.getY() - gp.activeWorld.camera.y - particle.scale),particle.scale);
     }
 }

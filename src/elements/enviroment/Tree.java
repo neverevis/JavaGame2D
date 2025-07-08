@@ -42,7 +42,7 @@ public class Tree extends Element {
 
     @Override
     public void render(Graphics2D g2d) {
-        sprite.render(g2d,(int)(position.x - world.camera.x),(int)(position.y - world.camera.y),width,height);
+        sprite.render(g2d,(int)(position.x - world.camera.x),(int)(position.y - world.camera.y));
         if(world.showElementsAnchor) {
             renderAnchor(g2d);
             collider.render(g2d);

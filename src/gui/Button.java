@@ -41,7 +41,7 @@ public class Button {
     }
 
     public void render(Graphics2D g){
-        btn.render(g,x,y,(int)(width/Global.SCALE),(int)(height/Global.SCALE));
+        btn.render(g,x,y);
     }
 
     public void update(double dt, Point cursorPoint,MouseInputs mouseInput){

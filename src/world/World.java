@@ -2,6 +2,7 @@ package world;
 
 import elements.Dust;
 import elements.Element;
+import elements.entities.Entity;
 import elements.entities.Player;
 import elements.entities.Slime;
 import elements.enviroment.Fence;
@@ -42,7 +43,6 @@ public class World {
     public Player player;
     Tree tree;
     Tree tree2;
-    Dust dust;
     Fence fence;
     Pillar pillar;
     Pillar p2;
@@ -64,7 +64,6 @@ public class World {
         player.setPosition(32/2*Global.TILESIZE,32/2* Global.TILESIZE);
         p2 = new Pillar(this.gp,this);
         p2.setPosition(1500,1500);
-        dust = new Dust(this.gp,this,player);
         tree = new Tree(this.gp,this);
         fence = new Fence(this.gp,this);
         tree.setPositionByAnchor(new Vector(700,500));
@@ -105,7 +104,6 @@ public class World {
         elements.add(player);
         elements.add(tree2);
         elements.add(tree);
-        elements.add(dust);
 
         tiles = new Tiles();
         cols = 100;

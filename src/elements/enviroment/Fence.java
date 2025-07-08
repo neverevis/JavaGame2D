@@ -39,7 +39,7 @@ public class Fence extends Element {
 
     @Override
     public void render(Graphics2D g2d) {
-        sprite.render(g2d,world.camera.relativeX(position.x),world.camera.relativeY(position.y),width,height);
+        sprite.render(g2d,world.camera.relativeX(position.x),world.camera.relativeY(position.y));
 
         if(world.showElementsAnchor){
             renderAnchor(g2d);

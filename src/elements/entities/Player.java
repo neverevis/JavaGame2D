@@ -1,5 +1,6 @@
 package elements.entities;
 
+import elements.Dust;
 import elements.Element;
 import elements.states.Direction;
 import elements.states.PlayerState;
@@ -39,6 +40,7 @@ public class Player extends Entity {
     Sprite shadow;
     double knockBackForce = 300*Global.SCALE;
     boolean serverOriented = false;
+    Dust dust = new Dust(gp,gp.activeWorld,this);
 
     Sound sound = new Sound();
 
@@ -87,6 +89,7 @@ public class Player extends Entity {
             }
         }
 
+        dust.update(deltaTime);
         sprite.update(deltaTime);
         attack.update(deltaTime);
     }
@@ -113,11 +116,12 @@ public class Player extends Entity {
 
     @Override
     public void render(Graphics2D g2d){
-        shadow.render(g2d,(int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y+ 2*Global.SCALE),width,height);
+        shadow.render(g2d,(int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y+ 2*Global.SCALE));
+        dust.render(g2d);
         if(direction == Direction.RIGHT || direction == Direction.UP) {
             renderSwordAndSlash(g2d);
         }
-        sprite.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y),width,height);
+        sprite.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y));
         if(gp.activeWorld.showElementsAnchor) {
             renderAnchor(g2d);
             collider.render(g2d);
@@ -218,7 +222,7 @@ public class Player extends Entity {
 
     private void renderSwordAndSlash(Graphics2D g2d){
         if (playerState == PlayerState.ATTACKING)
-            attack.render(g2d, (int)(position.getX() - world.camera.x - 64*Global.SCALE), (int)(position.getY() - world.camera.y - 64*Global.SCALE),160,160);
+            attack.render(g2d, (int)(position.getX() - world.camera.x - 64*Global.SCALE), (int)(position.getY() - world.camera.y - 64*Global.SCALE));
     }
 
     private void setPlayerDirection(Direction direction){

@@ -43,7 +43,7 @@ public class Pillar extends Element {
 
     @Override
     public void render(Graphics2D g2d) {
-        sprite.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y),width,height);
+        sprite.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y));
         if(gp.activeWorld.showElementsAnchor) {
             renderAnchor(g2d);
             collider.render(g2d);

@@ -9,21 +9,17 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Particle {
-    Random random = new Random(System.nanoTime());
+    private static final Random random = new Random();
     public double x;
     public double y;
     public double velocityY;
     public double scale;
-    BufferedImage dust;
-    Sprite sprite;
+
     public Particle(double x, double y){
         scale = random.nextInt(5) + 10;
         this.x = x;
         this.y = y;
         this.velocityY = -100.0;
-
-        sprite = new Sprite("/resources/particles/dust.png",16,16,0.2f);
-        sprite.moving = true;
     }
 
     public double getX(){

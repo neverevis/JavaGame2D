@@ -166,8 +166,8 @@ public class Slime extends Entity{
 
     @Override
     public void render(Graphics2D g2d) {
-        shadow.render(g2d,(int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y+ 1*Global.SCALE),width,height);
-        sprite.render(g2d,(int)(position.getX() - world.camera.x) ,(int)(position.getY() - world.camera.y),width,height);
+        shadow.render(g2d,(int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y+ 1*Global.SCALE));
+        sprite.render(g2d,(int)(position.getX() - world.camera.x) ,(int)(position.getY() - world.camera.y));
         if(gp.activeWorld.showElementsAnchor) {
             renderAnchor(g2d);
             collider.render(g2d);

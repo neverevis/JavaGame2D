@@ -4,6 +4,7 @@ import elements.Element;
 import elements.entities.Player;
 import elements.entities.Slime;
 import elements.states.Direction;
+import elements.states.PlayerState;
 import game.GamePanel;
 import utilities.Global;
 
@@ -132,6 +133,7 @@ public class Client{
                             alreadyExists = true;
                             connectedPlayer = p;
                             System.out.println("achou: " + connectedPlayer.id);
+                            break;
                         }
                     }
 
@@ -159,7 +161,9 @@ public class Client{
 
                         if (inState == 0) {
                             connectedPlayer.sprite.moving = false;
+                            connectedPlayer.playerState = PlayerState.IDLE;
                         } else if (inState == 1) {
+                            connectedPlayer.playerState = PlayerState.MOVING;
                             connectedPlayer.sprite.moving = true;
                         }
                     }

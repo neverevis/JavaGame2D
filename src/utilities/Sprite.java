@@ -32,15 +32,16 @@ public class Sprite {
         BufferedImage spriteSheet;
         try{
             spriteSheet = ImageIO.read(getClass().getResourceAsStream(path));
+            spriteSheet = ImageManager.getScaled(spriteSheet,(int)Global.SCALE);
         } catch (IOException e) {
             throw new RuntimeException();
         }
-        this.width = width;
-        this.height = height;
+        this.width = (int)(width*Global.SCALE);
+        this.height = (int)(height*Global.SCALE);
 
         if(spriteSheet != null) {
-            totalDirection = spriteSheet.getHeight() / height;
-            totalFrame = spriteSheet.getWidth() / width;
+            totalDirection = spriteSheet.getHeight() / this.height;
+            totalFrame = spriteSheet.getWidth() / this.width;
         }
 
         changeRatio = (int)(Global.FPS*seconds/totalFrame);
@@ -96,8 +97,8 @@ public class Sprite {
         }
     }
 
-    public void render(Graphics2D g, int x, int y,int width, int height){
-        g.drawImage(sprite[direction.code][frame], x, y, (int)(width*Global.SCALE), (int)(height*Global.SCALE), null);
+    public void render(Graphics2D g, int x, int y){
+        g.drawImage(sprite[direction.code][frame], x, y, null);
 
         if (takingDamage) {
             BufferedImage frameSprite = sprite[direction.ordinal()][frame];
@@ -117,7 +118,32 @@ public class Sprite {
             g2.dispose();
 
             // Desenha o efeito branco no local correto
-            g.drawImage(whiteFlash, x, y, (int)(width*Global.SCALE), (int)(height*Global.SCALE), null);
+            g.drawImage(whiteFlash, x, y, null);
+        }
+    }
+
+    public void render(Graphics2D g, int x, int y, double size){
+        g.drawImage(sprite[direction.code][frame], x, y, (int)(size*Global.SCALE),(int)(size*Global.SCALE),null);
+
+        if (takingDamage) {
+            BufferedImage frameSprite = sprite[direction.ordinal()][frame];
+
+            // Cria um sprite branco com a opacidade atual
+            BufferedImage whiteFlash = new BufferedImage(frameSprite.getWidth(), frameSprite.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = whiteFlash.createGraphics();
+
+            // Set o alpha
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillOpacity));
+
+            // Aplica o "branco" por cima do sprite, preservando a shape
+            float[] scale = {0f, 0f, 0f, 1f};
+            float[] offset = {255f, 255f, 255f, 0f};
+            RescaleOp op = new RescaleOp(scale, offset, null);
+            g2.drawImage(op.filter(frameSprite, null), 0, 0, null);
+            g2.dispose();
+
+            // Desenha o efeito branco no local correto
+            g.drawImage(whiteFlash, x, y,(int)(whiteFlash.getWidth() * size),(int)(whiteFlash.getHeight() * size), null);
         }
     }
 
