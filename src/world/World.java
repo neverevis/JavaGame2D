@@ -70,23 +70,33 @@ public class World {
         tree.setPositionByAnchor(new Vector(700,500));
         tree2 = new Tree(this.gp,this);
 
-        if(gp.isVirtual) {
-            System.out.println("instanciando 4 slimes no jogo virtual");
-            for (int i = 0; i < 4; i++) {
-                Slime s = new Slime(gp, this, player,false);
-                elements.add(s);
-                s.setPositionByAnchor(new Vector(70 * i, 900));
+
+        /*for (int i = 0; i < 4; i++) {
+            Slime s = new Slime(gp, this, player,false);
+            elements.add(s);
+            s.setPositionByAnchor(new Vector(70 * i, 900));
+        }*/
+
+        double centerX = 22*Global.TILESIZE + 8*8*Global.SCALE;
+        double centerY = 22*Global.TILESIZE + 8*8*Global.SCALE;
+
+        for(int i = 0; i < 16; i++){
+            for(int j = 0; j < 16; j++){
+                double px = 22*Global.TILESIZE + j * 8*Global.SCALE;
+                double py = 22*Global.TILESIZE + i * 8*Global.SCALE;
+
+                double dx = px - centerX;
+                double dy = py - centerY;
+
+                double dist = Math.sqrt(dx*dx + dy*dy);
+
+                if(dist < 8*8*Global.SCALE) {
+                    Grass grass = new Grass(gp, this);
+                    grass.setPositionByAnchor(new Vector(px, py));
+                    elements.add(grass);
+                }
             }
         }
-
-
-        /*for(int i = 0; i < 50 ;i++){
-            for(int j = 0;j < 50; j++){
-                Grass grass = new Grass(gp,this);
-                grass.setPositionByAnchor(new Vector(22*Global.TILESIZE + j * 12,22*Global.TILESIZE + i * 12));
-                elements.add(grass);
-            }
-        }*/
 
         tree2.setPositionByAnchor(new Vector(1000,1900));
         fence.setPositionByAnchor(new Vector(1500,1500));

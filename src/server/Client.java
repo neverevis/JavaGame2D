@@ -193,7 +193,7 @@ public class Client{
 
     void sleep(){
         try{
-            Thread.sleep(16);
+            Thread.sleep((long)(1000/Global.FPS));
         }catch (InterruptedException e)
         {
             e.printStackTrace();

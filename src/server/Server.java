@@ -4,6 +4,7 @@ import elements.Element;
 import elements.entities.Player;
 import elements.entities.Slime;
 import game.GamePanel;
+import utilities.Global;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -76,7 +77,7 @@ public class Server {
                 throw new RuntimeException(e);
             }
             try {
-                Thread.sleep(16);
+                Thread.sleep((long)(1000/ Global.FPS));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -13,4 +13,12 @@ public class ImageManager {
         return result;
     }
 
+    public static BufferedImage getScaled(BufferedImage image, int scale){
+        BufferedImage result = new BufferedImage(image.getWidth()*scale,image.getHeight()*scale,BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics2d = result.createGraphics();
+        graphics2d.drawImage(image,0,0,image.getWidth()*scale,image.getHeight()*scale,null);
+        graphics2d.dispose();
+        return result;
+    }
+
 }
