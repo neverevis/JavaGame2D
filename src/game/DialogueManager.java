@@ -1,7 +1,7 @@
 package game;
 
 import elements.states.PlayerState;
-import utilities.Global;
+import utilities.C;
 import world.World;
 
 import java.awt.*;
@@ -42,11 +42,11 @@ public class DialogueManager {
     public void render(Graphics2D g){
         if(triggered) {
             g.setColor(Color.black);
-            g.fillRect(100, Global.SCREENHEIGHT - 300, Global.SCREENWIDTH - 200, 200);
+            g.fillRect(100, C.SCREENHEIGHT - 300, C.SCREENWIDTH - 200, 200);
             g.setColor(Color.WHITE);
-            g.drawRect(100, Global.SCREENHEIGHT - 300, Global.SCREENWIDTH - 200, 200);
+            g.drawRect(100, C.SCREENHEIGHT - 300, C.SCREENWIDTH - 200, 200);
             g.setFont(font);
-            g.drawString(activeDialogue.get(activeLine), (Global.SCREENWIDTH)/2 - (20 * activeDialogue.get(activeLine).length())/4, Global.SCREENHEIGHT - 300 + 100);
+            g.drawString(activeDialogue.get(activeLine), (C.SCREENWIDTH)/2 - (20 * activeDialogue.get(activeLine).length())/4, C.SCREENHEIGHT - 300 + 100);
         }
     }
 

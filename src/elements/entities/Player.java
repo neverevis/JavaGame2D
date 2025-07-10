@@ -1,13 +1,11 @@
 package elements.entities;
 
 import elements.Dust;
-import elements.Element;
 import elements.states.Direction;
 import elements.states.PlayerState;
 import game.GamePanel;
 import game.KeyHandler;
-import server.Client;
-import utilities.Global;
+import utilities.C;
 import utilities.Sound;
 import utilities.Sprite;
 import utilities.Vector;
@@ -21,7 +19,7 @@ public class Player extends Entity {
     Vector velocity = new Vector(0,0);
     Vector directionVector = new Vector(0,0);
 
-    double acceleration = 1100*Global.SCALE;
+    double acceleration = 1100* C.SCALE;
     boolean attacking = false;
     boolean coolDown = false;
     double slashTime = 0.5; //segundos
@@ -37,9 +35,10 @@ public class Player extends Entity {
     KeyHandler key;
     public Direction direction;
     Sprite attack;
-    Sprite shadow;
-    double knockBackForce = 300*Global.SCALE;
+    static Sprite shadow;
+    double knockBackForce = 300* C.SCALE;
     boolean serverOriented = false;
+    double lastAttack = 0;
     Dust dust = new Dust(gp,gp.activeWorld,this);
 
     Sound sound = new Sound();
@@ -49,11 +48,11 @@ public class Player extends Entity {
         this.key = gp.kh;
         this.serverOriented = serverOriented;
 
-        setSize((int)Global.ORIGINAL_TILESIZE,(int)Global.ORIGINAL_TILESIZE);
+        setSize((int) C.ORIGINAL_TILESIZE,(int) C.ORIGINAL_TILESIZE);
         setPositionByAnchor(new Vector(500,700));
         setSpeed(100);
-        sprite = new Sprite("/resources/entities/players/playersheet.png",width,height,1f);
-        attack = new Sprite("/resources/entities/players/attack.png", 160, 160, 0.67f);
+        sprite = new Sprite("/resources/entities/players/playersheet.png",width,height,0.87f);
+        attack = new Sprite("/resources/entities/players/attack.png", 96, 96, 0.87f);
         shadow = new Sprite("/resources/entities/monsters/shadow.png",32,32,1f);
         collider.setBounds(this,11,26,10,6);
         collider.collision = true;
@@ -71,9 +70,23 @@ public class Player extends Entity {
         if(!serverOriented) {
             dealt += (health - dealt) * 0.06;
 
-            if (!attacking) {
-                updateMovement(deltaTime);
+            if(playerState == PlayerState.ATTACKING){
+                if(gp.time - lastAttack > 0.80){
+                    playerState = PlayerState.IDLE;
+                }
             }
+
+            if(gp.mouseInput.mouseClicked && playerState != PlayerState.ATTACKING) {
+                setAttackDir();
+                velocity.reset();
+                playerState = PlayerState.ATTACKING;
+                lastAttack = gp.time;
+            }
+
+            if(playerState == PlayerState.ATTACKING && (gp.time - lastAttack > 0.3 && gp.time - lastAttack < 0.31))
+                velocity.add(new Vector(0,500));
+
+            updateMovement(deltaTime);
 
             if (gp.kh.toggleAnchorDisplay) {
                 world.showElementsAnchor = true;
@@ -83,9 +96,14 @@ public class Player extends Entity {
 
             if (playerState == PlayerState.IDLE) {
                 sprite.moving = false;
-            } else if (playerState == PlayerState.MOVING) {
+                attack.moving = false;
+            } else if(playerState == PlayerState.MOVING){
                 sprite.moving = true;
+                attack.moving = false;
 
+            }
+            else if(playerState == PlayerState.ATTACKING){
+                attack.moving = true;
             }
         }
 
@@ -116,12 +134,14 @@ public class Player extends Entity {
 
     @Override
     public void render(Graphics2D g2d){
-        shadow.render(g2d,(int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y+ 2*Global.SCALE));
+        shadow.render(g2d,(int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y+ 2* C.SCALE));
         dust.render(g2d);
-        if(direction == Direction.RIGHT || direction == Direction.UP) {
+
+        if(playerState != PlayerState.ATTACKING)
+            sprite.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y));
+        else
             renderSwordAndSlash(g2d);
-        }
-        sprite.render(g2d, (int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y));
+
         if(gp.activeWorld.showElementsAnchor) {
             renderAnchor(g2d);
             collider.render(g2d);
@@ -136,33 +156,36 @@ public class Player extends Entity {
     public void updateMovement(double dt){
         directionVector.reset();
 
-        if (key.upKey) {
+        if (key.upKey && playerState != PlayerState.ATTACKING) {
             directionVector.y --;
             setPlayerDirection(Direction.UP);
         }
-        if (key.downKey) {
+        if (key.downKey && playerState != PlayerState.ATTACKING) {
             directionVector.y ++;
             setPlayerDirection(Direction.DOWN);
         }
-        if (key.leftKey) {
+        if (key.leftKey && playerState != PlayerState.ATTACKING) {
             directionVector.x --;
             setPlayerDirection(Direction.LEFT);
         }
 
-        if (key.rightKey) {
+        if (key.rightKey && playerState != PlayerState.ATTACKING) {
             directionVector.x ++;
             setPlayerDirection(Direction.RIGHT);
         }
 
         if(!key.leftKey && !key.upKey && !key.downKey && !key.rightKey){
-            playerState = PlayerState.IDLE;
+            if(playerState != PlayerState.ATTACKING)
+                playerState = PlayerState.IDLE;
             elapsedTime += dt;
 
             velocity.multiply(0.95);
 
         }else{
-            playerState = PlayerState.MOVING;
-            velocity.add(directionVector.normalize().multiply(acceleration * dt));
+            if(playerState != PlayerState.ATTACKING) {
+                playerState = PlayerState.MOVING;
+                velocity.add(directionVector.normalize().multiply(acceleration * dt));
+            }
 
             if(velocity.length() > speed)
                 velocity.normalize().multiply(speed);
@@ -198,8 +221,8 @@ public class Player extends Entity {
 
     public void setAttackDir(){
         //diferença dx e dy do centro da tela em relação ao clique
-        double clickDx = (double)Global.SCREENWIDTH/2 - gp.mouseInput.x;
-        double clickDy = (double)Global.SCREENHEIGHT/2 - gp.mouseInput.y;
+        double clickDx = (double) C.SCREENWIDTH/2 - gp.mouseInput.x;
+        double clickDy = (double) C.SCREENHEIGHT/2 - gp.mouseInput.y;
 
         //angulo em radianos
         double angle = Math.atan2(clickDy,clickDx);
@@ -222,7 +245,7 @@ public class Player extends Entity {
 
     private void renderSwordAndSlash(Graphics2D g2d){
         if (playerState == PlayerState.ATTACKING)
-            attack.render(g2d, (int)(position.getX() - world.camera.x - 64*Global.SCALE), (int)(position.getY() - world.camera.y - 64*Global.SCALE));
+            attack.render(g2d, (int)(position.getX() - world.camera.x - 32*C.SCALE), (int)(position.getY() - world.camera.y - 32*C.SCALE));
     }
 
     private void setPlayerDirection(Direction direction){

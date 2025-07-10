@@ -1,9 +1,23 @@
 package utilities;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class ImageManager {
+
+    public static BufferedImage loadImage(String path,int width, int height){
+        BufferedImage img = null;
+        try{
+            img = ImageIO.read(ImageManager.class.getResourceAsStream(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        img = toCompatibleImage(img);
+        return img;
+    }
 
     public static BufferedImage getCroppedImg(BufferedImage image,int x, int y, int width, int height){
         BufferedImage result = new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
@@ -19,6 +33,25 @@ public class ImageManager {
         graphics2d.drawImage(image,0,0,image.getWidth()*scale,image.getHeight()*scale,null);
         graphics2d.dispose();
         return result;
+    }
+
+    public static BufferedImage toCompatibleImage(BufferedImage image) {
+        GraphicsConfiguration gfx_config = GraphicsEnvironment
+                .getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice()
+                .getDefaultConfiguration();
+
+        if (image.getColorModel().equals(gfx_config.getColorModel()))
+            return image;
+
+        BufferedImage newImage = gfx_config.createCompatibleImage(
+                image.getWidth(), image.getHeight(), image.getTransparency());
+
+        Graphics2D g2d = newImage.createGraphics();
+        g2d.drawImage(image, 0, 0, null);
+        g2d.dispose();
+
+        return newImage;
     }
 
 }

@@ -26,11 +26,11 @@ public class Collider {
     }
 
     public void setBounds(Element owner, int offsetX, int offsetY, int width, int height){
-        this.width = width*Global.SCALE;
-        this.height = height*Global.SCALE;
+        this.width = width* C.SCALE;
+        this.height = height* C.SCALE;
         this.owner = owner;
-        this.offsetX = offsetX *Global.SCALE;
-        this.offsetY = offsetY *Global.SCALE;
+        this.offsetX = offsetX * C.SCALE;
+        this.offsetY = offsetY * C.SCALE;
         colliderBox = new Rectangle((int)this.offsetX,(int)this.offsetY,(int)this.width,(int)this.height);
         nextColliderBox = new Rectangle((int)this.offsetX,(int)this.offsetY,(int)this.width,(int)this.height);
         centerOffset = new Vector(this.width/2,this.height/2);

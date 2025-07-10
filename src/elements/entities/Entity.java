@@ -2,14 +2,9 @@ package elements.entities;
 
 import elements.Element;
 import game.GamePanel;
-import utilities.Collider;
-import utilities.Global;
+import utilities.C;
 import utilities.Vector;
 import world.World;
-
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class Entity extends Element {
     public double speed;
@@ -23,6 +18,6 @@ public abstract class Entity extends Element {
 
     public void setSpeed(double speed){
         if(speed >= 0)
-            this.speed = speed* Global.SCALE;
+            this.speed = speed* C.SCALE;
     }
 }

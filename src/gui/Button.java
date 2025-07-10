@@ -2,14 +2,10 @@ package gui;
 
 import elements.states.Direction;
 import game.MouseInputs;
-import utilities.Global;
+import utilities.C;
 import utilities.Sprite;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.nio.Buffer;
 
 public class Button {
     private int x;
@@ -24,8 +20,8 @@ public class Button {
 
 
     public void setSize(int width, int height){
-        this.width = (int)(width * Global.SCALE);
-        this.height = (int)(height * Global.SCALE);
+        this.width = (int)(width * C.SCALE);
+        this.height = (int)(height * C.SCALE);
     }
 
     public void setPosition(int x, int y){

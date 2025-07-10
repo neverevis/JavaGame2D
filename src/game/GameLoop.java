@@ -1,6 +1,8 @@
 package game;
 
-import utilities.Global;
+import utilities.C;
+
+import java.awt.*;
 
 public class GameLoop implements Runnable {
     GamePanel gp;
@@ -13,7 +15,7 @@ public class GameLoop implements Runnable {
 
     @Override
     public void run() {
-        double frameTime = 1_000_000_000.0/ Global.FPS;
+        double frameTime = 1_000_000_000.0/ C.FPS;
         double deltaTime;
         double lastTime = System.nanoTime();
         double nextFrame = System.nanoTime() + frameTime;

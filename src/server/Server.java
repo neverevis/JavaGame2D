@@ -4,12 +4,11 @@ import elements.Element;
 import elements.entities.Player;
 import elements.entities.Slime;
 import game.GamePanel;
-import utilities.Global;
+import utilities.C;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -77,7 +76,7 @@ public class Server {
                 throw new RuntimeException(e);
             }
             try {
-                Thread.sleep((long)(1000/ Global.FPS));
+                Thread.sleep((long)(1000/ C.FPS));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

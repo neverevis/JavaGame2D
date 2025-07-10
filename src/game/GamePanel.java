@@ -3,14 +3,14 @@ package game;
 import elements.states.GameState;
 import gui.MainMenu;
 import server.Client;
-import utilities.Global;
+import utilities.C;
 import world.World;
 
-import javax.imageio.ImageIO;                   // Importa a classe ImageIO, usada para ler e escrever arquivos de imagem (como PNG, JPG, etc).
-import java.awt.*;                              // Importa todo o conteudo da biblioteca AWT
-import java.awt.image.BufferStrategy;           // Importa a classe de BufferStrategy, usada na classe GameFrame
-import java.awt.image.BufferedImage;            // Importa a classe BufferedImage que representa uma imagem que pode ser manipulada pixel a pixel na memória.
-import java.io.IOException;                     // Importa a classe IOException, usada para tratar erros que podem ocorrer durante operações de entrada/saída (como ler imagens de arquivos).
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 
 public class GamePanel extends Canvas
@@ -29,13 +29,16 @@ public class GamePanel extends Canvas
     public Thread game;
     public GameState gameState = GameState.MENU;
     MainMenu mainMenu = new MainMenu(this);
+    Font font = new Font("Arial", Font.BOLD, 30);
+    double zoom = 1;
+    BufferedImage frameBuffer = new BufferedImage(C.SCREENWIDTH,C.SCREENHEIGHT,BufferedImage.TYPE_INT_ARGB);
 
     public GamePanel(boolean isVirtual)
     {
         this.isVirtual = isVirtual;
         if(!isVirtual)
             client = new Client(this);
-        setPreferredSize(new Dimension(Global.SCREENWIDTH,Global.SCREENHEIGHT));
+        setPreferredSize(new Dimension(C.SCREENWIDTH, C.SCREENHEIGHT));
         setBackground(Color.black);
         setFocusable(true);
         addKeyListener(kh);
@@ -53,35 +56,45 @@ public class GamePanel extends Canvas
     }
 
     public void render() {
+
         BufferStrategy bufferStrategy = getBufferStrategy();
         Graphics2D g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 
-        g2d.setColor(Color.black);
-        g2d.fillRect(0,0,getWidth(),getHeight());
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
-        if(gameState == GameState.MENU){
+        if(zoom > 1) {
+            g2d.translate(-(int)(C.SCREENWIDTH*zoom - C.SCREENWIDTH)/2,-(int)(C.SCREENHEIGHT*zoom - C.SCREENHEIGHT)/2);
+            g2d.scale(zoom, zoom);
+        }
+
+        g2d.setColor(Color.black);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+
+        if (gameState == GameState.MENU) {
             g2d.setColor(Color.blue);
-            g2d.fillRect(0,0,getWidth(),getHeight());
+            g2d.fillRect(0, 0, getWidth(), getHeight());
             mainMenu.render(g2d);
         }
 
-        if(gameState == GameState.INWORLD){
+        if (gameState == GameState.INWORLD) {
             activeWorld.render(g2d);
 
-            if(activeWorld.showElementsAnchor) {
-                g2d.setFont(new Font("Arial", Font.BOLD, 30));
+            if (activeWorld.showElementsAnchor) {
+                g2d.setFont(font);
                 g2d.setColor(Color.WHITE);
                 g2d.drawString("FPS: " + String.valueOf(gl.finalFps), 10, 40);
             }
         }
         cursorPoint = getMousePosition();
 
-        if(cursorPoint != null)
-            g2d.drawImage(mouseImg,(int)(cursorPoint.x-mouseImg.getWidth()* Global.SCALE /2),(int)(cursorPoint.y-mouseImg.getHeight()* Global.SCALE/2),(int)(mouseImg.getWidth()*Global.SCALE), (int)(mouseImg.getHeight()*Global.SCALE), null);
+        if (cursorPoint != null)
+            g2d.drawImage(mouseImg, (int) (cursorPoint.x - mouseImg.getWidth() * C.SCALE / 2), (int) (cursorPoint.y - mouseImg.getHeight() * C.SCALE / 2), (int) (mouseImg.getWidth() * C.SCALE), (int) (mouseImg.getHeight() * C.SCALE), null);
 
         g2d.dispose();
         bufferStrategy.show();
-        Toolkit.getDefaultToolkit().sync();
     }
 
     public void update(double deltaTime){
@@ -91,6 +104,18 @@ public class GamePanel extends Canvas
             mainMenu.update(deltaTime, cursorPoint);
         }
         if(gameState == GameState.INWORLD){
+            if(kh.zoom){
+                if(zoom < 3)
+                    zoom += (3 - zoom) * 1 * deltaTime;
+            }
+            else{
+                if(zoom != 1) {
+                    zoom -= (zoom - 1) * 4 * deltaTime;
+                    if(zoom < 1.001){
+                        zoom = 1;
+                    }
+                }
+            }
             if(kh.escapeKey)
                 gameState = GameState.MENU;
             activeWorld.update(deltaTime);

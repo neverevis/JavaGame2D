@@ -1,7 +1,6 @@
 package world;
 
-import game.GamePanel;
-import utilities.Global;
+import utilities.C;
 import utilities.ImageManager;
 
 import javax.imageio.ImageIO;
@@ -19,10 +18,10 @@ public class Tiles {
 
     private void loadTiles(){
         try {
-            tile[0] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/grass.png")),(int)Global.SCALE);
-            tile[1] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/flowergrass.png")),(int)Global.SCALE);
-            tile[2] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/bush.png")),(int)Global.SCALE);
-            tile[3] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/stone.png")),(int)Global.SCALE);
+            tile[0] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/grass.png")),(int) C.SCALE);
+            tile[1] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/flowergrass.png")),(int) C.SCALE);
+            tile[2] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/bush.png")),(int) C.SCALE);
+            tile[3] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/stone.png")),(int) C.SCALE);
 
 
         } catch (IOException e) {

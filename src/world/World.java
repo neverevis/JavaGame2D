@@ -1,6 +1,5 @@
 package world;
 
-import elements.Dust;
 import elements.Element;
 import elements.entities.Entity;
 import elements.entities.Player;
@@ -13,7 +12,7 @@ import game.CollisionSystem;
 import game.DialogueManager;
 import game.GamePanel;
 import server.Client;
-import utilities.Global;
+import utilities.C;
 import utilities.Sound;
 import utilities.Vector;
 
@@ -37,6 +36,7 @@ public class World {
     public Camera camera = new Camera(this);
     public boolean showElementsAnchor = false;
     public List<Element> elements = new CopyOnWriteArrayList<>();
+    public List<Entity> entities = new ArrayList<>();
     public List<Player> connectedPlayers = new CopyOnWriteArrayList<>();
     public CollisionSystem collisionSystem = new CollisionSystem();
     public DialogueManager dialogueManager;
@@ -61,7 +61,7 @@ public class World {
         this.tilePath = tilePath;
         if(!gp.isVirtual)
             player = new Player(this.gp,this,false);
-        player.setPosition(32/2*Global.TILESIZE,32/2* Global.TILESIZE);
+        player.setPosition(32/2* C.TILESIZE,32/2* C.TILESIZE);
         p2 = new Pillar(this.gp,this);
         p2.setPosition(1500,1500);
         tree = new Tree(this.gp,this);
@@ -73,23 +73,24 @@ public class World {
         /*for (int i = 0; i < 4; i++) {
             Slime s = new Slime(gp, this, player,false);
             elements.add(s);
+            entities.add(s);
             s.setPositionByAnchor(new Vector(70 * i, 900));
         }*/
 
-        double centerX = 22*Global.TILESIZE + 8*8*Global.SCALE;
-        double centerY = 22*Global.TILESIZE + 8*8*Global.SCALE;
+        double centerX = 22* C.TILESIZE + 10 *8* C.SCALE;
+        double centerY = 22* C.TILESIZE + 10 *8* C.SCALE;
 
-        for(int i = 0; i < 16; i++){
-            for(int j = 0; j < 16; j++){
-                double px = 22*Global.TILESIZE + j * 8*Global.SCALE;
-                double py = 22*Global.TILESIZE + i * 8*Global.SCALE;
+        for(int i = 0; i < 20; i++){
+            for(int j = 0; j < 20; j++){
+                double px = 22* C.TILESIZE + j * 8* C.SCALE;
+                double py = 22* C.TILESIZE + i * 8* C.SCALE;
 
                 double dx = px - centerX;
                 double dy = py - centerY;
 
                 double dist = Math.sqrt(dx*dx + dy*dy);
 
-                if(dist < 8*8*Global.SCALE) {
+                if(dist < 10 *8* C.SCALE) {
                     Grass grass = new Grass(gp, this);
                     grass.setPositionByAnchor(new Vector(px, py));
                     elements.add(grass);
@@ -102,14 +103,15 @@ public class World {
         elements.add(p2);
         elements.add(fence);
         elements.add(player);
+        entities.add(player);
         elements.add(tree2);
         elements.add(tree);
 
         tiles = new Tiles();
         cols = 100;
         rows = 100;
-        width = cols* Global.TILESIZE;
-        height = rows* Global.TILESIZE;
+        width = cols* C.TILESIZE;
+        height = rows* C.TILESIZE;
         convertWorld();
     }
 
@@ -155,24 +157,24 @@ public class World {
     public void render(Graphics2D g2d){
         for(int i = 0; i < cols; i++){
             for(int j = 0; j < rows; j++){
-                double tileX = j*Global.TILESIZE - camera.x;
-                double tileY = i*Global.TILESIZE - camera.y;
+                double tileX = j* C.TILESIZE - camera.x;
+                double tileY = i* C.TILESIZE - camera.y;
 
-                if(tileX > - Global.TILESIZE && tileX < Global.SCREENWIDTH && tileY > - Global.TILESIZE && tileY < Global.SCREENHEIGHT) {
+                if(tileX > - C.TILESIZE && tileX < C.SCREENWIDTH && tileY > - C.TILESIZE && tileY < C.SCREENHEIGHT) {
                     tiles.drawTile(g2d, world[i][j], (int)tileX, (int)tileY);
                 }
             }
         }
 
         for(Element elm : elements){
-            if(elm.position.x - camera.x < Global.SCREENWIDTH && elm.position.y - camera.y < Global.SCREENHEIGHT && elm.position.x+elm.width*Global.SCALE - camera.x > 0 && elm.position.y+elm.height*Global.SCALE - camera.y > 0)
+            if(elm.position.x - camera.x < C.SCREENWIDTH && elm.position.y - camera.y < C.SCREENHEIGHT && elm.position.x+elm.width* C.SCALE - camera.x > 0 && elm.position.y+elm.height* C.SCALE - camera.y > 0)
                 elm.render(g2d);
         }
 
         if(pause){
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
             g2d.setColor(Color.BLACK);
-            g2d.fillRect(0, 0, Global.SCREENWIDTH, Global.SCREENHEIGHT);
+            g2d.fillRect(0, 0, C.SCREENWIDTH, C.SCREENHEIGHT);
 
             // resetar alpha depois, se for desenhar mais coisas
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));

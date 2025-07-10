@@ -19,8 +19,10 @@ public class MouseInputs implements MouseListener, MouseMotionListener{
     public void mouseClicked(MouseEvent e) {}
 
     @Override
-    public void mousePressed(MouseEvent e) { // Mouse foi pressionado
+    public void mousePressed(MouseEvent e) {
         mouseClicked = true;
+        x = e.getX();
+        y = e.getY();
     }
 
     @Override

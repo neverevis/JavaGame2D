@@ -6,7 +6,7 @@ import elements.entities.Slime;
 import elements.states.Direction;
 import elements.states.PlayerState;
 import game.GamePanel;
-import utilities.Global;
+import utilities.C;
 
 import java.io.*;
 import java.net.Socket;
@@ -197,7 +197,7 @@ public class Client{
 
     void sleep(){
         try{
-            Thread.sleep((long)(1000/Global.FPS));
+            Thread.sleep((long)(1000/ C.FPS));
         }catch (InterruptedException e)
         {
             e.printStackTrace();

@@ -30,21 +30,19 @@ public class Sprite {
 
     public Sprite(String path, int width, int height, double seconds){
         BufferedImage spriteSheet;
-        try{
-            spriteSheet = ImageIO.read(getClass().getResourceAsStream(path));
-            spriteSheet = ImageManager.getScaled(spriteSheet,(int)Global.SCALE);
-        } catch (IOException e) {
-            throw new RuntimeException();
-        }
-        this.width = (int)(width*Global.SCALE);
-        this.height = (int)(height*Global.SCALE);
+
+        spriteSheet = ImageManager.loadImage(path,width,height);
+        spriteSheet = ImageManager.getScaled(spriteSheet,(int) C.SCALE);
+
+        this.width = (int)(width* C.SCALE);
+        this.height = (int)(height* C.SCALE);
 
         if(spriteSheet != null) {
             totalDirection = spriteSheet.getHeight() / this.height;
             totalFrame = spriteSheet.getWidth() / this.width;
         }
 
-        changeRatio = (int)(Global.FPS*seconds/totalFrame);
+        changeRatio = (int)(C.FPS*seconds/totalFrame);
 
         sprite = new BufferedImage[totalDirection][totalFrame];
 
@@ -81,7 +79,7 @@ public class Sprite {
             timeElapsed += deltaTime;
         else
             frame = 0;
-        if(moving && timeElapsed > (1.0/Global.FPS) * changeRatio) {
+        if(moving && timeElapsed > (1.0/ C.FPS) * changeRatio) {
             frame++;
             timeElapsed = 0;
         }
@@ -123,7 +121,7 @@ public class Sprite {
     }
 
     public void render(Graphics2D g, int x, int y, double size){
-        g.drawImage(sprite[direction.code][frame], x, y, (int)(size*Global.SCALE),(int)(size*Global.SCALE),null);
+        g.drawImage(sprite[direction.code][frame], x, y, (int)(size* C.SCALE),(int)(size* C.SCALE),null);
 
         if (takingDamage) {
             BufferedImage frameSprite = sprite[direction.ordinal()][frame];
@@ -148,7 +146,7 @@ public class Sprite {
     }
 
     public void setAnimationSpeed(double seconds){
-        changeRatio = (int)(Global.FPS*seconds/totalFrame);
+        changeRatio = (int)(C.FPS*seconds/totalFrame);
     }
 
     public void toggleDamageState(){

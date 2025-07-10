@@ -15,7 +15,7 @@ public class GameFrame extends JFrame {
         gp.createBufferStrategy(3);
         gp.game.start();
         setResizable(true);
-        //setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setVisible(true);
     }

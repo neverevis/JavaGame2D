@@ -1,6 +1,6 @@
 package world;
 
-import utilities.Global;
+import utilities.C;
 import utilities.Vector;
 
 import java.util.Random;
@@ -9,8 +9,8 @@ public class Camera {
     public double x;
     public double y;
 
-    double screenCenterX = Global.SCREENWIDTH/2;
-    double screenCenterY = Global.SCREENHEIGHT/2;
+    double screenCenterX = C.SCREENWIDTH/2;
+    double screenCenterY = C.SCREENHEIGHT/2;
     double targetX;
     double targetY;
     double smoothing = 6.25;
@@ -29,7 +29,7 @@ public class Camera {
     }
 
     public void update(double deltaTime){
-        updateTarget();
+        updateTarget(deltaTime);
         if(lock) {
             x += (targetX - x) * smoothing * deltaTime;
             y += (targetY - y) * smoothing * deltaTime;
@@ -51,11 +51,11 @@ public class Camera {
         this.lock = lock;
     }
 
-    void updateTarget(){
+    void updateTarget(double deltaTime){
         double nextTarX = world.player.getAnchorX();
         double nextTarY = world.player.getAnchorY();
 
-        double tolerance = 0*Global.TILESIZE;
+        double tolerance = 0* C.TILESIZE;
 
         if(!world.pause) {
             if (world.gp.cursorPoint != null) {

@@ -6,11 +6,10 @@ import elements.states.EnemyState;
 import game.GamePanel;
 import utilities.*;
 import world.World;
-import javax.imageio.ImageIO;
+
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Random;
 
 
@@ -36,7 +35,7 @@ public class Slime extends Entity{
     Vector nearestPoint = new Vector();
     Random r = new Random();
 
-    double maxVelocity = 90 * Global.SCALE;
+    double maxVelocity = 90 * C.SCALE;
     double avoidForce = 3000;
     RayCasts rayCasts;
     Line2D.Double avoidLine = new Line2D.Double();
@@ -58,7 +57,7 @@ public class Slime extends Entity{
 
     public void setAttributes() {
         setSpeed(1.5);
-        setSize((int)Global.ORIGINAL_TILESIZE,(int)Global.ORIGINAL_TILESIZE);
+        setSize((int) C.ORIGINAL_TILESIZE,(int) C.ORIGINAL_TILESIZE);
         sprite = new Sprite("/resources/entities/monsters/redslime.png",width,height,0.5f);
         shadow = new Sprite("/resources/entities/monsters/shadow.png",width,height,1f);
         setAnchor(16,27);
@@ -166,7 +165,7 @@ public class Slime extends Entity{
 
     @Override
     public void render(Graphics2D g2d) {
-        shadow.render(g2d,(int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y+ 1*Global.SCALE));
+        shadow.render(g2d,(int)(position.getX() - world.camera.x), (int)(position.getY() - world.camera.y+ 1* C.SCALE));
         sprite.render(g2d,(int)(position.getX() - world.camera.x) ,(int)(position.getY() - world.camera.y));
         if(gp.activeWorld.showElementsAnchor) {
             renderAnchor(g2d);

@@ -2,15 +2,11 @@ package elements.enviroment;
 
 import elements.Element;
 import game.GamePanel;
-import utilities.Collider;
-import utilities.Global;
 import utilities.Sprite;
 import world.World;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Random;
 
 public class Tree extends Element {
