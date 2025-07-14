@@ -91,6 +91,7 @@ public class Client {
 
                 switch (package_type) {
                     case 0 -> playerPackage();
+                    case 1 -> playerDisconnected();
                 }
             }
         }catch (IOException e){
@@ -104,6 +105,22 @@ public class Client {
         in_x = in.readDouble();
         in_y = in.readDouble();
 
+        ELM_ConnectedPlayer player = selectPlayer();
+
+        player.pos.x = in_x;
+        player.pos.y = in_y;
+    }
+
+    public void playerDisconnected() throws IOException{
+        in_id = in.readInt();
+
+        ELM_ConnectedPlayer player = selectPlayer();
+
+        world.players.remove(player);
+        world.elements.remove(player);
+    }
+
+    public ELM_ConnectedPlayer selectPlayer(){
         ELM_ConnectedPlayer player = null;
         for(ELM_Player p : world.players){
             if(p.id == in_id){
@@ -120,7 +137,6 @@ public class Client {
             world.players.add(player);
         }
 
-        player.pos.x = in_x;
-        player.pos.y = in_y;
+        return player;
     }
 }

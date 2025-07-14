@@ -27,7 +27,7 @@ public class Server {
             while(true){
                 Socket client;
                 client = server.accept();
-                ClientHandler clientHandler = new ClientHandler(client);
+                ClientHandler clientHandler = new ClientHandler(client,this);
                 clientHandler.id = generateId();
                 clients.add(clientHandler);
 
@@ -43,19 +43,35 @@ public class Server {
         while (true) {
             for (ClientHandler self : clients) {
                 for (ClientHandler other : clients) {
-                    if (other != self) {
+                    if (self.connected && other.connected && other != self) {
                         try {
+                            //pacote de player
                             self.out.writeInt(0);
 
                             self.out.writeInt(other.id);
                             self.out.writeDouble(other.x);
                             self.out.writeDouble(other.y);
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            System.out.println("falha ao enviar dados do cliente: " + self.id);
                         }
                     }
                 }
             }
+
+            clients.stream().filter((client) -> !client.connected).forEach((client) -> {
+                for(ClientHandler other : clients){
+                    if(other.connected){
+                        try {
+                            other.out.writeInt(1);
+
+                            other.out.writeInt(client.id);
+                        }catch (IOException e){
+                            System.out.println("falha ao enviar para o cliente: " + other.id);
+                        }
+                    }
+                }
+                clients.remove(client);
+            });
 
             sleep();
         }

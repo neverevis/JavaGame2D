@@ -7,6 +7,7 @@ import java.net.Socket;
 
 public class ClientHandler {
     Socket client;
+    Server server;
     DataInputStream in;
     DataOutputStream out;
 
@@ -14,9 +15,12 @@ public class ClientHandler {
     double x, y;
 
     boolean connected;
+    boolean markToRemove;
 
-    public ClientHandler(Socket client){
+    public ClientHandler(Socket client,Server server){
         this.client = client;
+        this.server = server;
+
         try {
             in = new DataInputStream(client.getInputStream());
             out = new DataOutputStream(client.getOutputStream());
@@ -38,7 +42,10 @@ public class ClientHandler {
                 y = in.readDouble();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            try{client.close();} catch (IOException ex) {e.printStackTrace();}
+            connected = false;
         }
+
+        System.out.println("Cliente " + id + " saiu do jogo.");
     }
 }
