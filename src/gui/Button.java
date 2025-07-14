@@ -1,9 +1,8 @@
 package gui;
 
-import elements.states.Direction;
-import game.MouseInputs;
-import utilities.C;
-import utilities.Sprite;
+import core.G;
+import core.Mouse;
+import graphics.Sprite;
 
 import java.awt.*;
 
@@ -20,8 +19,8 @@ public class Button {
 
 
     public void setSize(int width, int height){
-        this.width = (int)(width * C.SCALE);
-        this.height = (int)(height * C.SCALE);
+        this.width = (int)(width * G.SCALE);
+        this.height = (int)(height * G.SCALE);
     }
 
     public void setPosition(int x, int y){
@@ -33,15 +32,14 @@ public class Button {
     }
 
     public void loadSprite(String spriteSheetPath){
-        btn = new Sprite(spriteSheetPath,96,32,0.4f);
+        btn = new Sprite(spriteSheetPath,96,32);
     }
 
     public void render(Graphics2D g){
         btn.render(g,x,y);
     }
 
-    public void update(double dt, Point cursorPoint,MouseInputs mouseInput){
-        btn.update(dt);
+    public void update(double dt, Point cursorPoint, Mouse mouseInput){
 
         if(done)
             done = false;
@@ -53,21 +51,17 @@ public class Button {
         if(cursorPoint != null) {
             if (cursorPoint.x >= this.x && cursorPoint.y >= this.y && cursorPoint.x <= this.x + width && cursorPoint.y <= this.y + height) {
                 hovered = true;
-                btn.setDirection(Direction.UP);
             }
             else if(!clicked){
                 hovered = false;
-                btn.setDirection(Direction.DOWN);
             }
         }
 
         if(mouseInput.mouseClicked && hovered) {
             clicked = true;
-            btn.moving = true;
         }
 
         if(time >= 0.3) {
-            btn.moving = false;
             clicked = false;
             time = 0.0;
             done = true;

@@ -1,129 +1,39 @@
 package world;
 
+import core.Core;
+import core.G;
+import elements.ELM_Player;
+import elements.ELM_Tree;
 import elements.Element;
-import elements.entities.Entity;
-import elements.entities.Player;
-import elements.entities.Slime;
-import elements.enviroment.Fence;
-import elements.enviroment.Grass;
-import elements.enviroment.Pillar;
-import elements.enviroment.Tree;
-import game.CollisionSystem;
-import game.DialogueManager;
-import game.GamePanel;
-import server.Client;
-import utilities.C;
-import utilities.Sound;
-import utilities.Vector;
+import graphics.ImageManager;
+import graphics.Renderable;
+import physics.CollisionSystem;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class World {
-    int cols,rows;
+public class World implements Renderable{
+    public Camera camera;
+    Tiles tiles = new Tiles();
+
+    public Core core;
+    public int cols;
+    public int rows;
     public int width, height;
     public int[][] world;
-    Tiles tiles;
-    Random random = new Random();
-    public GamePanel gp;
-    public Camera camera = new Camera(this);
-    public boolean showElementsAnchor = false;
-    public List<Element> elements = new CopyOnWriteArrayList<>();
-    public List<Entity> entities = new ArrayList<>();
-    public List<Player> connectedPlayers = new CopyOnWriteArrayList<>();
-    public CollisionSystem collisionSystem = new CollisionSystem();
-    public DialogueManager dialogueManager;
-    public Player player;
-    Tree tree;
-    Tree tree2;
-    Fence fence;
-    Pillar pillar;
-    Pillar p2;
-    float alpha = 0.0f;
-    public boolean pause = false;
-    Client client;
-    String tilePath;
-    BufferedImage tileData;
 
-    Sound music = new Sound();
+    public CopyOnWriteArrayList<Element> elements = new CopyOnWriteArrayList<>();
+    public CopyOnWriteArrayList<ELM_Player> players = new CopyOnWriteArrayList<>();
 
-    public World(GamePanel gp, String tilePath){
-        this.client = gp.client;
-        this.gp = gp;
-        this.dialogueManager = new DialogueManager(gp,this);
-        this.tilePath = tilePath;
-        if(!gp.isVirtual)
-            player = new Player(this.gp,this,false);
-        player.setPosition(32/2* C.TILESIZE,32/2* C.TILESIZE);
-        p2 = new Pillar(this.gp,this);
-        p2.setPosition(1500,1500);
-        tree = new Tree(this.gp,this);
-        fence = new Fence(this.gp,this);
-        tree.setPositionByAnchor(new Vector(700,500));
-        tree2 = new Tree(this.gp,this);
+    public CollisionSystem collSys = new CollisionSystem();
 
+    ELM_Player player;
 
-        /*for (int i = 0; i < 4; i++) {
-            Slime s = new Slime(gp, this, player,false);
-            elements.add(s);
-            entities.add(s);
-            s.setPositionByAnchor(new Vector(70 * i, 900));
-        }*/
-
-        double centerX = 22* C.TILESIZE + 10 *8* C.SCALE;
-        double centerY = 22* C.TILESIZE + 10 *8* C.SCALE;
-
-        for(int i = 0; i < 20; i++){
-            for(int j = 0; j < 20; j++){
-                double px = 22* C.TILESIZE + j * 8* C.SCALE;
-                double py = 22* C.TILESIZE + i * 8* C.SCALE;
-
-                double dx = px - centerX;
-                double dy = py - centerY;
-
-                double dist = Math.sqrt(dx*dx + dy*dy);
-
-                if(dist < 10 *8* C.SCALE) {
-                    Grass grass = new Grass(gp, this);
-                    grass.setPositionByAnchor(new Vector(px, py));
-                    elements.add(grass);
-                }
-            }
-        }
-
-        tree2.setPositionByAnchor(new Vector(1000,1900));
-        fence.setPositionByAnchor(new Vector(1500,1500));
-        elements.add(p2);
-        elements.add(fence);
-        elements.add(player);
-        entities.add(player);
-        elements.add(tree2);
-        elements.add(tree);
-
-        tiles = new Tiles();
-        cols = 100;
-        rows = 100;
-        width = cols* C.TILESIZE;
-        height = rows* C.TILESIZE;
-        convertWorld();
-    }
-
-    public void convertWorld() {
-        try {
-            tileData = ImageIO.read(getClass().getResourceAsStream(tilePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int w = tileData.getWidth();
-        int h = tileData.getHeight();
+    public World(String path, Core core){
+        BufferedImage tileData = ImageManager.load(path);
+        this.core = core;
 
         cols = tileData.getWidth();
         rows = tileData.getHeight();
@@ -152,65 +62,56 @@ public class World {
                 }
             }
         }
+
+        player = new ELM_Player(this);
+        elements.add(player);
+        players.add(player);
+        elements.add(new ELM_Tree(this));
+        collSys.display(true);
+
+        camera = new Camera(this);
     }
 
-    public void render(Graphics2D g2d){
+    public void update(double dt){
+        camera.update(dt);
+        for(Element elm : elements)
+            elm.update(dt);
+        elements.sort(null);
+        collSys.update();
+    }
+
+    @Override
+    public void render(Graphics2D g){
+        AffineTransform og = g.getTransform();
+        g.translate(-camera.pos.x, -camera.pos.y);
+
         for(int i = 0; i < cols; i++){
             for(int j = 0; j < rows; j++){
-                double tileX = j* C.TILESIZE - camera.x;
-                double tileY = i* C.TILESIZE - camera.y;
+                double tileX = j* 32.0;
+                double tileY = i* 32.0;
 
-                if(tileX > - C.TILESIZE && tileX < C.SCREENWIDTH && tileY > - C.TILESIZE && tileY < C.SCREENHEIGHT) {
-                    tiles.drawTile(g2d, world[i][j], (int)tileX, (int)tileY);
+                if(tileX - camera.pos.x> - G.TILESIZE && tileX - camera.pos.x < G.S_WIDTH && tileY - camera.pos.y > - G.TILESIZE && tileY - camera.pos.y < G.S_HEIGHT) {
+                    tiles.drawTile(g, world[i][j], tileX, tileY);
                 }
             }
         }
 
         for(Element elm : elements){
-            if(elm.position.x - camera.x < C.SCREENWIDTH && elm.position.y - camera.y < C.SCREENHEIGHT && elm.position.x+elm.width* C.SCALE - camera.x > 0 && elm.position.y+elm.height* C.SCALE - camera.y > 0)
-                elm.render(g2d);
+            elm.render(g);
         }
 
-        if(pause){
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-            g2d.setColor(Color.BLACK);
-            g2d.fillRect(0, 0, C.SCREENWIDTH, C.SCREENHEIGHT);
+        collSys.render(g);
 
-            // resetar alpha depois, se for desenhar mais coisas
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-            player.render(g2d);
-        }
-
-        dialogueManager.render(g2d);
-
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Arial", Font.BOLD, 20));
-        g2d.drawString("health",20,30);
-        g2d.setColor(Color.darkGray);
-        g2d.fillRect(20,40,(int)player.maxHealth * 4, 15);
-        g2d.setColor(Color.black);
-        g2d.drawRect(20,40,(int)player.maxHealth * 4, 15);
-        g2d.setColor(Color.orange);
-        g2d.fillRect(20,40,(int)player.dealt * 4, 15);
-        g2d.setColor(Color.red);
-        g2d.fillRect(20,40,(int)player.health * 4, 15);
+        g.setTransform(og);
     }
 
-    public void update(double deltaTime){
-        camera.update(deltaTime);
-        dialogueManager.update(deltaTime);
-        if(!pause) {
-            for (Element elm : elements) {
-                elm.update(deltaTime);
-            }
-            collisionSystem.update();
-        }
-        else{
-            player.update(deltaTime);
-            if(alpha + 1f * deltaTime <= 0.9)
-                alpha+= 1f * deltaTime;
-        }
-        //organizar a lista de elementos por ordem de Y
-        elements.sort(Comparator.comparingInt(a -> (int) a.getFeetCenterY()));
+    @Override
+    public double getZIndex() {
+        return 0;
+    }
+
+    @Override
+    public int getLayer() {
+        return 0;
     }
 }

@@ -1,12 +1,11 @@
 package world;
 
-import utilities.C;
-import utilities.ImageManager;
+import graphics.ImageManager;
+import graphics.Renderable;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 public class Tiles {
     int totalTiles = 16;
@@ -17,19 +16,14 @@ public class Tiles {
     }
 
     private void loadTiles(){
-        try {
-            tile[0] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/grass.png")),(int) C.SCALE);
-            tile[1] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/flowergrass.png")),(int) C.SCALE);
-            tile[2] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/bush.png")),(int) C.SCALE);
-            tile[3] = ImageManager.getScaled(ImageIO.read(getClass().getResourceAsStream("/resources/tiles/stone.png")),(int) C.SCALE);
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        tile[0] = ImageManager.load("/resources/tiles/grass.png");
+        tile[1] = ImageManager.load("/resources/tiles/flowergrass.png");
+        tile[2] = ImageManager.load("/resources/tiles/bush.png");
+        tile[3] = ImageManager.load("/resources/tiles/stone.png");
     }
 
-    public void drawTile(Graphics g,int id,int x,int y){
-        g.drawImage(tile[id],x,y, null);
+    public void drawTile(Graphics2D g,int id,double x,double y){
+        AffineTransform at = AffineTransform.getTranslateInstance(x,y);
+        g.drawImage(tile[id], at, null);
     }
 }

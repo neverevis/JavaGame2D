@@ -1,4 +1,4 @@
-import game.GameFrame;
+import core.GameFrame;
 
 public class Main {
     public static void main(String[] args) {
