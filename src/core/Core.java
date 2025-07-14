@@ -2,6 +2,7 @@ package core;
 
 import graphics.ImageManager;
 import graphics.RenderSystem;
+import server.Client;
 import world.World;
 
 import java.awt.*;
@@ -24,6 +25,8 @@ public class Core extends Canvas
     public RenderSystem renSys = new RenderSystem();
     public Point cursorPoint;
     BufferedImage mouseImg;
+
+    Client client = new Client(this);
 
     public Core()
     {

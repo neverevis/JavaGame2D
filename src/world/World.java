@@ -29,7 +29,7 @@ public class World implements Renderable{
 
     public CollisionSystem collSys = new CollisionSystem();
 
-    ELM_Player player;
+    public ELM_Player player;
 
     public World(String path, Core core){
         BufferedImage tileData = ImageManager.load(path);

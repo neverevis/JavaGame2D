@@ -77,8 +77,6 @@ public class ELM_Player extends Element {
 
         pos.add(velocity.copy().multiply(dt));
 
-        System.out.println(velocity.length());
-
         if(animation != null)
             animation.update(dt);
     }
