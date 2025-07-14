@@ -26,8 +26,8 @@ public class ELM_Player extends Element {
     Collider collider;
     World world;
 
-    double acceleration = 5;
-    double maxSpeed = 1;
+    double acceleration = 800;
+    double maxSpeed = 100;
 
     public ELM_Player(World world){
         this.world = world;
@@ -68,17 +68,16 @@ public class ELM_Player extends Element {
 
         if(!Key.W && !Key.A && !Key.S && !Key.D){
             animation = idle;
+            velocity.multiply(Math.pow(0.03,dt * 2));
         }
 
         direction.normalize();
         velocity.add(direction.multiply(acceleration * dt));
         velocity.clamp(maxSpeed);
 
-        pos.add(velocity.copy().multiply(Math.pow(1,dt)));
+        pos.add(velocity.copy().multiply(dt));
 
-        double drag = 4;
-        double factor = Math.max(0, 1 - drag * dt);
-        velocity.multiply(factor);
+        System.out.println(velocity.length());
 
         if(animation != null)
             animation.update(dt);

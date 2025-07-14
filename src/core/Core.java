@@ -37,7 +37,7 @@ public class Core extends Canvas
 
         renSys.register(world);
 
-        animationTimer = new AnimationTimer(120){
+        animationTimer = new AnimationTimer(G.FPS){
             @Override
             public void step(double dt) {
                 update(dt);

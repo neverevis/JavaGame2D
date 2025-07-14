@@ -4,17 +4,17 @@ import javax.swing.*;
 
 public class GameFrame extends JFrame {
 
-    Core gp = new Core();
+    Core core = new Core();
 
     public GameFrame()
     {
         setTitle("");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        add(gp);
+        add(core);
         pack();
         setResizable(true);
-        gp.createBufferStrategy(3);
-        gp.animationTimer.start();
+        core.createBufferStrategy(3);
+        core.animationTimer.start();
         //setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setVisible(true);

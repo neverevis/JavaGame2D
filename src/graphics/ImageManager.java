@@ -24,6 +24,7 @@ public class ImageManager {
         Graphics2D graphics2d = result.createGraphics();
         graphics2d.drawImage(image,0,0,width,height,x,y,width+x,height+y,null);
         graphics2d.dispose();
+        result = toCompatibleImage(result);
         return result;
     }
 
