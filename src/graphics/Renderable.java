@@ -1,9 +1,7 @@
 package graphics;
 
-import java.awt.*;
-
 public interface Renderable extends Comparable<Renderable>{
-    public void render(Graphics2D g);
+    public void render(GraphicsFX gfx);
     public int getLayer();
     public double getZIndex();
 

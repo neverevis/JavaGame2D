@@ -49,6 +49,7 @@ public class Server {
                             self.out.writeInt(0);
 
                             self.out.writeInt(other.id);
+                            self.string_out.println(other.nickname);
                             self.out.writeDouble(other.x);
                             self.out.writeDouble(other.y);
                         } catch (IOException e) {

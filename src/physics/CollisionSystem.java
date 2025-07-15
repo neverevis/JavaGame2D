@@ -1,6 +1,7 @@
 package physics;
 
 import core.Key;
+import graphics.GraphicsFX;
 import graphics.Renderable;
 
 import java.awt.*;
@@ -44,10 +45,10 @@ public class CollisionSystem implements Renderable{
     }
 
     @Override
-    public void render(Graphics2D g) {
+    public void render(GraphicsFX gfx) {
         if(display) {
             for (Collider c : colliders) {
-                c.render(g);
+                c.render(gfx);
             }
         }
     }

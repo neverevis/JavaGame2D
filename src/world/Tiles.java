@@ -1,5 +1,6 @@
 package world;
 
+import graphics.GraphicsFX;
 import graphics.ImageManager;
 import graphics.Renderable;
 
@@ -22,8 +23,7 @@ public class Tiles {
         tile[3] = ImageManager.load("/resources/tiles/stone.png");
     }
 
-    public void drawTile(Graphics2D g,int id,double x,double y){
-        AffineTransform at = AffineTransform.getTranslateInstance(x,y);
-        g.drawImage(tile[id], at, null);
+    public void drawTile(GraphicsFX gfx, int id, double x, double y){
+        gfx.draw(tile[id], x,y);
     }
 }

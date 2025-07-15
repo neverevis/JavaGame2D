@@ -3,13 +3,10 @@ package server;
 import core.AnimationTimer;
 import core.Core;
 import core.G;
-import elements.ELM_ConnectedPlayer;
 import elements.ELM_Player;
 import world.World;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -21,6 +18,8 @@ public class Client {
     Socket client;
     DataInputStream in;
     DataOutputStream out;
+    BufferedReader string_in;
+    PrintWriter string_out;
 
     String ip;
     int port = 12345;
@@ -29,6 +28,7 @@ public class Client {
     //dados para receber
     int package_type;
     int in_id;
+    String in_nickname;
     double in_x;
     double in_y;
 
@@ -45,6 +45,8 @@ public class Client {
     }
 
     public void connect(){
+        System.out.print("Digite seu nickname: ");
+        this.world.player.nickname = sc.nextLine();
         System.out.print("Digite o ip do servidor: ");
         ip = sc.nextLine();
 
@@ -52,9 +54,13 @@ public class Client {
             client = new Socket(ip, port);
             in = new DataInputStream(client.getInputStream());
             out = new DataOutputStream(client.getOutputStream());
+            string_in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            string_out = new PrintWriter(client.getOutputStream());
             connected = true;
 
             id = in.readInt();
+            string_out.println(world.player.nickname);
+
             world.player.id = id;
 
             System.out.println("Conectado! seu id: " + id);
@@ -100,12 +106,12 @@ public class Client {
     }
 
     public void playerPackage() throws IOException{
-        System.out.println("pacote de player recebido!");
         in_id = in.readInt();
+        in_nickname = string_in.readLine();
         in_x = in.readDouble();
         in_y = in.readDouble();
 
-        ELM_ConnectedPlayer player = selectPlayer();
+        ELM_Player player = selectPlayer();
 
         player.pos.x = in_x;
         player.pos.y = in_y;
@@ -114,27 +120,31 @@ public class Client {
     public void playerDisconnected() throws IOException{
         in_id = in.readInt();
 
-        ELM_ConnectedPlayer player = selectPlayer();
+        ELM_Player player = selectPlayer();
 
         world.players.remove(player);
         world.elements.remove(player);
+        world.collSys.unregister(player.collider);
+
+        System.out.println("Jogador " + player.id + " saiu do jogo.");
     }
 
-    public ELM_ConnectedPlayer selectPlayer(){
-        ELM_ConnectedPlayer player = null;
+    public ELM_Player selectPlayer(){
+        ELM_Player player = null;
         for(ELM_Player p : world.players){
             if(p.id == in_id){
-                System.out.println("encontrou!");
-                player = (ELM_ConnectedPlayer) p;
+                player = p;
             }
         }
 
         if(player == null){
-            System.out.println("criou");
-            player = new ELM_ConnectedPlayer(world);
+            player = new ELM_Player(world,false);
             player.id = in_id;
+            player.nickname = in_nickname;
             world.elements.add(player);
             world.players.add(player);
+
+            System.out.println("Jogador " + player.id + " entrou no jogo!");
         }
 
         return player;

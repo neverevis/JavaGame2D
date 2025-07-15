@@ -5,6 +5,7 @@ import core.G;
 import elements.ELM_Player;
 import elements.ELM_Tree;
 import elements.Element;
+import graphics.GraphicsFX;
 import graphics.ImageManager;
 import graphics.Renderable;
 import physics.CollisionSystem;
@@ -63,7 +64,7 @@ public class World implements Renderable{
             }
         }
 
-        player = new ELM_Player(this);
+        player = new ELM_Player(this,true);
         elements.add(player);
         players.add(player);
         elements.add(new ELM_Tree(this));
@@ -81,9 +82,9 @@ public class World implements Renderable{
     }
 
     @Override
-    public void render(Graphics2D g){
-        AffineTransform og = g.getTransform();
-        g.translate(-camera.pos.x, -camera.pos.y);
+    public void render(GraphicsFX gfx){
+        gfx.save();
+        gfx.translate(-camera.pos.x,-camera.pos.y);
 
         for(int i = 0; i < cols; i++){
             for(int j = 0; j < rows; j++){
@@ -91,18 +92,18 @@ public class World implements Renderable{
                 double tileY = i* 32.0;
 
                 if(tileX - camera.pos.x> - G.TILESIZE && tileX - camera.pos.x < G.S_WIDTH && tileY - camera.pos.y > - G.TILESIZE && tileY - camera.pos.y < G.S_HEIGHT) {
-                    tiles.drawTile(g, world[i][j], tileX, tileY);
+                    tiles.drawTile(gfx, world[i][j], tileX, tileY);
                 }
             }
         }
 
         for(Element elm : elements){
-            elm.render(g);
+            elm.render(gfx);
         }
 
-        collSys.render(g);
+        collSys.render(gfx);
 
-        g.setTransform(og);
+        gfx.restore();
     }
 
     @Override

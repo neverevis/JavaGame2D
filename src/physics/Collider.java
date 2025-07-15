@@ -1,5 +1,6 @@
 package physics;
 
+import graphics.GraphicsFX;
 import graphics.Renderable;
 import math.Vector;
 
@@ -55,12 +56,13 @@ public class Collider implements Renderable {
         area.y = pos.y + offset.y;
     }
 
-    public void render(Graphics2D g){
+    public void render(GraphicsFX gfx){
         if(colliding)
-            g.setColor(Color.WHITE);
+            gfx.setColor(Color.WHITE);
         else
-            g.setColor(Color.black);
-        g.draw(area);
+            gfx.setColor(Color.BLACK);
+        
+        gfx.draw(area);
     }
 
     public void onCollision(Collider other){

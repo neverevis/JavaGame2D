@@ -2,6 +2,7 @@ package elements;
 
 import core.G;
 import graphics.Animator;
+import graphics.GraphicsFX;
 import graphics.Sprite;
 import math.Vector;
 
@@ -79,8 +80,8 @@ public class ELM_Slime extends Element {
     }
 
     @Override
-    public void render(Graphics2D g){
-        sprite.render(g,pos.x,pos.y);
+    public void render(GraphicsFX gfx){
+        gfx.draw(sprite,pos.x,pos.y);
     }
 
     @Override

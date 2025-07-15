@@ -1,6 +1,7 @@
 package elements;
 
 import graphics.Animator;
+import graphics.GraphicsFX;
 import graphics.Sprite;
 import physics.Collider;
 import world.World;
@@ -27,8 +28,8 @@ public class ELM_Tree extends Element {
     }
 
     @Override
-    public void render(Graphics2D g) {
-        sprite.render(g,pos.x,pos.y);
+    public void render(GraphicsFX gfx) {
+        gfx.draw(sprite,pos.x,pos.y);
     }
 
     @Override

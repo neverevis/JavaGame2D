@@ -1,5 +1,6 @@
 package core;
 
+import graphics.GraphicsFX;
 import graphics.ImageManager;
 import graphics.RenderSystem;
 import server.Client;
@@ -27,6 +28,7 @@ public class Core extends Canvas
     BufferedImage mouseImg;
 
     Client client = new Client(this);
+    GraphicsFX gfx = new GraphicsFX(this);
 
     public Core()
     {
@@ -65,28 +67,20 @@ public class Core extends Canvas
     }
 
     public void render() {
-        BufferStrategy bufferStrategy = getBufferStrategy();
-        Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-        AffineTransform original = g.getTransform();
+        gfx.begin();
 
-        g.setColor(Color.black);
-        g.fillRect(0, 0, getWidth(), getHeight());
-        g.scale(G.SCALE,G.SCALE);
+        gfx.clear();
+        gfx.save();
 
-        renSys.render(g);
+        gfx.scale(G.SCALE);
 
-        g.setTransform(original);;
+        renSys.render(gfx);
 
-        g.setFont(new Font("Consolas",Font.PLAIN,20));
-        g.setColor(Color.WHITE);
-        g.drawString("FPS: " +  frameRate,5,25);
+        gfx.restore();
+        gfx.setColor(Color.WHITE);
+        gfx.draw("FPS: " +  frameRate,5,25);
 
-        g.dispose();
-        bufferStrategy.show();
+        gfx.end();
     }
 
     public void hideCursor(){

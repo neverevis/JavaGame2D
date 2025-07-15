@@ -13,7 +13,6 @@ public class Animator {
         this.duration = duration;
 
         changeRatio = duration / (end - start);
-        System.out.println(changeRatio);
     }
 
     public void update(double dt){

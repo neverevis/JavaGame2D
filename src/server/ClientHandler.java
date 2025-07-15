@@ -1,8 +1,6 @@
 package server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler {
@@ -10,12 +8,14 @@ public class ClientHandler {
     Server server;
     DataInputStream in;
     DataOutputStream out;
+    BufferedReader string_in;
+    PrintWriter string_out;
 
     int id;
     double x, y;
+    String nickname;
 
     boolean connected;
-    boolean markToRemove;
 
     public ClientHandler(Socket client,Server server){
         this.client = client;
@@ -24,6 +24,8 @@ public class ClientHandler {
         try {
             in = new DataInputStream(client.getInputStream());
             out = new DataOutputStream(client.getOutputStream());
+            string_in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            string_out = new PrintWriter(client.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -36,6 +38,7 @@ public class ClientHandler {
             connected = true;
 
             out.writeInt(id);
+            nickname = string_in.readLine();
 
             while (connected) {
                 x = in.readDouble();

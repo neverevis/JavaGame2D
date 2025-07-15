@@ -15,7 +15,6 @@ public class ImageManager {
             e.printStackTrace();
         }
 
-        img = toCompatibleImage(img);
         return img;
     }
 

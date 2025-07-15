@@ -9,6 +9,7 @@ public class Camera {
     public Vector center;
     public Vector target;
 
+
     Random random = new Random();
     World world;
 

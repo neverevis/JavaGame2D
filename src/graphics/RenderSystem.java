@@ -3,8 +3,6 @@ package graphics;
 import world.Tiles;
 import world.World;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 public class RenderSystem {
@@ -20,20 +18,21 @@ public class RenderSystem {
         renderables.remove(r);
     }
 
-    public void render(Graphics2D g){
+    public void render(GraphicsFX gfx){
         renderables.sort(null);
 
-        AffineTransform og = g.getTransform();;
+        gfx.save();
 
         for(Renderable r : renderables) {
             if(r.getLayer() == 0)
-                r.render(g);
+                r.render(gfx);
         }
 
         for(Renderable r : renderables) {
             if(r.getLayer() != 0)
-                r.render(g);
+                r.render(gfx);
         }
-        g.setTransform(og);
+
+        gfx.restore();
     }
 }

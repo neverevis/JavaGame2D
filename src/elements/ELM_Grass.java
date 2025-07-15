@@ -1,6 +1,7 @@
 package elements;
 
 import core.G;
+import graphics.GraphicsFX;
 import graphics.ImageManager;
 import world.World;
 
@@ -61,20 +62,8 @@ public class ELM_Grass extends Element {
     }
 
     @Override
-    public void render(Graphics2D g) {
-        g.drawImage(shadow,(int)pos.x,(int)pos.y,null);
+    public void render(GraphicsFX gfx) {
 
-        AffineTransform original = g.getTransform();
-
-        g.translate(16,32);
-        g.rotate(rotationa);
-        g.drawImage(l_blade,(int)pos.x,(int)pos.y,null);
-
-        g.setTransform(original);
-
-        g.translate(16,32);
-        g.rotate(rotationa);
-        g.drawImage(r_blade,(int)pos.x,(int)pos.y,null);
     }
 
     @Override
