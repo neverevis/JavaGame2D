@@ -21,8 +21,6 @@ public class RenderSystem {
     public void render(GraphicsFX gfx){
         renderables.sort(null);
 
-        gfx.save();
-
         for(Renderable r : renderables) {
             if(r.getLayer() == 0)
                 r.render(gfx);
@@ -32,7 +30,5 @@ public class RenderSystem {
             if(r.getLayer() != 0)
                 r.render(gfx);
         }
-
-        gfx.restore();
     }
 }

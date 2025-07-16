@@ -23,8 +23,17 @@ public class GraphicsFX {
     Stack<Font> fontStack = new Stack<>();
     Stack<Color> colorStack = new Stack<>();
 
+    Font font;
+
     public GraphicsFX(Core core){
         this.core = core;
+        try {
+            font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/resources/UI/nokiafc22.ttf")).deriveFont(25f);
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void begin(){
@@ -36,19 +45,14 @@ public class GraphicsFX {
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-        try {
-            g.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/resources/UI/nokiafc22.ttf")).deriveFont(25f));
-        } catch (FontFormatException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        g.setFont(font);
+
     }
 
     public void end(){
         g.dispose();
         bufferStrategy.show();
-        Toolkit.getDefaultToolkit().sync();
     }
 
     public void save(){

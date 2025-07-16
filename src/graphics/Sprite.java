@@ -27,9 +27,4 @@ public class Sprite {
             }
         }
     }
-
-    public void render(Graphics2D g, double x, double y){
-        AffineTransform at = AffineTransform.getTranslateInstance(x,y);
-        g.drawImage(sprite[row][col], at, null);
-    }
 }

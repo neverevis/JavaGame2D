@@ -8,8 +8,8 @@ public class ClientHandler {
     Server server;
     DataInputStream in;
     DataOutputStream out;
-    BufferedReader string_in;
-    PrintWriter string_out;
+
+    Thread launch;
 
     int id;
     double x, y;
@@ -24,22 +24,16 @@ public class ClientHandler {
         try {
             in = new DataInputStream(client.getInputStream());
             out = new DataOutputStream(client.getOutputStream());
-            string_in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            string_out = new PrintWriter(client.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        new Thread(this::readPackage).start();
+        launch = new Thread(this::readPackage);
     }
 
     public void readPackage(){
         try {
             connected = true;
-
-            out.writeInt(id);
-            nickname = string_in.readLine();
-
             while (connected) {
                 x = in.readDouble();
                 y = in.readDouble();

@@ -52,15 +52,14 @@ public class Client {
 
         try {
             client = new Socket(ip, port);
+
             in = new DataInputStream(client.getInputStream());
             out = new DataOutputStream(client.getOutputStream());
-            string_in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            string_out = new PrintWriter(client.getOutputStream());
+
             connected = true;
 
             id = in.readInt();
-            string_out.println(world.player.nickname);
-
+            out.writeUTF(world.player.nickname);
             world.player.id = id;
 
             System.out.println("Conectado! seu id: " + id);
@@ -107,7 +106,7 @@ public class Client {
 
     public void playerPackage() throws IOException{
         in_id = in.readInt();
-        in_nickname = string_in.readLine();
+        in_nickname = in.readUTF();
         in_x = in.readDouble();
         in_y = in.readDouble();
 

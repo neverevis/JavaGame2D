@@ -27,11 +27,17 @@ public class Server {
             while(true){
                 Socket client;
                 client = server.accept();
+
                 ClientHandler clientHandler = new ClientHandler(client,this);
+
                 clientHandler.id = generateId();
+                clientHandler.out.writeInt(clientHandler.id);
+                clientHandler.nickname = clientHandler.in.readUTF();
+
+                clientHandler.launch.start();
                 clients.add(clientHandler);
 
-                System.out.println("Cliente conectado: " + clientHandler.id);
+                System.out.println("Cliente conectado: " + clientHandler.nickname);
             }
         } catch (IOException e) {
             System.out.println("Servidor finalizado.");
@@ -49,7 +55,7 @@ public class Server {
                             self.out.writeInt(0);
 
                             self.out.writeInt(other.id);
-                            self.string_out.println(other.nickname);
+                            self.out.writeUTF(other.nickname);
                             self.out.writeDouble(other.x);
                             self.out.writeDouble(other.y);
                         } catch (IOException e) {

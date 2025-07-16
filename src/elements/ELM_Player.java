@@ -3,12 +3,14 @@ package elements;
 import core.Key;
 import graphics.Animator;
 import graphics.GraphicsFX;
+import graphics.ImageManager;
 import graphics.Sprite;
 import math.Vector;
 import physics.Collider;
 import world.World;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class ELM_Player extends Element {
     public int id;
@@ -20,7 +22,9 @@ public class ELM_Player extends Element {
     Vector direction = new Vector();
     Vector velocity = new Vector();
 
+    BufferedImage shadow;
     Sprite sprite;
+    Sprite running;
     Animator animation;
 
     Animator idle;
@@ -39,6 +43,7 @@ public class ELM_Player extends Element {
         this.isLocal = isLocal;
 
         sprite = new Sprite("/resources/elements/players/playersheet.png",32,32);
+        shadow = ImageManager.load("/resources/elements/players/shadow.png");
 
         runDown = new Animator(sprite,0,1,12,0.8);
         runUp = new Animator(sprite,1,1,12,0.8);
@@ -92,20 +97,21 @@ public class ELM_Player extends Element {
 
     @Override
     public void render(GraphicsFX gfx){
+        gfx.draw(shadow,pos.x,pos.y+2);
         gfx.draw(sprite,pos.x,pos.y);
 
-        /*gfx.save();
-        gfx.setTextSize(3f);
+        gfx.save();
+        gfx.setTextSize(2.8f);
 
         gfx.setColor(Color.BLACK);
-        gfx.opacity(0.2f);
+        gfx.opacity(0.1f);
         gfx.fillRect(pos.x + 14.5 - gfx.stringWidth(nickname)/2,pos.y - 8,gfx.stringWidth(nickname) + 3,6,2,2);
         gfx.opacity(0.8f);
 
         gfx.setColor(Color.WHITE);
         gfx.draw(nickname,pos.x + 16 - gfx.stringWidth(nickname)/2,pos.y - 3.5);
 
-        gfx.restore();*/
+        gfx.restore();
     }
 
     @Override
