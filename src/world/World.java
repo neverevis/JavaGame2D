@@ -73,6 +73,7 @@ public class World implements Renderable{
         }
 
         player = new ELM_Player(this,true);
+        player.pos.set((double)cols/2*G.TILESIZE,(double)rows/2*G.TILESIZE);
         elements.add(player);
         players.add(player);
         //elements.add(new ELM_Tree(this));
@@ -83,6 +84,7 @@ public class World implements Renderable{
         collSys.display(true);
 
         camera = new Camera(this);
+        camera.pos.set(player.pos.copy());
     }
 
     public void update(double dt){
