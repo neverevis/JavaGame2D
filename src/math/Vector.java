@@ -13,11 +13,6 @@ public class Vector {
         this.y = 0;
     }
 
-    public Vector(double x, double y){
-        this.x = x;
-        this.y = y;
-    }
-
     public Vector reset(){
         this.x = 0;
         this.y = 0;
@@ -88,6 +83,18 @@ public class Vector {
         this.y += vector.y;
 
         return this;
+    }
+
+    public Vector add(double x, double y){
+        this.x += x;
+        this.y += y;
+
+        return this;
+    }
+
+    public Vector(double x, double y){
+        this.x += x;
+        this.y += y;
     }
 
     public Vector sub(Vector vector){

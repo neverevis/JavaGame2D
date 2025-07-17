@@ -4,10 +4,11 @@ import world.Tiles;
 import world.World;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RenderSystem {
     World world;
-    ArrayList<Renderable> renderables = new ArrayList<>();
+    CopyOnWriteArrayList<Renderable> renderables = new CopyOnWriteArrayList<>();
     Tiles tiles = new Tiles();
 
     public void register(Renderable r){

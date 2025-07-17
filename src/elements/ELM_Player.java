@@ -1,10 +1,7 @@
 package elements;
 
 import core.Key;
-import graphics.Animator;
-import graphics.GraphicsFX;
-import graphics.ImageManager;
-import graphics.Sprite;
+import graphics.*;
 import math.Vector;
 import physics.Collider;
 import world.World;

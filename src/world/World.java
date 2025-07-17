@@ -81,6 +81,7 @@ public class World implements Renderable{
         elements.add(new ELM_Pillar(this,75,150));
         elements.add(new ELM_Pillar(this,125,150));
         elements.add(new ELM_Box(this));
+        elements.add(new ELM_Emmiter(this,player.pos,1));
         collSys.display(true);
 
         camera = new Camera(this);
