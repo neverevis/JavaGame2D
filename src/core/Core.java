@@ -20,7 +20,7 @@ public class Core extends Canvas
 
     public Key key = new Key();
     public Mouse mouse = new Mouse();
-    public World world = new World("/resources/tileData.png",this);
+    public World world = new World("/resources/tileData2.png",this);
 
     public AnimationTimer animationTimer;
     public RenderSystem renSys = new RenderSystem();

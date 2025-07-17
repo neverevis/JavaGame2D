@@ -24,7 +24,6 @@ public class ELM_Player extends Element {
 
     BufferedImage shadow;
     Sprite sprite;
-    Sprite running;
     Animator animation;
 
     Animator idle;
@@ -35,6 +34,7 @@ public class ELM_Player extends Element {
     public Collider collider;
     World world;
 
+    public int state;
     double acceleration = 800;
     double maxSpeed = 100;
 
@@ -42,14 +42,14 @@ public class ELM_Player extends Element {
         this.world = world;
         this.isLocal = isLocal;
 
-        sprite = new Sprite("/resources/elements/players/playersheet.png",32,32);
+        sprite = new Sprite("/resources/elements/players/spritesheet.png",96,96);
         shadow = ImageManager.load("/resources/elements/players/shadow.png");
 
-        runDown = new Animator(sprite,0,1,12,0.8);
-        runUp = new Animator(sprite,1,1,12,0.8);
-        runLeft = new Animator(sprite,2,1,12,0.8);
-        runRight = new Animator(sprite,3,1,12,0.8);
-        idle = new Animator(sprite,0,0,0,1);
+        runDown = new Animator(sprite,0,12,23,0.8);
+        runUp = new Animator(sprite,0,0,11,0.8);
+        runLeft = new Animator(sprite,0,24,35,0.8);
+        runRight = new Animator(sprite,0,36,47,0.8);
+        idle = new Animator(sprite,0,48,60,1);
 
         collider = new Collider(pos,10,8,11,24);
 
@@ -63,23 +63,23 @@ public class ELM_Player extends Element {
 
             if (Key.W) {
                 direction.y--;
-                animation = runUp;
+                state = P.UP;
             }
             if (Key.S) {
                 direction.y++;
-                animation = runDown;
+                state = P.DOWN;
             }
             if (Key.A) {
                 direction.x--;
-                animation = runLeft;
+                state = P.LEFT;
             }
             if (Key.D) {
                 direction.x++;
-                animation = runRight;
+                state = P.RIGHT;
             }
 
             if (!Key.W && !Key.A && !Key.S && !Key.D) {
-                animation = idle;
+                state = P.IDLE;
                 velocity.multiply(Math.pow(0.03, dt * 2));
             }
 
@@ -88,17 +88,33 @@ public class ELM_Player extends Element {
             velocity.clamp(maxSpeed);
 
             pos.add(velocity.copy().multiply(dt));
-
-            if (animation != null)
-                animation.update(dt);
         }
+
+        if(state == P.DOWN){
+            animation = runDown;
+        }
+        else if(state == P.UP){
+            animation = runUp;
+        }
+        else if(state == P.LEFT){
+            animation = runLeft;
+        }
+        else if(state == P.RIGHT){
+            animation = runRight;
+        }
+        else if(state == P.IDLE){
+            animation = idle;
+        }
+
+        if (animation != null)
+            animation.update(dt);
     }
 
 
     @Override
     public void render(GraphicsFX gfx){
         gfx.draw(shadow,pos.x,pos.y+2);
-        gfx.draw(sprite,pos.x,pos.y);
+        gfx.draw(sprite,pos.x-32,pos.y-32);
 
         gfx.save();
         gfx.setTextSize(2.8f);

@@ -2,16 +2,12 @@ package world;
 
 import core.Core;
 import core.G;
-import elements.ELM_Player;
-import elements.ELM_Tree;
-import elements.Element;
+import elements.*;
 import graphics.GraphicsFX;
 import graphics.ImageManager;
 import graphics.Renderable;
 import physics.CollisionSystem;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -61,13 +57,29 @@ public class World implements Renderable{
                 else if(hexRGB.equalsIgnoreCase("585858")){
                     world[y][x] = 3;
                 }
+                else if(hexRGB.equalsIgnoreCase("323c39")){
+                    world[y][x] = 4;
+                }
+                else if(hexRGB.equalsIgnoreCase("639284")){
+                    world[y][x] = 5;
+                }
+                else if(hexRGB.equalsIgnoreCase("3f7565")){
+                    world[y][x] = 6;
+                }
+                else if(hexRGB.equalsIgnoreCase("257960")){
+                    world[y][x] = 7;
+                }
             }
         }
 
         player = new ELM_Player(this,true);
         elements.add(player);
         players.add(player);
-        elements.add(new ELM_Tree(this));
+        //elements.add(new ELM_Tree(this));
+        elements.add(new ELM_Pillar(this,25,150));
+        elements.add(new ELM_Pillar(this,75,150));
+        elements.add(new ELM_Pillar(this,125,150));
+        elements.add(new ELM_Box(this));
         collSys.display(true);
 
         camera = new Camera(this);

@@ -34,8 +34,8 @@ public class Server {
                 clientHandler.out.writeInt(clientHandler.id);
                 clientHandler.nickname = clientHandler.in.readUTF();
 
-                clientHandler.launch.start();
                 clients.add(clientHandler);
+                clientHandler.launch.start();
 
                 System.out.println("Cliente conectado: " + clientHandler.nickname);
             }
@@ -58,6 +58,7 @@ public class Server {
                             self.out.writeUTF(other.nickname);
                             self.out.writeDouble(other.x);
                             self.out.writeDouble(other.y);
+                            self.out.writeInt(other.state);
                         } catch (IOException e) {
                             System.out.println("falha ao enviar dados do cliente: " + self.id);
                         }

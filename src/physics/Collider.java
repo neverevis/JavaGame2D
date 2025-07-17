@@ -8,11 +8,11 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 public class Collider implements Renderable {
-    Vector pos;
+    protected Vector pos;
     Vector offset;
     double width;
     double height;
-    Rectangle2D.Double area;
+    public Rectangle2D.Double area;
     boolean colliding;
 
     public Collider(double x, double y, double w, double h){

@@ -17,10 +17,8 @@ public class Animator {
 
     public void update(double dt){
         elapsed += dt;
-        if(sprite.row != row){
-            sprite.row = row;
+        if(sprite.col < start || sprite.col > end) {
             frame = start;
-            elapsed = 0;
         }
 
         if(elapsed >= changeRatio){

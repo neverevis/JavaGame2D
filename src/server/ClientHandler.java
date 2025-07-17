@@ -13,9 +13,10 @@ public class ClientHandler {
 
     int id;
     double x, y;
+    int state;
     String nickname;
 
-    boolean connected;
+    boolean connected = true;
 
     public ClientHandler(Socket client,Server server){
         this.client = client;
@@ -33,16 +34,16 @@ public class ClientHandler {
 
     public void readPackage(){
         try {
-            connected = true;
             while (connected) {
                 x = in.readDouble();
                 y = in.readDouble();
+                state = in.readInt();
             }
         } catch (IOException e) {
             try{client.close();} catch (IOException ex) {e.printStackTrace();}
             connected = false;
         }
 
-        System.out.println("Cliente " + id + " saiu do jogo.");
+        System.out.println("Cliente " + nickname + " saiu do jogo.");
     }
 }

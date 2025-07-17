@@ -31,10 +31,12 @@ public class Client {
     String in_nickname;
     double in_x;
     double in_y;
+    int in_state;
 
     //dados para enviar
     double out_x;
     double out_y;
+    int out_state;
 
     boolean connected = false;
 
@@ -59,8 +61,8 @@ public class Client {
             connected = true;
 
             id = in.readInt();
-            out.writeUTF(world.player.nickname);
             world.player.id = id;
+            out.writeUTF(world.player.nickname);
 
             System.out.println("Conectado! seu id: " + id);
         }catch (IOException e){
@@ -81,9 +83,11 @@ public class Client {
         try {
             out_x = world.player.pos.x;
             out_y = world.player.pos.y;
+            out_state = world.player.state;
 
             out.writeDouble(out_x);
             out.writeDouble(out_y);
+            out.writeInt(out_state);
         } catch (IOException e) {
             System.out.println("falha ao enviar pacote");
         }
@@ -109,11 +113,19 @@ public class Client {
         in_nickname = in.readUTF();
         in_x = in.readDouble();
         in_y = in.readDouble();
+        in_state = in.readInt();
 
         ELM_Player player = selectPlayer();
 
         player.pos.x = in_x;
         player.pos.y = in_y;
+        player.state = in_state;
+
+        System.out.println("=-=-= PlayerPackage =-=-=");
+        System.out.println("NICKNAME: " + in_nickname);
+        System.out.println("X : " + in_x);
+        System.out.println("Y : " + in_y);
+        System.out.println("STATE : " + in_state);
     }
 
     public void playerDisconnected() throws IOException{
