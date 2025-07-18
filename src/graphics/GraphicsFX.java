@@ -23,6 +23,9 @@ public class GraphicsFX {
     Stack<Font> fontStack = new Stack<>();
     Stack<Color> colorStack = new Stack<>();
 
+    AffineTransform at;
+    FontMetrics fm;
+
     Font font;
 
     public GraphicsFX(Core core){
@@ -97,8 +100,26 @@ public class GraphicsFX {
     }
 
     public void draw(BufferedImage image, double x, double y){
-        AffineTransform at = AffineTransform.getTranslateInstance(x,y);
+        double w = image.getWidth();
+        double h = image.getHeight();
+
+        at = AffineTransform.getTranslateInstance(x - w/2,y - h/2);
         g.drawImage(image,at,null);
+
+        at.setToIdentity();
+    }
+
+    public void draw(BufferedImage image, double x, double y, double size) {
+        double w = image.getWidth();
+        double h = image.getHeight();
+
+        at.translate(x, y);
+        at.scale(size, size);
+        at.translate(-w/2, -h/2);
+
+        g.drawImage(image, at, null);
+
+        at.setToIdentity();
     }
 
     public void draw(Sprite sprite, double x, double y){
@@ -107,12 +128,24 @@ public class GraphicsFX {
         draw(spr,x,y);
     }
 
+    public void draw(Sprite sprite, double x, double y, double size){
+        BufferedImage spr = sprite.sprite[sprite.row][sprite.col];
+
+        draw(spr,x,y,size);
+    }
+
     public void draw(Shape shape){
         g.draw(shape);
     }
 
     public void draw(String string, double x, double y){
-        g.drawString(string,(float)x,(float)y);
+        save();
+        fm = g.getFontMetrics();
+        double w = fm.stringWidth(string);
+        double h = fm.getAscent() - fm.getDescent();
+        g.translate(x - w / 2,y + h / 2);
+        g.drawString(string,0,0);
+        restore();
     }
 
     public void fillRect(double x, double y, double w, double h){
@@ -120,7 +153,7 @@ public class GraphicsFX {
     }
 
     public void fillRect(double x, double y, double w, double h, double arcW, double arcH){
-        g.fill(new RoundRectangle2D.Double(x,y,w,h,arcW,arcH));
+        g.fill(new RoundRectangle2D.Double(x - w/2,y -h/2,w,h,arcW,arcH));
     }
 
     public void opacity(float opacity){

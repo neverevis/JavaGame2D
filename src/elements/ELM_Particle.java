@@ -1,47 +1,66 @@
 package elements;
 
+import graphics.Animator;
 import graphics.GraphicsFX;
 import graphics.Sprite;
 import math.Vector;
 import world.World;
 
+import java.util.Random;
+
 public class ELM_Particle extends Element {
     Sprite sprite;
     double lifeTime;
-    double gravity;
-    Vector wind;
+    double size = 1;
+    boolean active = true;
     Vector velocity = new Vector();
-    World world;
+    ELM_Emmiter emmiter;
+    Animator animator;
+    Random random = new Random();
 
-    public ELM_Particle(World world, ELM_Emmiter emmiter,String spritePath, double lifetime, double gravity, Vector wind){
-        this.world = world;
+    public ELM_Particle(ELM_Emmiter emmiter,String spritePath,double size, double lifeTime){
+        this.emmiter = emmiter;
         this.sprite = new Sprite(spritePath,16,16);
-        this.lifeTime = lifetime;
-        this.gravity = gravity;
-        this.wind = wind;
+        this.lifeTime = lifeTime;
+        this.size = random.nextDouble(emmiter.size);
 
-        pos.set(emmiter.pos.x,emmiter.pos.y);
+        animator = new Animator(sprite,0,0,4,0.5);
+
+        pos.set(emmiter.pos.x + emmiter.offsetX,emmiter.pos.y + emmiter.offsetY);
     }
 
     @Override
     public void update(double dt) {
         lifeTime -= dt;
         if(lifeTime > 0){
-            velocity.add(0,gravity);
-            pos.add(wind);
+            animator.update(dt);
+            velocity.add(0,emmiter.gravity * dt);
+            pos.add(emmiter.windX * dt,emmiter.windY * dt);
             pos.add(velocity);
+            if(size > 0){
+                size -= 0.2 * dt;
+            }
+        }else{
+            active = false;
         }
     }
 
     @Override
     public void render(GraphicsFX gfx) {
-        if(lifeTime > 0) {
-            gfx.draw(sprite, pos.x - world.camera.pos.x, pos.y - world.camera.pos.y);
-        }
+        if(active)
+            gfx.draw(sprite, pos.x, pos.y,size);
+    }
+
+    public void reset(){
+        active = true;
+        lifeTime = emmiter.lifeTime;
+        pos.set(emmiter.pos.x + emmiter.offsetX,emmiter.pos.y + emmiter.offsetY);
+        this.size = random.nextDouble(emmiter.size);
+        velocity.reset();
     }
 
     @Override
     public double getZIndex() {
-        return pos.y;
+        return pos.y + 8;
     }
 }

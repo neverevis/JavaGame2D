@@ -3,6 +3,7 @@ package core;
 import graphics.GraphicsFX;
 import graphics.ImageManager;
 import graphics.RenderSystem;
+import gui.MENU_Start;
 import server.Client;
 import world.World;
 
@@ -19,6 +20,7 @@ public class Core extends Canvas
     public Key key = new Key();
     public Mouse mouse = new Mouse();
     public World world = new World("/resources/tileData2.png",this);
+    public MENU_Start menuStart = new MENU_Start(this);
 
     public AnimationTimer animationTimer;
     public RenderSystem renSys = new RenderSystem();
@@ -27,6 +29,8 @@ public class Core extends Canvas
 
     Client client = new Client(this);
     GraphicsFX gfx = new GraphicsFX(this);
+
+    TextField text = new TextField("");
 
     public Core()
     {
@@ -39,6 +43,8 @@ public class Core extends Canvas
         mouseImg = ImageManager.load("/resources/cursor/cursor.png");
 
         renSys.register(world);
+        renSys.register(menuStart);
+        //key.setTextField(text);
 
         animationTimer = new AnimationTimer(G.FPS){
             @Override
@@ -62,6 +68,7 @@ public class Core extends Canvas
     public void update(double dt){
         G.time += dt;
         world.update(dt);
+        menuStart.update();
     }
 
     public void render() {
@@ -75,6 +82,10 @@ public class Core extends Canvas
         renSys.render(gfx);
 
         gfx.restore();
+
+        gfx.setColor(Color.WHITE);
+        gfx.draw(text.text,(double)G.S_WIDTH/2,(double)G.S_HEIGHT/2);
+
         gfx.setColor(Color.WHITE);
         gfx.draw("FPS: " +  frameRate,5,25);
 

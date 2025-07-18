@@ -15,7 +15,7 @@ public class ELM_Pillar extends Element{
 
     public ELM_Pillar(World world, double x, double y){
         this.world = world;
-        collider = new Collider(pos,32,16,16,48){
+        collider = new Collider(pos,32,16,-16,16){
             @Override
             public void onCollision(Collider other) {
 
@@ -29,9 +29,15 @@ public class ELM_Pillar extends Element{
 
     @Override
     public void update(double dt) {
-        if(world.player.getZIndex() < getZIndex() && world.player.pos.x > pos.x + 8 && world.player.pos.x < pos.x + 64 - 32){
+        if(
+                world.player.getZIndex() < getZIndex() &&
+                world.player.pos.y > pos.y - 32 &&
+                world.player.pos.x > pos.x - 16 &&
+                world.player.pos.x < pos.x + 16
+        ) {
             opacity += (float)((opacityTarget - opacity) * 5 * dt);
-        }else{
+        }
+        else{
             opacity += (float)((1 - opacity) * 5 * dt);
         }
     }

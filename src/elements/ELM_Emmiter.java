@@ -4,20 +4,36 @@ import graphics.GraphicsFX;
 import math.Vector;
 import world.World;
 
+import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ELM_Emmiter extends Element{
-    CopyOnWriteArrayList<ELM_Particle> particles = new CopyOnWriteArrayList<>();
+    ArrayList<ELM_Particle> particlePool = new ArrayList<>();
     int spawnRate;
+    double lifeTime;
+    int offsetX;
+    int offsetY;
+    double windX;
+    double windY;
+    double gravity;
+    double size;
+
     double spawnPerSecond;
     double timer = 0;
     Vector pos;
     World world;
 
-    public ELM_Emmiter(World world, Vector pos ,int spawnRate){
+    public ELM_Emmiter(World world, Vector pos, double size ,int offsetX, int offsetY,int spawnRate, double lifeTime, double windX, double windY, double gravity){
         this.world = world;
         this.pos = pos;
+        this.size = size;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
         this.spawnRate = spawnRate;
+        this.lifeTime = lifeTime;
+        this.windX = windX;
+        this.windY = windY;
+        this.gravity = gravity;
         spawnPerSecond = 1.0/spawnRate;
     }
 
@@ -26,22 +42,29 @@ public class ELM_Emmiter extends Element{
         timer += dt;
 
         if(timer >= spawnPerSecond){
-            ELM_Particle p = new ELM_Particle(world,this,"/resources/particles/dust.png",10, 0.01,new Vector(0,-0.4));
-            particles.add(p);
-            world.core.renSys.register(p);
+            spawnParticle();
 
             timer = 0;
         }
 
-        for(ELM_Particle p : particles){
-            if(p.lifeTime > 0) {
+        for(ELM_Particle p : particlePool){
+            if(p.active) {
                 p.update(dt);
             }
-            else {
-                particles.remove(p);
-                world.core.renSys.unregister(p);
+        }
+    }
+
+    public void spawnParticle(){
+        for(ELM_Particle p : particlePool){
+            if(!p.active) {
+                p.reset();
+                return;
             }
         }
+
+        ELM_Particle p = new ELM_Particle(this,"/resources/particles/dust.png",size,lifeTime);
+        particlePool.add(p);
+        world.elements.add(p);
     }
 
     @Override

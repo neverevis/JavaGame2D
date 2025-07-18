@@ -48,7 +48,7 @@ public class ELM_Player extends Element {
         runRight = new Animator(sprite,0,36,47,0.8);
         idle = new Animator(sprite,0,48,60,1);
 
-        collider = new Collider(pos,10,8,11,24);
+        collider = new Collider(pos,10,8,-5,8);
 
         world.collSys.register(collider);
     }
@@ -111,24 +111,24 @@ public class ELM_Player extends Element {
     @Override
     public void render(GraphicsFX gfx){
         gfx.draw(shadow,pos.x,pos.y+2);
-        gfx.draw(sprite,pos.x-32,pos.y-32);
+        gfx.draw(sprite,pos.x,pos.y);
 
         gfx.save();
         gfx.setTextSize(2.8f);
 
         gfx.setColor(Color.BLACK);
-        gfx.opacity(0.1f);
-        gfx.fillRect(pos.x + 14.5 - gfx.stringWidth(nickname)/2,pos.y - 8,gfx.stringWidth(nickname) + 3,6,2,2);
+        gfx.opacity(0.2f);
+        gfx.fillRect(pos.x, pos.y - 20,gfx.stringWidth(nickname) + 3,6,2,2);
         gfx.opacity(0.8f);
 
         gfx.setColor(Color.WHITE);
-        gfx.draw(nickname,pos.x + 16 - gfx.stringWidth(nickname)/2,pos.y - 3.5);
+        gfx.draw(nickname,pos.x, pos.y - 20);
 
         gfx.restore();
     }
 
     @Override
     public double getZIndex() {
-        return pos.y;
+        return pos.y + 32;
     }
 }

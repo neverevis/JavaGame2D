@@ -145,6 +145,7 @@ public class Client {
         for(ELM_Player p : world.players){
             if(p.id == in_id){
                 player = p;
+                break;
             }
         }
 

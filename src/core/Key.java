@@ -8,9 +8,13 @@ public class Key implements KeyListener {
     public boolean interactKey = false;
     public boolean zoom = false;
 
+    TextField textField;
+    Core core;
+
     @Override
     public void keyTyped(KeyEvent e) {
-
+        if(textField != null && !Character.isISOControl(e.getKeyChar()))
+            textField.text += e.getKeyChar();
     }
 
     @Override
@@ -30,11 +34,18 @@ public class Key implements KeyListener {
         if(e.getKeyCode() == 68)
             D = true;
 
+
         if(e.getKeyCode() == 80){
             if(!toggleAnchorDisplay)
                 toggleAnchorDisplay = true;
             else
                 toggleAnchorDisplay = false;
+        }
+
+        if(textField != null && e.getKeyCode() == 8){
+            if(!textField.text.isEmpty()){
+                textField.text = textField.text.substring(0,textField.text.length()-1);
+            }
         }
     }
 
@@ -44,8 +55,6 @@ public class Key implements KeyListener {
             zoom = false;
         if(e.getKeyCode() == 69)
             interactKey = false;
-        if(e.getKeyCode() == 27)
-            escapeKey = false;
         if(e.getKeyCode() == 87)
             W = false;
         if(e.getKeyCode() == 83)
@@ -54,5 +63,13 @@ public class Key implements KeyListener {
             A = false;
         if(e.getKeyCode() == 68)
             D = false;
+    }
+
+    public void setTextField(TextField textField){
+        this.textField = textField;
+    }
+
+    public void removeTextField(){
+        this.textField = null;
     }
 }

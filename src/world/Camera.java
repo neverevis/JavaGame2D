@@ -15,7 +15,7 @@ public class Camera {
 
     public Camera(World world){
         this.world = world;
-        center = new Vector((double)(G.S_WIDTH/2/4) - 16,(double)(G.S_HEIGHT/2/4) - 16);
+        center = new Vector((double)(G.S_WIDTH/2/4),(double)(G.S_HEIGHT/2/4));
     }
 
     public void update(double dt) {
