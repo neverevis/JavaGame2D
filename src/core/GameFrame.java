@@ -1,6 +1,10 @@
 package core;
 
+import graphics.ImageManager;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 
 public class GameFrame extends JFrame {
 
@@ -9,6 +13,7 @@ public class GameFrame extends JFrame {
     public GameFrame()
     {
         setTitle("");
+        setIconImage(ImageManager.load("/resources/icon/window_icon.png"));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         add(core);
         pack();

@@ -59,6 +59,7 @@ public class Server {
                             self.out.writeDouble(other.x);
                             self.out.writeDouble(other.y);
                             self.out.writeInt(other.state);
+                            self.out.writeInt(other.facing);
                         } catch (IOException e) {
                             System.out.println("falha ao enviar dados do cliente: " + self.id);
                         }

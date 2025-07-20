@@ -60,6 +60,6 @@ public class ELM_Box extends Element{
 
     @Override
     public double getZIndex() {
-        return this.pos.y;
+        return this.pos.y + 16;
     }
 }

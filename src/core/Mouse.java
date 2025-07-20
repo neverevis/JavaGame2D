@@ -10,8 +10,8 @@ import java.awt.event.MouseMotionListener;
 public class Mouse implements MouseListener, MouseMotionListener{
 
     private Core gp;
-    public boolean mouseClicked = false;
-    public boolean mouseReleased = false;
+    public static boolean mouseClicked = false;
+    public static boolean mouseReleased = false;
     Vector pos = new Vector();
 
     public int clickedX = 0;

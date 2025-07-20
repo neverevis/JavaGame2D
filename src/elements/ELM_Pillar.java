@@ -6,6 +6,9 @@ import math.Vector;
 import physics.Collider;
 import world.World;
 
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+
 public class ELM_Pillar extends Element{
     World world;
     Sprite sprite = new Sprite("/resources/elements/pillar/pillar.png",64,64);

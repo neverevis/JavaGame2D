@@ -3,6 +3,7 @@ package server;
 import core.AnimationTimer;
 import core.Core;
 import core.G;
+import elements.ELM_Emmiter;
 import elements.ELM_Player;
 import world.World;
 
@@ -32,11 +33,13 @@ public class Client {
     double in_x;
     double in_y;
     int in_state;
+    int in_facing;
 
     //dados para enviar
     double out_x;
     double out_y;
     int out_state;
+    int out_facing;
 
     boolean connected = false;
 
@@ -84,10 +87,12 @@ public class Client {
             out_x = world.player.pos.x;
             out_y = world.player.pos.y;
             out_state = world.player.state;
+            out_facing = world.player.facing;
 
             out.writeDouble(out_x);
             out.writeDouble(out_y);
             out.writeInt(out_state);
+            out.writeInt(out_facing);
         } catch (IOException e) {
             System.out.println("falha ao enviar pacote");
         }
@@ -114,12 +119,14 @@ public class Client {
         in_x = in.readDouble();
         in_y = in.readDouble();
         in_state = in.readInt();
+        in_facing = in.readInt();
 
         ELM_Player player = selectPlayer();
 
         player.pos.x = in_x;
         player.pos.y = in_y;
         player.state = in_state;
+        player.facing = in_facing;
 
         System.out.println("=-=-= PlayerPackage =-=-=");
         System.out.println("NICKNAME: " + in_nickname);

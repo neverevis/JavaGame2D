@@ -1,5 +1,6 @@
 package graphics;
 
+import core.G;
 import world.World;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -17,6 +18,7 @@ public class RenderSystem {
 
     public void render(GraphicsFX gfx){
         renderables.sort(null);
+        gfx.scale(G.SCALE);
 
         for(Renderable r : renderables) {
             if(r.getLayer() == 0)

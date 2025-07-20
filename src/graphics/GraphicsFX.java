@@ -95,7 +95,7 @@ public class GraphicsFX {
     public void clear(){
         save();
         g.setColor(Color.BLACK);
-        g.fillRect(0,0,G.S_WIDTH,G.S_HEIGHT);
+        g.fillRect(0,0,G.S_WIDTH*G.SCALE,G.S_HEIGHT*G.SCALE);
         restore();
     }
 

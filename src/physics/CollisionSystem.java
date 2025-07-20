@@ -53,6 +53,15 @@ public class CollisionSystem implements Renderable{
         }
     }
 
+    public boolean testCollision(Collider other){
+        for(Collider self : colliders){
+            if(other != self && other.willCollide(self))
+                return  true;
+        }
+
+        return false;
+    }
+
     @Override
     public double getZIndex() {
         return 0;

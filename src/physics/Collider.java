@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 public class Collider implements Renderable {
-    protected Vector pos;
+    public Vector pos;
     Vector offset;
     double width;
     double height;
@@ -63,6 +63,13 @@ public class Collider implements Renderable {
             gfx.setColor(Color.BLACK);
         
         gfx.draw(area);
+    }
+
+    public boolean willCollide(Collider other){
+        if(other.area.intersects(this.area))
+            return true;
+
+        return false;
     }
 
     public void onCollision(Collider other){

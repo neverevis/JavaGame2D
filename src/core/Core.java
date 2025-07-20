@@ -19,7 +19,7 @@ public class Core extends Canvas
 
     public Key key = new Key();
     public Mouse mouse = new Mouse();
-    public World world = new World("/resources/tileData2.png",this);
+    public World world = new World("/resources/tileData3.png",this);
     public MENU_Start menuStart = new MENU_Start(this);
 
     public AnimationTimer animationTimer;
@@ -76,8 +76,6 @@ public class Core extends Canvas
 
         gfx.clear();
         gfx.save();
-
-        gfx.scale(G.SCALE);
 
         renSys.render(gfx);
 

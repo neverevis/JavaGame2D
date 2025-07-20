@@ -14,6 +14,7 @@ public class ClientHandler {
     int id;
     double x, y;
     int state;
+    int facing;
     String nickname;
 
     boolean connected = true;
@@ -38,6 +39,7 @@ public class ClientHandler {
                 x = in.readDouble();
                 y = in.readDouble();
                 state = in.readInt();
+                facing = in.readInt();
             }
         } catch (IOException e) {
             try{client.close();} catch (IOException ex) {e.printStackTrace();}

@@ -6,7 +6,9 @@ import elements.*;
 import graphics.GraphicsFX;
 import graphics.ImageManager;
 import graphics.Renderable;
+import math.Vector;
 import physics.CollisionSystem;
+import physics.Barrier;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -48,40 +50,24 @@ public class World implements Renderable{
 
                 String hexRGB = String.format("%02X%02X%02X", red, green, blue);
 
-                if(hexRGB.equalsIgnoreCase("99e550")){
-                    world[y][x] = 0;
-                }
-                else if(hexRGB.equalsIgnoreCase("daffb6")){
-                    world[y][x] = 1;
-                }
-                else if(hexRGB.equalsIgnoreCase("585858")){
-                    world[y][x] = 3;
-                }
-                else if(hexRGB.equalsIgnoreCase("323c39")){
-                    world[y][x] = 4;
-                }
-                else if(hexRGB.equalsIgnoreCase("639284")){
-                    world[y][x] = 5;
-                }
-                else if(hexRGB.equalsIgnoreCase("3f7565")){
-                    world[y][x] = 6;
-                }
-                else if(hexRGB.equalsIgnoreCase("257960")){
-                    world[y][x] = 7;
-                }
+                world[y][x] = tiles.getCode(hexRGB);
             }
         }
 
         player = new ELM_Player(this,true);
-        player.pos.set((double)cols/2*G.TILESIZE,(double)rows/2*G.TILESIZE);
+        player.pos.set(50,100);
         elements.add(player);
         players.add(player);
         //elements.add(new ELM_Tree(this));
-        elements.add(new ELM_Pillar(this,25,150));
-        elements.add(new ELM_Pillar(this,75,150));
-        elements.add(new ELM_Pillar(this,125,150));
-        elements.add(new ELM_Box(this));
-        elements.add(new ELM_Emmiter(this,player.pos,0.6,0,16,15,1.2,0,-10,0.1));
+        //elements.add(new ELM_Emmiter(this,"/resources/elements/torch/fireParticle.png",new Vector(16*32,16*32),32*16,1,0,0,600,3,3,-6,0));
+        for(int i = 0; i < 16; i++){
+            elements.add(new ELM_Torch(this,64*i,50));
+            elements.add(new ELM_Pillar(this,32 + 64*i,64));
+        }
+
+
+        Barrier barrier = new Barrier(this,0,32,32 * cols, 32 * 2);
+        //elements.add(new ELM_Emmiter(this,player.pos,0.6,0,16,15,1.2,0,-10,0.1));
         collSys.display(true);
 
         camera = new Camera(this);
@@ -106,7 +92,7 @@ public class World implements Renderable{
                 double tileX = j* 32.0;
                 double tileY = i* 32.0;
 
-                if(tileX - camera.pos.x> - G.TILESIZE && tileX - camera.pos.x < G.S_WIDTH && tileY - camera.pos.y > - G.TILESIZE && tileY - camera.pos.y < G.S_HEIGHT) {
+                if(tileX - camera.pos.x + 32 > 0 && tileX - camera.pos.x - 32 < G.S_WIDTH/4 && tileY - camera.pos.y + 32 > 0 && tileY - 32 - camera.pos.y < G.S_HEIGHT/4) {
                     tiles.drawTile(gfx, world[i][j], tileX, tileY);
                 }
             }

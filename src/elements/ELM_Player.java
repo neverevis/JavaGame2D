@@ -1,6 +1,7 @@
 package elements;
 
 import core.Key;
+import core.Mouse;
 import graphics.*;
 import math.Vector;
 import physics.Collider;
@@ -12,10 +13,10 @@ import java.awt.image.BufferedImage;
 public class ELM_Player extends Element {
     public int id;
     public String nickname = "player";
-    double nickLabelWidth;
 
     boolean isLocal;
 
+    Vector nextPos = new Vector();
     Vector direction = new Vector();
     Vector velocity = new Vector();
 
@@ -28,16 +29,31 @@ public class ELM_Player extends Element {
     Animator runDown;
     Animator runLeft;
     Animator runRight;
+    Animator attackDown;
     public Collider collider;
     World world;
+    ELM_Emmiter dust;
 
     public int state;
+    public int facing;
     double acceleration = 800;
     double maxSpeed = 100;
+    double attackCoolDown;
+    public boolean startAttack = false;
+
+    int IDLE = 0;
+    int RUNNING = 1;
+    public int ATTACKING = 2;
+
+    int UP = 0;
+    int DOWN = 1;
+    int LEFT = 2;
+    int RIGHT = 3;
 
     public ELM_Player(World world,boolean isLocal){
         this.world = world;
         this.isLocal = isLocal;
+        dust = new ELM_Emmiter(this.world,"/resources/particles/dust.png",this.pos,3,0.7,0.2,0,16,27,1.2,0,-10,0.2);
 
         sprite = new Sprite("/resources/elements/players/spritesheet.png",96,96);
         shadow = ImageManager.load("/resources/elements/players/shadow.png");
@@ -47,6 +63,7 @@ public class ELM_Player extends Element {
         runLeft = new Animator(sprite,0,24,35,0.8);
         runRight = new Animator(sprite,0,36,47,0.8);
         idle = new Animator(sprite,0,48,60,1);
+        attackDown = new Animator(sprite,0,61,70,0.55);
 
         collider = new Collider(pos,10,8,-5,8);
 
@@ -55,56 +72,125 @@ public class ELM_Player extends Element {
 
     @Override
     public void update(double dt) {
+        if(attackCoolDown > 0){
+            attackCoolDown -= dt;
+        }
+
+        if(state == ATTACKING){
+            velocity.multiply(Math.pow(0.03, dt * 2));
+            if(attackCoolDown < 0.45){
+                state = IDLE;
+            }
+        }
+
         if(isLocal) {
+            if(Mouse.mouseClicked && attackCoolDown <= 0){
+                startAttack = true;
+                state = ATTACKING;
+                attackCoolDown = 1;
+            }
+
             direction.reset();
 
-            if (Key.W) {
-                direction.y--;
-                state = P.UP;
-            }
-            if (Key.S) {
-                direction.y++;
-                state = P.DOWN;
-            }
-            if (Key.A) {
-                direction.x--;
-                state = P.LEFT;
-            }
-            if (Key.D) {
-                direction.x++;
-                state = P.RIGHT;
-            }
+            if(state != ATTACKING) {
+                if (Key.W) {
+                    direction.y--;
+                    state = RUNNING;
+                    facing = UP;
+                }
+                if (Key.S) {
+                    direction.y++;
+                    state = RUNNING;
+                    facing = DOWN;
+                }
+                if (Key.A) {
+                    direction.x--;
+                    state = RUNNING;
+                    facing = LEFT;
+                }
+                if (Key.D) {
+                    direction.x++;
+                    state = RUNNING;
+                    facing = RIGHT;
+                }
 
-            if (!Key.W && !Key.A && !Key.S && !Key.D) {
-                state = P.IDLE;
-                velocity.multiply(Math.pow(0.03, dt * 2));
+                if (!Key.W && !Key.A && !Key.S && !Key.D) {
+                    state = IDLE;
+                    velocity.multiply(Math.pow(0.03, dt * 2));
+                }
             }
 
             direction.normalize();
             velocity.add(direction.multiply(acceleration * dt));
             velocity.clamp(maxSpeed);
 
-            pos.add(velocity.copy().multiply(dt));
+            //validação de posição
+            collider.pos = nextPos;
+
+            nextPos.set(pos);
+            nextPos.add(velocity.x * dt,0);
+
+            collider.update();
+            if(!world.collSys.testCollision(collider))
+                pos.set(nextPos.x,pos.y);
+
+            nextPos.set(pos);
+            nextPos.add(0,velocity.y * dt);
+
+            collider.update();
+            if(!world.collSys.testCollision(collider))
+                pos.set(pos.x, nextPos.y);
+
+            collider.pos = pos;
         }
 
-        if(state == P.DOWN){
-            animation = runDown;
+        if(facing == DOWN){
+            if(state == RUNNING){
+                animation = runDown;
+                dust.active = true;
+            }else if(state == IDLE){
+                animation = idle;
+                dust.active = false;
+            }
         }
-        else if(state == P.UP){
-            animation = runUp;
+        else if(facing == UP){
+            if(state == RUNNING){
+                animation = runUp;
+                dust.active = true;
+            }else if(state == IDLE){
+                animation = idle;
+                dust.active = false;
+            }
         }
-        else if(state == P.LEFT){
-            animation = runLeft;
+        else if(facing == LEFT){
+            if(state == RUNNING){
+                animation = runLeft;
+                dust.active = true;
+            }else if(state == IDLE){
+                animation = idle;
+                dust.active = false;
+            }
         }
-        else if(state == P.RIGHT){
-            animation = runRight;
+        else if(facing == RIGHT){
+            if(state == RUNNING){
+                animation = runRight;
+                dust.active = true;
+            }else if(state == IDLE){
+                animation = idle;
+                dust.active = false;
+            }
         }
-        else if(state == P.IDLE){
-            animation = idle;
+
+        if(state == ATTACKING){
+            startAttack = false;
+            animation = attackDown;
+            dust.active = false;
         }
 
         if (animation != null)
             animation.update(dt);
+
+        dust.update(dt);
     }
 
 
@@ -129,6 +215,6 @@ public class ELM_Player extends Element {
 
     @Override
     public double getZIndex() {
-        return pos.y + 32;
+        return pos.y + 16;
     }
 }

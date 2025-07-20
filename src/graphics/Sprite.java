@@ -5,11 +5,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class Sprite {
-    BufferedImage[][] sprite;
+    public BufferedImage[][] sprite;
 
     int width, height;
     public int row, col;
-    int totalRow, totalCol;
+    public int totalRow, totalCol;
 
     public Sprite(String path, int w, int h){
         BufferedImage spriteSheet = ImageManager.load(path);

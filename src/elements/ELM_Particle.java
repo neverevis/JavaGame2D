@@ -23,10 +23,12 @@ public class ELM_Particle extends Element {
         this.sprite = new Sprite(spritePath,16,16);
         this.lifeTime = lifeTime;
         this.size = random.nextDouble(emmiter.size);
+        animator = new Animator(sprite,0,0,sprite.totalCol-1,0.5);
 
-        animator = new Animator(sprite,0,0,4,0.5);
+        double randX = random.nextDouble(emmiter.spawnRange*2)- emmiter.spawnRange;
+        double randY = random.nextDouble(emmiter.spawnRange*2) - emmiter.spawnRange;
 
-        pos.set(emmiter.pos.x + emmiter.offsetX,emmiter.pos.y + emmiter.offsetY);
+        pos.set(emmiter.pos.x + emmiter.offsetX + randX,emmiter.pos.y + emmiter.offsetY + randY);
     }
 
     @Override
@@ -38,7 +40,7 @@ public class ELM_Particle extends Element {
             pos.add(emmiter.windX * dt,emmiter.windY * dt);
             pos.add(velocity);
             if(size > 0){
-                size -= 0.2 * dt;
+                size *= Math.pow(0.1,dt / emmiter.lifeTime);
             }
         }else{
             active = false;
@@ -47,20 +49,26 @@ public class ELM_Particle extends Element {
 
     @Override
     public void render(GraphicsFX gfx) {
+        gfx.opacity((float)emmiter.opacity);
         if(active)
             gfx.draw(sprite, pos.x, pos.y,size);
+        gfx.opacity(1);
     }
 
     public void reset(){
         active = true;
         lifeTime = emmiter.lifeTime;
-        pos.set(emmiter.pos.x + emmiter.offsetX,emmiter.pos.y + emmiter.offsetY);
         this.size = random.nextDouble(emmiter.size);
         velocity.reset();
+
+        double randX = random.nextDouble(emmiter.spawnRange*2)- emmiter.spawnRange;
+        double randY = random.nextDouble(emmiter.spawnRange*2) - emmiter.spawnRange;
+
+        pos.set(emmiter.pos.x + emmiter.offsetX + randX,emmiter.pos.y + emmiter.offsetY + randY);
     }
 
     @Override
     public double getZIndex() {
-        return pos.y + 8;
+        return pos.y;
     }
 }
