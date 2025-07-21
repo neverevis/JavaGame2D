@@ -2,6 +2,9 @@ package server;
 
 import core.AnimationTimer;
 import core.G;
+import math.Vector;
+import server.logic.S_Player;
+import server.logic.ServerWorld;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -13,16 +16,31 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Server {
     Random random = new Random();
     ServerSocket server;
+    ServerWorld serverWorld;
     List<ClientHandler> clients;
     int port = 12345;
+    int playerCount = 0;
 
     public Server(){
         try {
             server = new ServerSocket(port);
             clients = new CopyOnWriteArrayList<>();
+            serverWorld = new ServerWorld(this);
+
+            new AnimationTimer(300){
+                @Override
+                public void step(double dt) {
+                  serverWorld.update(dt);
+                }
+            }.start();
             System.out.println("Servidor inicializado!");
 
-            new Thread(this::broadcast).start();
+            new AnimationTimer(60){
+                @Override
+                public void step(double dt) {
+                    broadcast();
+                }
+            }.start();
 
             while(true){
                 Socket client;
@@ -38,6 +56,8 @@ public class Server {
                 clientHandler.launch.start();
 
                 System.out.println("Cliente conectado: " + clientHandler.nickname);
+
+                playerCount++;
             }
         } catch (IOException e) {
             System.out.println("Servidor finalizado.");
@@ -49,20 +69,18 @@ public class Server {
         while (true) {
             for (ClientHandler self : clients) {
                 for (ClientHandler other : clients) {
-                    if (self.connected && other.connected && other != self) {
-                        try {
-                            //pacote de player
-                            self.out.writeInt(0);
+                    try {
+                        //pacote de player
+                        self.out.writeInt(0);
 
-                            self.out.writeInt(other.id);
-                            self.out.writeUTF(other.nickname);
-                            self.out.writeDouble(other.x);
-                            self.out.writeDouble(other.y);
-                            self.out.writeInt(other.state);
-                            self.out.writeInt(other.facing);
-                        } catch (IOException e) {
-                            System.out.println("falha ao enviar dados do cliente: " + self.id);
-                        }
+                        self.out.writeInt(other.id);
+                        self.out.writeUTF(other.nickname);
+                        self.out.writeDouble(other.player.pos.x);
+                        self.out.writeDouble(other.player.pos.y);
+                        self.out.writeInt(other.player.state);
+                        self.out.writeInt(other.player.facing);
+                    } catch (IOException e) {
+                        System.out.println("falha ao enviar dados do cliente: " + self.id);
                     }
                 }
             }

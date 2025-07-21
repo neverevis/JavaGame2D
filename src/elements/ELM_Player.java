@@ -72,24 +72,7 @@ public class ELM_Player extends Element {
 
     @Override
     public void update(double dt) {
-        if(attackCoolDown > 0){
-            attackCoolDown -= dt;
-        }
-
-        if(state == ATTACKING){
-            velocity.multiply(Math.pow(0.03, dt * 2));
-            if(attackCoolDown < 0.45){
-                state = IDLE;
-            }
-        }
-
         if(isLocal) {
-            if(Mouse.mouseClicked && attackCoolDown <= 0){
-                startAttack = true;
-                state = ATTACKING;
-                attackCoolDown = 1;
-            }
-
             direction.reset();
 
             if(state != ATTACKING) {
@@ -116,6 +99,8 @@ public class ELM_Player extends Element {
 
                 if (!Key.W && !Key.A && !Key.S && !Key.D) {
                     state = IDLE;
+                    velocity.multiply(Math.pow(0.03, dt * 2));
+                }else{
                     velocity.multiply(Math.pow(0.03, dt * 2));
                 }
             }

@@ -1,10 +1,9 @@
 package server;
 
-import core.AnimationTimer;
-import core.Core;
-import core.G;
+import core.*;
 import elements.ELM_Emmiter;
 import elements.ELM_Player;
+import math.Vector;
 import world.World;
 
 import java.io.*;
@@ -21,6 +20,9 @@ public class Client {
     DataOutputStream out;
     BufferedReader string_in;
     PrintWriter string_out;
+
+    Vector newPos = new Vector();
+    Vector lerp = new Vector();
 
     String ip;
     int port = 12345;
@@ -84,15 +86,11 @@ public class Client {
 
     public void send(){
         try {
-            out_x = world.player.pos.x;
-            out_y = world.player.pos.y;
-            out_state = world.player.state;
-            out_facing = world.player.facing;
-
-            out.writeDouble(out_x);
-            out.writeDouble(out_y);
-            out.writeInt(out_state);
-            out.writeInt(out_facing);
+            out.writeBoolean(Key.W);
+            out.writeBoolean(Key.A);
+            out.writeBoolean(Key.S);
+            out.writeBoolean(Key.D);
+            out.writeBoolean(Mouse.mouseClicked);
         } catch (IOException e) {
             System.out.println("falha ao enviar pacote");
         }
@@ -123,16 +121,18 @@ public class Client {
 
         ELM_Player player = selectPlayer();
 
-        player.pos.x = in_x;
-        player.pos.y = in_y;
+        newPos.set(in_x, in_y);
+        Vector dir = newPos.sub(player.pos);
+        player.pos.add(dir.multiply(0.2));
+
         player.state = in_state;
         player.facing = in_facing;
 
-        System.out.println("=-=-= PlayerPackage =-=-=");
+        /*System.out.println("=-=-= PlayerPackage =-=-=");
         System.out.println("NICKNAME: " + in_nickname);
         System.out.println("X : " + in_x);
         System.out.println("Y : " + in_y);
-        System.out.println("STATE : " + in_state);
+        System.out.println("STATE : " + in_state);*/
     }
 
     public void playerDisconnected() throws IOException{

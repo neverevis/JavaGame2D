@@ -1,16 +1,16 @@
-package physics;
+package server.logic;
+import physics.Collider;
+import server.logic.ServerWorld;
 
-import world.World;
-
-public class Barrier {
-    World world;
+public class S_Barrier {
+    ServerWorld world;
     Collider collider;
     double x;
     double y;
     int w;
     int h;
 
-    public Barrier(World world, double x, double y, int w, int h){
+    public S_Barrier(ServerWorld world, double x, double y, int w, int h){
         collider = new Collider(x-16,y-16,w,h){
             @Override
             public void onCollision(Collider other) {
