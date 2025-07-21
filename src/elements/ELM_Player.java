@@ -33,17 +33,17 @@ public class ELM_Player extends Element {
     public Collider collider;
     World world;
     ELM_Emmiter dust;
+    ELM_Emmiter dash;
 
     public int state;
     public int facing;
     double acceleration = 800;
     double maxSpeed = 100;
-    double attackCoolDown;
-    public boolean startAttack = false;
 
     int IDLE = 0;
     int RUNNING = 1;
     public int ATTACKING = 2;
+    int TAKING_DAMAGE = 3;
 
     int UP = 0;
     int DOWN = 1;
@@ -54,6 +54,7 @@ public class ELM_Player extends Element {
         this.world = world;
         this.isLocal = isLocal;
         dust = new ELM_Emmiter(this.world,"/resources/particles/dust.png",this.pos,3,0.7,0.2,0,16,27,1.2,0,-10,0.2);
+        dash = new ELM_Emmiter(this.world,"/resources/elements/torch/fireParticle.png",this.pos,8,3,1,0,0,700,0.5,0,0,0);
 
         sprite = new Sprite("/resources/elements/players/spritesheet.png",96,96);
         shadow = ImageManager.load("/resources/elements/players/shadow.png");
@@ -72,6 +73,13 @@ public class ELM_Player extends Element {
 
     @Override
     public void update(double dt) {
+        if(Key.SPACE){
+            dash.active = true;
+        }else{
+            dash.active = false;
+        }
+        if(state == TAKING_DAMAGE)
+            System.out.println("TOMANDO DANO!");
         if(isLocal) {
             direction.reset();
 
@@ -167,7 +175,6 @@ public class ELM_Player extends Element {
         }
 
         if(state == ATTACKING){
-            startAttack = false;
             animation = attackDown;
             dust.active = false;
         }
@@ -176,6 +183,7 @@ public class ELM_Player extends Element {
             animation.update(dt);
 
         dust.update(dt);
+        dash.update(dt);
     }
 
 

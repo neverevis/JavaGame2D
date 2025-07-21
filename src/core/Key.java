@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 
 public class Key implements KeyListener {
     public static boolean W = false, S = false, A = false, D = false, toggleAnchorDisplay = false, escapeKey = false;
+    public static boolean SPACE = false;
     public boolean interactKey = false;
     public boolean zoom = false;
 
@@ -19,6 +20,8 @@ public class Key implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == 32)
+            SPACE = true;
         if(e.getKeyCode() == 90)
             zoom = true;
         if(e.getKeyCode() == 69)
@@ -51,6 +54,8 @@ public class Key implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+        if(e.getKeyCode() == 32)
+            SPACE = false;
         if(e.getKeyCode() == 90)
             zoom = false;
         if(e.getKeyCode() == 69)

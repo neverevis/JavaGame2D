@@ -27,7 +27,9 @@ public class S_Player {
 
     int IDLE = 0;
     int RUNNING = 1;
-    public int ATTACKING = 2;
+    int ATTACKING = 2;
+    int TAKING_DAMAGE = 3;
+    int teleportCount = 0;
 
     int UP = 0;
     int DOWN = 1;
@@ -43,6 +45,10 @@ public class S_Player {
     }
 
     public void update(double dt) {
+        if(clientHandler.SPACE && teleportCount == 0){
+            teleportCount = 6;
+        }
+
         if (attackCoolDown > 0) {
             attackCoolDown -= dt;
         }
@@ -85,15 +91,39 @@ public class S_Player {
                 facing = RIGHT;
             }
 
-            if (!clientHandler.W && !clientHandler.A && !clientHandler.S && !clientHandler.D) {
+            if (!clientHandler.W && !clientHandler.A && !clientHandler.S && !clientHandler.D && state != TAKING_DAMAGE) {
                 state = IDLE;
                 velocity.multiply(Math.pow(0.03, dt * 2));
+            }
+
+            if(teleportCount != 0){
+                teleportCount--;
+                collider.pos = nextPos;
+
+                nextPos.set(pos);
+                nextPos.add(velocity.copy().x * dt * 5,0);
+
+                collider.update();
+                if (!world.collSys.testCollision(collider))
+                    pos.set(nextPos.x, pos.y);
+
+                nextPos.set(pos);
+                nextPos.add(0,velocity.copy().y * dt * 5);
+
+                collider.update();
+                if (!world.collSys.testCollision(collider))
+                    pos.set(pos.x, nextPos.y);
+
+                collider.update();
+                collider.pos = pos;
             }
         }
 
         direction.normalize();
         velocity.add(direction.multiply(acceleration * dt));
-        velocity.clamp(maxSpeed);
+
+        if(state != TAKING_DAMAGE)
+            velocity.clamp(maxSpeed);
 
         //validação de posição
         collider.pos = nextPos;
@@ -113,6 +143,22 @@ public class S_Player {
             pos.set(pos.x, nextPos.y);
 
         collider.pos = pos;
+
+        if(state == ATTACKING && attackCoolDown < 0.9 && attackCoolDown > 0.8){
+            for(S_Player p : world.players){
+                if(p != this) {
+                    if (pos.getDistance(p.pos) < 32) {
+                        Vector knockback = p.pos.copy().sub(pos).normalize().multiply(9000 * dt);
+                        p.velocity.add(knockback);
+                        p.state = TAKING_DAMAGE;
+                    }
+                }
+            }
+        }
+
+        if(state == TAKING_DAMAGE){
+            velocity.multiply(Math.pow(0.01, dt));
+        }
     }
 
 }

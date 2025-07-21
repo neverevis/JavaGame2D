@@ -91,6 +91,7 @@ public class Client {
             out.writeBoolean(Key.S);
             out.writeBoolean(Key.D);
             out.writeBoolean(Mouse.mouseClicked);
+            out.writeBoolean(Key.SPACE);
         } catch (IOException e) {
             System.out.println("falha ao enviar pacote");
         }

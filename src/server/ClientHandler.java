@@ -17,7 +17,7 @@ public class ClientHandler {
     Thread launch;
 
     int id;
-    public boolean W, A ,S ,D ,click;
+    public boolean W, A ,S ,D ,click, SPACE;
     String nickname;
 
     boolean connected = true;
@@ -46,6 +46,9 @@ public class ClientHandler {
                 S = in.readBoolean();
                 D = in.readBoolean();
                 click = in.readBoolean();
+                SPACE = in.readBoolean();
+
+                System.out.println(SPACE);
             }
         } catch (IOException e) {
             try{client.close();} catch (IOException ex) {e.printStackTrace();}
