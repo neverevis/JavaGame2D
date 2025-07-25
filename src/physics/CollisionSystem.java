@@ -3,6 +3,7 @@ package physics;
 import core.Key;
 import graphics.GraphicsFX;
 import graphics.Renderable;
+import math.Vector;
 
 import java.awt.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -53,13 +54,35 @@ public class CollisionSystem implements Renderable{
         }
     }
 
-    public boolean testCollision(Collider other){
-        for(Collider self : colliders){
-            if(other != self && other.willCollide(self))
+    public boolean testCollision(Collider collider){
+        for(Collider other : colliders){
+            if(other != collider && collider.willCollide(other) && other.solid)
                 return  true;
         }
 
         return false;
+    }
+
+    public boolean predictCollision_x(Collider collider, double futureX){
+        double originalX = collider.pos.x;
+        collider.pos.x = futureX;
+        collider.update();
+        boolean colliding = testCollision(collider);
+        collider.pos.x = originalX;
+        collider.update();
+
+        return colliding;
+    }
+
+    public boolean predictCollision_y(Collider collider, double futureY){
+        double originalY = collider.pos.y;
+        collider.pos.y = futureY;
+        collider.update();
+        boolean colliding = testCollision(collider);
+        collider.pos.y = originalY;
+        collider.update();
+
+        return colliding;
     }
 
     @Override

@@ -17,7 +17,7 @@ public class ELM_Tree extends Element {
         sprite = new Sprite("/resources/elements/tree/tree.png",96,96);
         animation = new Animator(sprite,0,0,23,2);
 
-        collider = new Collider(pos,18,12,39,79);
+        collider = new Collider(pos,18,12,39,79,true);
 
         world.collSys.register(collider);
     }

@@ -14,8 +14,10 @@ public class Key implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(textField != null && !Character.isISOControl(e.getKeyChar()))
+        if(textField != null && !Character.isISOControl(e.getKeyChar()) && textField.charactersCount <= textField.characterLimit) {
             textField.text += e.getKeyChar();
+            textField.charactersCount++;
+        }
     }
 
     @Override
@@ -48,6 +50,7 @@ public class Key implements KeyListener {
         if(textField != null && e.getKeyCode() == 8){
             if(!textField.text.isEmpty()){
                 textField.text = textField.text.substring(0,textField.text.length()-1);
+                textField.charactersCount--;
             }
         }
     }

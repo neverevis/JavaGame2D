@@ -36,6 +36,7 @@ public class Client {
     double in_y;
     int in_state;
     int in_facing;
+    double in_health;
 
     //dados para enviar
     double out_x;
@@ -119,6 +120,7 @@ public class Client {
         in_y = in.readDouble();
         in_state = in.readInt();
         in_facing = in.readInt();
+        in_health = in.readDouble();
 
         ELM_Player player = selectPlayer();
 
@@ -128,6 +130,7 @@ public class Client {
 
         player.state = in_state;
         player.facing = in_facing;
+        player.health = in_health;
 
         /*System.out.println("=-=-= PlayerPackage =-=-=");
         System.out.println("NICKNAME: " + in_nickname);

@@ -12,7 +12,7 @@ public class Mouse implements MouseListener, MouseMotionListener{
     private Core gp;
     public static boolean mouseClicked = false;
     public static boolean mouseReleased = false;
-    Vector pos = new Vector();
+    public static Vector pos = new Vector();
 
     public int clickedX = 0;
     public int clickedY = 0;

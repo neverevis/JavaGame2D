@@ -11,7 +11,7 @@ public class S_Barrier {
     int h;
 
     public S_Barrier(ServerWorld world, double x, double y, int w, int h){
-        collider = new Collider(x-16,y-16,w,h){
+        collider = new Collider(x-16,y-16,w,h,true){
             @Override
             public void onCollision(Collider other) {
 

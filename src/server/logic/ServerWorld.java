@@ -45,7 +45,7 @@ public class ServerWorld{
 
         S_Barrier barrier = new S_Barrier(this,0,32,32 * cols, 32 * 2);
 
-        for(int i = 0; i < 16; i++){
+        for(int i = 0; i < 15; i++){
             new S_Pillar(this,32 + 64*i,64);
         }
     }

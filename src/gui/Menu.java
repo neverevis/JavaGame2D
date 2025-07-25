@@ -6,7 +6,7 @@ import graphics.Renderable;
 public abstract class Menu implements Renderable {
     @Override
     public int getLayer() {
-        return 1;
+        return 2;
     }
 
     @Override

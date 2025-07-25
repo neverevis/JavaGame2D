@@ -6,6 +6,7 @@ import elements.*;
 import graphics.GraphicsFX;
 import graphics.ImageManager;
 import graphics.Renderable;
+import gui.HealthBar;
 import math.Vector;
 import physics.CollisionSystem;
 import physics.Barrier;
@@ -29,6 +30,7 @@ public class World implements Renderable{
     public CollisionSystem collSys = new CollisionSystem();
 
     public ELM_Player player;
+    HealthBar hp;
 
     public World(String path, Core core){
         BufferedImage tileData = ImageManager.load(path);
@@ -49,24 +51,26 @@ public class World implements Renderable{
                 int blue  =  pixel        & 0xFF;
 
                 String hexRGB = String.format("%02X%02X%02X", red, green, blue);
-
                 world[y][x] = tiles.getCode(hexRGB);
             }
         }
 
         player = new ELM_Player(this,true);
+        hp = new HealthBar(player);
+        core.renSys.register(hp);
         player.pos.set(50,100);
         elements.add(player);
         players.add(player);
         //elements.add(new ELM_Tree(this));
         //elements.add(new ELM_Emmiter(this,"/resources/elements/torch/fireParticle.png",new Vector(16*32,16*32),32*16,1,0,0,600,3,3,-6,0));
-        for(int i = 0; i < 16; i++){
+        for(int i = 0; i < 15; i++){
             elements.add(new ELM_Torch(this,64*i,50));
             elements.add(new ELM_Pillar(this,32 + 64*i,64));
         }
 
 
         Barrier barrier = new Barrier(this,0,32,32 * cols, 32 * 2);
+        Barrier barrier1 = new Barrier(this,32*31,0,32,32*2*32);
         //elements.add(new ELM_Emmiter(this,player.pos,0.6,0,16,15,1.2,0,-10,0.1));
         collSys.display(true);
 
@@ -80,6 +84,7 @@ public class World implements Renderable{
             elm.update(dt);
         elements.sort(null);
         collSys.update();
+        hp.update();
     }
 
     @Override

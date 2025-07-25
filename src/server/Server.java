@@ -79,6 +79,7 @@ public class Server {
                         self.out.writeDouble(other.player.pos.y);
                         self.out.writeInt(other.player.state);
                         self.out.writeInt(other.player.facing);
+                        self.out.writeDouble(other.player.health);
                     } catch (IOException e) {
                         System.out.println("falha ao enviar dados do cliente: " + self.id);
                     }

@@ -18,7 +18,7 @@ public class ELM_Pillar extends Element{
 
     public ELM_Pillar(World world, double x, double y){
         this.world = world;
-        collider = new Collider(pos,32,16,-16,16){
+        collider = new Collider(pos,32,16,-16,16,true){
             @Override
             public void onCollision(Collider other) {
 

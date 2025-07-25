@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Tiles {
-    int totalTiles = 16;
+    int totalTiles = 18;
     Random random = new Random();
     BufferedImage tile[] = new BufferedImage[totalTiles];
 
@@ -35,6 +35,8 @@ public class Tiles {
         tile[12] = ImageManager.load("/resources/tiles/brickwall2.png");
         tile[13] = ImageManager.load("/resources/tiles/border.png");
         tile[14] = ImageManager.load("/resources/tiles/brickfloor4.png");
+        tile[15] = ImageManager.load("/resources/tiles/borderVertical.png");
+        tile[16] = ImageManager.load("/resources/tiles/borderTopCorner.png");
 
     }
 
@@ -56,6 +58,10 @@ public class Tiles {
             return 13;
         }else if(color.equalsIgnoreCase("f0f0f0")){
             return 14;
+        }else if(color.equalsIgnoreCase("29ff00")){
+            return 16;
+        }else if(color.equalsIgnoreCase("0063ff")){
+            return 15;
         }
 
         return -1;

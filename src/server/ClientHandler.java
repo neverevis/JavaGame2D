@@ -47,8 +47,6 @@ public class ClientHandler {
                 D = in.readBoolean();
                 click = in.readBoolean();
                 SPACE = in.readBoolean();
-
-                System.out.println(SPACE);
             }
         } catch (IOException e) {
             try{client.close();} catch (IOException ex) {e.printStackTrace();}

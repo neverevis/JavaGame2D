@@ -19,18 +19,18 @@ public class Core extends Canvas
 
     public Key key = new Key();
     public Mouse mouse = new Mouse();
+    public RenderSystem renSys = new RenderSystem();
     public World world = new World("/resources/tileData3.png",this);
     public MENU_Start menuStart = new MENU_Start(this);
 
     public AnimationTimer animationTimer;
-    public RenderSystem renSys = new RenderSystem();
     public Point cursorPoint;
     BufferedImage mouseImg;
 
     Client client = new Client(this);
     GraphicsFX gfx = new GraphicsFX(this);
 
-    TextField text = new TextField("");
+    TextField text = new TextField("", 10);
 
     public Core()
     {
@@ -68,7 +68,7 @@ public class Core extends Canvas
     public void update(double dt){
         G.time += dt;
         world.update(dt);
-        menuStart.update();
+        menuStart.update(dt);
     }
 
     public void render() {
@@ -85,7 +85,7 @@ public class Core extends Canvas
         gfx.draw(text.text,(double)G.S_WIDTH/2,(double)G.S_HEIGHT/2);
 
         gfx.setColor(Color.WHITE);
-        gfx.draw("FPS: " +  frameRate,5,25);
+        gfx.draw("FPS: " +  frameRate,G.S_WIDTH - 10 - gfx.stringWidth("FPS: " + frameRate)/2,25);
 
         gfx.end();
     }

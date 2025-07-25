@@ -1,7 +1,5 @@
 package server.logic;
 
-import core.Key;
-import core.Mouse;
 import math.Vector;
 import physics.Collider;
 import server.ClientHandler;
@@ -13,7 +11,11 @@ public class S_Player {
     public Vector pos;
     Vector direction = new Vector();
     Vector velocity = new Vector();
+    Vector knockback = new Vector();
+    Vector movement = new Vector();
     Vector nextPos = new Vector();
+
+    public double health = 100;
 
     double acceleration = 800;
     double maxSpeed = 100;
@@ -21,55 +23,60 @@ public class S_Player {
     Collider collider;
 
     double attackCoolDown;
+    boolean damageDealt;
+    boolean invincibility;
 
     public int state;
     public int facing;
 
-    int IDLE = 0;
-    int RUNNING = 1;
-    int ATTACKING = 2;
-    int TAKING_DAMAGE = 3;
-    int teleportCount = 0;
+    final int IDLE = 0;
+    final int RUNNING = 1;
+    final int ATTACKING = 2;
+    final int TAKING_DAMAGE = 3;
 
-    int UP = 0;
-    int DOWN = 1;
-    int LEFT = 2;
-    int RIGHT = 3;
+    final int UP = 0;
+    final int DOWN = 1;
+    final int LEFT = 2;
+    final int RIGHT = 3;
+
+    final double ATTACK_COOLDOWN_TIME = 1.0;
+    final double PUNCH_DAMAGE = 20;
+    final int ATTACK_RANGE = 32;
+    final double DAMAGE_KNOCKBACK = 300;
 
     public S_Player(ClientHandler clientHandler, Vector pos, ServerWorld world){
         this.clientHandler = clientHandler;
         this.pos = pos;
         this.world = world;
-        collider = new Collider(pos,10,8,-5,8);
+        collider = new Collider(pos,10,8,-5,8,false);
         world.collSys.register(collider);
     }
 
     public void update(double dt) {
-        if(clientHandler.SPACE && teleportCount == 0){
-            teleportCount = 6;
+        /*System.out.println("movement = " + movement.length());
+        System.out.println("velocity = " + velocity.length());
+        System.out.println("pos = " + pos.x + ", " + pos.y);*/
+        handleAttack(dt);
+        handleMovement(dt);
+        handleTakingDamage(dt);
+        applyVelocity(dt);
+    }
+
+    void handleAttack(double dt){
+        updateAttackState(dt);
+
+        if(shouldStartAttacking()){
+            startAttack();
         }
-
-        if (attackCoolDown > 0) {
-            attackCoolDown -= dt;
+        if(shouldDealDamage()){
+            dealDamageToPlayers();
         }
+    }
 
-        if (state == ATTACKING) {
-            velocity.multiply(Math.pow(0.03, dt * 2));
-            if (attackCoolDown < 0.45) {
-                state = IDLE;
-            }
-        }
+    void handleMovement(double dt){
+        if (state != ATTACKING && state != TAKING_DAMAGE) {
+            direction.reset();
 
-        if (clientHandler.click && attackCoolDown <= 0) {
-            state = ATTACKING;
-            velocity.add(0,700);
-            System.out.println(state);
-            attackCoolDown = 1;
-        }
-
-        direction.reset();
-
-        if (state != ATTACKING) {
             if (clientHandler.W) {
                 direction.y--;
                 state = RUNNING;
@@ -91,74 +98,116 @@ public class S_Player {
                 facing = RIGHT;
             }
 
-            if (!clientHandler.W && !clientHandler.A && !clientHandler.S && !clientHandler.D && state != TAKING_DAMAGE) {
+            if (!clientHandler.W && !clientHandler.A && !clientHandler.S && !clientHandler.D) {
+                decelerate(movement,dt);
                 state = IDLE;
-                velocity.multiply(Math.pow(0.03, dt * 2));
             }
 
-            if(teleportCount != 0){
-                teleportCount--;
-                collider.pos = nextPos;
+            direction.normalize();
+            movement.add(direction.multiply(acceleration * dt));
+            movement.clamp(maxSpeed);
+        }
+    }
 
-                nextPos.set(pos);
-                nextPos.add(velocity.copy().x * dt * 5,0);
+    void applyVelocity(double dt){
+        knockback.multiply(Math.pow(0.03,dt));
+        velocity.set(movement.copy().add(knockback));
 
-                collider.update();
-                if (!world.collSys.testCollision(collider))
-                    pos.set(nextPos.x, pos.y);
+        nextPos.set(pos);
+        nextPos.add(velocity.multiply(dt));
 
-                nextPos.set(pos);
-                nextPos.add(0,velocity.copy().y * dt * 5);
+        if(!world.collSys.predictCollision_x(collider,nextPos.x)){
 
-                collider.update();
-                if (!world.collSys.testCollision(collider))
-                    pos.set(pos.x, nextPos.y);
+            pos.x = nextPos.x;
+        }
+        if(!world.collSys.predictCollision_y(collider,nextPos.y)){
+            pos.y = nextPos.y;
+        }
+    }
 
-                collider.update();
-                collider.pos = pos;
-            }
+    void updateAttackState(double dt){
+        if(attackCoolDown > 0) {
+            attackCoolDown -= dt;
         }
 
-        direction.normalize();
-        velocity.add(direction.multiply(acceleration * dt));
+        if(state == ATTACKING) {
+            if (attackCoolDown <= 0.45) {
+                state = IDLE;
+            }
+            decelerate(movement,dt);
+        }
+    }
 
-        if(state != TAKING_DAMAGE)
-            velocity.clamp(maxSpeed);
+    boolean shouldStartAttacking(){
+        return state != TAKING_DAMAGE && clientHandler.click && attackCoolDown <= 0;
+    }
 
-        //validação de posição
-        collider.pos = nextPos;
+    public void startAttack(){
+        state = ATTACKING;
+        attackCoolDown = ATTACK_COOLDOWN_TIME;
+        damageDealt = false;
+    }
 
-        nextPos.set(pos);
-        nextPos.add(velocity.x * dt, 0);
+    boolean shouldDealDamage(){
+        if(state == ATTACKING && !damageDealt && attackCoolDown < 0.95){
+            return true;
+        }
 
-        collider.update();
-        if (!world.collSys.testCollision(collider))
-            pos.set(nextPos.x, pos.y);
+        return false;
+    }
 
-        nextPos.set(pos);
-        nextPos.add(0, velocity.y * dt);
-
-        collider.update();
-        if (!world.collSys.testCollision(collider))
-            pos.set(pos.x, nextPos.y);
-
-        collider.pos = pos;
-
-        if(state == ATTACKING && attackCoolDown < 0.9 && attackCoolDown > 0.8){
-            for(S_Player p : world.players){
-                if(p != this) {
-                    if (pos.getDistance(p.pos) < 32) {
-                        Vector knockback = p.pos.copy().sub(pos).normalize().multiply(9000 * dt);
-                        p.velocity.add(knockback);
-                        p.state = TAKING_DAMAGE;
-                    }
+    void dealDamageToPlayers(){
+        for(S_Player player : world.players){
+            if(player != this) {
+                if (!player.invincibility && isOnAttackRange(player) && isOnFacingDirection(player)) {
+                    player.takeDamage(pos, PUNCH_DAMAGE);
                 }
             }
         }
 
-        if(state == TAKING_DAMAGE){
-            velocity.multiply(Math.pow(0.01, dt));
+        damageDealt = true;
+    }
+
+    boolean isOnAttackRange(S_Player player){
+        return pos.getDistance(player.pos) <= ATTACK_RANGE;
+    }
+
+    boolean isOnFacingDirection(S_Player player){
+        double dx = pos.x - player.pos.x;
+        double dy = pos.y - player.pos.y;
+
+        if(facing == UP && dy > 0){
+            return true;
         }
+        else if(facing == DOWN && dy <= 0){
+            return true;
+        }
+        else if(facing == LEFT && dx > 0){
+            return true;
+        }
+        else if(facing == RIGHT && dx <= 0){
+            return true;
+        }
+
+        return false;
+    }
+
+    public void takeDamage(Vector originPosition, double damage){
+        state = TAKING_DAMAGE;
+        knockback = pos.copy().sub(originPosition).normalize().multiply(DAMAGE_KNOCKBACK);
+        health -= damage;
+    }
+
+    public void handleTakingDamage(double dt){
+        if(state == TAKING_DAMAGE) {
+            if (knockback.length() <= 10) {
+                state = IDLE;
+            }
+        }
+    }
+
+    public void decelerate(Vector force, double dt){
+        force.multiply(Math.pow(0.03, dt * 2));
     }
 
 }

@@ -8,7 +8,7 @@ public class S_Pillar {
     Vector pos = new Vector();
     public S_Pillar(ServerWorld serverWorld, double x, double y){
         pos.set(x,y);
-        collider = new Collider(pos,32,16,-16,16){
+        collider = new Collider(pos,32,16,-16,16,true){
             @Override
             public void onCollision(Collider other) {
 

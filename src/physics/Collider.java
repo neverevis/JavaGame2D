@@ -1,5 +1,7 @@
 package physics;
 
+import elements.ELM_Player;
+import elements.Element;
 import graphics.GraphicsFX;
 import graphics.Renderable;
 import math.Vector;
@@ -13,40 +15,57 @@ public class Collider implements Renderable {
     double width;
     double height;
     public Rectangle2D.Double area;
-    boolean colliding;
+    public boolean colliding;
+    public boolean solid;
+    ELM_Player owner = null;
 
-    public Collider(double x, double y, double w, double h){
+    public Collider(double x, double y, double w, double h, boolean solid){
         pos = new Vector(x,y);
         width = w;
         height = h;
         offset = new Vector();
+        this.solid = solid;
 
         area = new Rectangle2D.Double(x,y,w,h);
     }
 
-    public Collider(double x, double y,double w, double h, double offsetX, double offsetY){
+    public Collider(double x, double y,double w, double h, double offsetX, double offsetY, boolean solid){
         pos = new Vector(x,y);
         width = w;
         height = h;
         offset = new Vector(offsetX,offsetY);
+        this.solid = solid;
 
         area = new Rectangle2D.Double(x + offsetX,y + offsetY,w,h);
     }
 
-    public Collider(Vector pos, double w, double h){
+    public Collider(Vector pos, double w, double h, boolean solid){
         this.pos = pos;
         width = w;
         height = h;
         offset = new Vector();
+        this.solid = solid;
 
         area = new Rectangle2D.Double(pos.x,pos.y,w,h);
     }
 
-    public Collider(Vector pos, double w, double h, double offsetX, double offsetY){
+    public Collider(Vector pos, double w, double h, double offsetX, double offsetY, boolean solid){
         this.pos = pos;
         width = w;
         height = h;
         offset = new Vector(offsetX,offsetY);
+        this.solid = solid;
+
+        area = new Rectangle2D.Double(pos.x,pos.y,w,h);
+    }
+
+    public Collider(Vector pos, double w, double h, double offsetX, double offsetY, boolean solid, ELM_Player owner){
+        this.pos = pos;
+        width = w;
+        height = h;
+        offset = new Vector(offsetX,offsetY);
+        this.solid = solid;
+        this.owner = owner;
 
         area = new Rectangle2D.Double(pos.x,pos.y,w,h);
     }
@@ -80,6 +99,13 @@ public class Collider implements Renderable {
 
         this.pos.add(knockback);
         other.update();
+    }
+
+    public Collider copy(){
+        Collider copy = new Collider(this.pos.x,this.pos.y,this.width,this.height,this.offset.x,this.offset.y,this.solid);
+        copy.update();
+
+        return copy;
     }
 
     @Override

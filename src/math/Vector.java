@@ -128,6 +128,13 @@ public class Vector {
         return this;
     }
 
+    public Vector fromAngle(double angle) {
+        angle = Math.toRadians(angle);
+        this.x = Math.cos(angle);
+        this.y = Math.sin(angle);
+        return this;
+    }
+
     public Vector applyOppositeDirection(Vector target, double multiplier){
         applyDirection(target, -multiplier);
 
