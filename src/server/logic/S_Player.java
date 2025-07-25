@@ -33,6 +33,7 @@ public class S_Player {
     final int RUNNING = 1;
     final int ATTACKING = 2;
     final int TAKING_DAMAGE = 3;
+    final int DEAD = 4;
 
     final int UP = 0;
     final int DOWN = 1;
@@ -53,13 +54,14 @@ public class S_Player {
     }
 
     public void update(double dt) {
-        /*System.out.println("movement = " + movement.length());
-        System.out.println("velocity = " + velocity.length());
-        System.out.println("pos = " + pos.x + ", " + pos.y);*/
-        handleAttack(dt);
-        handleMovement(dt);
-        handleTakingDamage(dt);
-        applyVelocity(dt);
+        if(state != DEAD) {
+            handleAttack(dt);
+            handleMovement(dt);
+            handleTakingDamage(dt);
+            applyVelocity(dt);
+        }
+        if(health <= 0)
+            state = DEAD;
     }
 
     void handleAttack(double dt){

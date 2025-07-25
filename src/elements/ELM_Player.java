@@ -36,6 +36,7 @@ public class ELM_Player extends Element {
     Animator runRight;
     Animator attackDown;
     Animator attackUp;
+    Animator dead;
     public Collider collider;
     public World world;
     ELM_Emmiter dust;
@@ -59,6 +60,7 @@ public class ELM_Player extends Element {
     public final int RUNNING = 1;
     public final int ATTACKING = 2;
     public final int TAKING_DAMAGE = 3;
+    public final int DEAD = 4;
 
     public final int UP = 0;
     public final int DOWN = 1;
@@ -87,6 +89,7 @@ public class ELM_Player extends Element {
         idleRight = new Animator(sprite,0,74,86,1);
         attackDown = new Animator(sprite,0,100,109,0.55);
         attackUp = new Animator(sprite,0,110,119,0.55);
+        dead = new Animator(sprite,0,120,120,1);
 
         collider = new Collider(pos,10,8,-5,8,false);
 
@@ -95,52 +98,55 @@ public class ELM_Player extends Element {
 
     @Override
     public void update(double dt) {
-        if(isLocal) {
+        if(isLocal && state != DEAD) {
             handleMovement(dt);
             applyVelocity(dt);
         }
 
-        if(facing == DOWN){
-            if(state == RUNNING){
-                animation = runDown;
-                dust.active = true;
-            }else if(state == IDLE){
-                animation = idleDown;
-                dust.active = false;
-            }else if(state == ATTACKING){
-                animation = attackDown;
-                dust.active = false;
+        if(state != DEAD) {
+            if (facing == DOWN) {
+                if (state == RUNNING) {
+                    animation = runDown;
+                    dust.active = true;
+                } else if (state == IDLE) {
+                    animation = idleDown;
+                    dust.active = false;
+                } else if (state == ATTACKING) {
+                    animation = attackDown;
+                    dust.active = false;
+                }
+            } else if (facing == UP) {
+                if (state == RUNNING) {
+                    animation = runUp;
+                    dust.active = true;
+                } else if (state == IDLE) {
+                    animation = idleUp;
+                    dust.active = false;
+                } else if (state == ATTACKING) {
+                    animation = attackUp;
+                    dust.active = false;
+                }
+            } else if (facing == LEFT) {
+                if (state == RUNNING) {
+                    animation = runLeft;
+                    dust.active = true;
+                } else if (state == IDLE) {
+                    animation = idleLeft;
+                    dust.active = false;
+                }
+            } else if (facing == RIGHT) {
+                if (state == RUNNING) {
+                    animation = runRight;
+                    dust.active = true;
+                } else if (state == IDLE) {
+                    animation = idleRight;
+                    dust.active = false;
+                }
             }
         }
-        else if(facing == UP){
-            if(state == RUNNING){
-                animation = runUp;
-                dust.active = true;
-            }else if(state == IDLE){
-                animation = idleUp;
-                dust.active = false;
-            }else if(state == ATTACKING){
-                animation = attackUp;
-                dust.active = false;
-            }
-        }
-        else if(facing == LEFT){
-            if(state == RUNNING){
-                animation = runLeft;
-                dust.active = true;
-            }else if(state == IDLE){
-                animation = idleLeft;
-                dust.active = false;
-            }
-        }
-        else if(facing == RIGHT){
-            if(state == RUNNING){
-                animation = runRight;
-                dust.active = true;
-            }else if(state == IDLE){
-                animation = idleRight;
-                dust.active = false;
-            }
+
+        if(state == DEAD){
+            animation = dead;
         }
 
         if (animation != null)
