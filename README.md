@@ -70,7 +70,6 @@ src/
 
 - **Component Pattern**: Sistema de elementos modulares
 - **Observer Pattern**: Sistema de eventos e animações
-- **Singleton Pattern**: Gerenciamento de recursos
 - **Object Pool**: Reutilização de partículas
 - **State Pattern**: Estados dos jogadores (idle, correndo, atacando, morto)
 
@@ -181,20 +180,13 @@ Este projeto demonstra:
 
 - [ ] Sistema de inventário
 - [ ] Diferentes tipos de inimigos com IA
-- [ ] Sistema de sons e música
-- [ ] Mapa procedural
+- [ ] Expansão de Mapa
 - [ ] Sistema de save/load
-- [ ] Otimização de rede (UDP para movimento)
 - [ ] Sistema de chat multiplayer
 
 ## 👨‍💻 Autor
 
 Desenvolvido por **neverevis** como projeto acadêmico de Programação Orientada a Objetos.
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT - veja o arquivo LICENSE para mais detalhes.
-
 ---
 
 ⭐ Se este projeto foi útil para você, considere dar uma estrela no repositório!
