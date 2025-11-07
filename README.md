@@ -133,10 +133,7 @@ java -Dsun.java2d.opengl=true src.Main
 java src.server.Server
 ```
 
-2. Configure a conexão no cliente (edite `Client.java`):
-```java
-socket = new Socket("localhost", 12345);
-```
+2. Configure a conexão no terminal do cliente inserindo o endereço de ip do servidor:
 
 3. Execute o jogo normalmente
 
